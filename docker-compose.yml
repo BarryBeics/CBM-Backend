@@ -1,0 +1,32 @@
+version: '3.9'
+
+networks:
+  gotrading:
+    name: gotrading
+    driver: bridge
+
+services:
+  database:
+    image: ${MONGODB_IMAGE}
+    restart: always
+    ports:
+      - "27017:27017"
+    env_file: .env
+    networks:
+      - gotrading
+    volumes:
+      - database-data:/data/db
+
+  resolvers:
+    image: ${RESOLVERS_IMAGE}
+    ports:
+      - "8080:8080"
+    env_file: 
+      - .env
+    depends_on:
+      - database
+    networks:
+      - gotrading
+
+volumes:
+  database-data:
