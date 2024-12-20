@@ -6,7 +6,6 @@ package resolvers
 
 import (
 	"context"
-	"fmt"
 
 	"cryptobotmanager.com/cbm-backend/Resolvers/graph/generated"
 	"cryptobotmanager.com/cbm-backend/Resolvers/graph/model"
@@ -27,34 +26,98 @@ func (r *mutationResolver) CreateHistoricPrices(ctx context.Context, input *mode
 	return insertedHistoricPrices, nil
 }
 
-// CreateHistoricKline is the resolver for the createHistoricKline field.
+// CreateHistoricKlineData is the resolver for the getHistoricKlineData field.
 func (r *mutationResolver) CreateHistoricKline(ctx context.Context, input *model.NewHistoricKlineDataInput) ([]*model.HistoricKlineData, error) {
-	panic(fmt.Errorf("not implemented: CreateHistoricKline - createHistoricKline"))
+	// Assuming you want to save multiple HistoricKlineData in the input
+	insertedHistoricKlineData, err := db.SaveHistoricKlineData(input)
+	if err != nil {
+		return nil, err
+	}
+
+	// Assuming you want to return the insertedHistoricKlineData and the timestamp
+	return insertedHistoricKlineData, nil
 }
 
 // DeleteHistoricPrices is the resolver for the deleteHistoricPrices field.
 func (r *mutationResolver) DeleteHistoricPrices(ctx context.Context, timestamp int) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteHistoricPrices - deleteHistoricPrices"))
+	err := db.DeleteHistoricPricesByTimestamp(ctx, timestamp)
+
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting Unique Timestamp Count")
+		return false, err
+	}
+
+	return true, nil
 }
 
 // GetHistoricPrice is the resolver for the getHistoricPrice field.
 func (r *queryResolver) GetHistoricPrice(ctx context.Context, symbol string, limit *int) ([]*model.HistoricPrices, error) {
-	panic(fmt.Errorf("not implemented: GetHistoricPrice - getHistoricPrice"))
+	historicPrices, err := db.HistoricPricesBySymbol(symbol, *limit)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting historic prices")
+		return nil, err
+	}
+
+	// Convert slice of model.HistoricPrice to slice of *model.HistoricPrice
+	var result []*model.HistoricPrices
+	for i := range historicPrices {
+		result = append(result, &historicPrices[i])
+	}
+
+	// Return the slice of pointers to historic prices
+	return result, nil
 }
 
 // GetHistoricPricesAtTimestamp is the resolver for the getHistoricPricesAtTimestamp field.
 func (r *queryResolver) GetHistoricPricesAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricPrices, error) {
-	panic(fmt.Errorf("not implemented: GetHistoricPricesAtTimestamp - getHistoricPricesAtTimestamp"))
+	log.Info().Msgf("Fetching prices at Timestamp: %d", timestamp)
+
+	historicPrices, err := db.HistoricPricesAtTimestamp(timestamp)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting historic prices at position")
+		return nil, err
+	}
+
+	// Convert slice of model.HistoricPrices to slice of *model.HistoricPrices
+	var result []*model.HistoricPrices
+	for i := range historicPrices {
+		result = append(result, &historicPrices[i])
+	}
+
+	log.Info().Msgf("Retrieved prices: %+v", historicPrices)
+
+	// Return the slice of pointers to historic prices
+	return result, nil
 }
 
 // GetHistoricKlineData is the resolver for the getHistoricKlineData field.
 func (r *queryResolver) GetHistoricKlineData(ctx context.Context, symbol string, limit *int) ([]*model.HistoricKlineData, error) {
-	panic(fmt.Errorf("not implemented: GetHistoricKlineData - getHistoricKlineData"))
+	historicKlineData, err := db.HistoricKlineDataBySymbol(symbol, *limit)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting historic Kline data")
+		return nil, err
+	}
+
+	// Convert slice of model.HistoricKlineData to slice of *model.HistoricKlineData
+	var result []*model.HistoricKlineData
+	for i := range historicKlineData {
+		result = append(result, &historicKlineData[i])
+	}
+
+	// Return the slice of pointers to historic kline data
+	return result, nil
 }
 
-// GetUniqueTimestampCount is the resolver for the getUniqueTimestampCount field.
+// GetUniqueTimestampCount fetches the count of unique timestamps.
 func (r *queryResolver) GetUniqueTimestampCount(ctx context.Context) (int, error) {
-	panic(fmt.Errorf("not implemented: GetUniqueTimestampCount - getUniqueTimestampCount"))
+	int, err := db.GetUniqueTimestampCount(ctx)
+
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting Unique Timestamp Count")
+		return 0, err
+	}
+
+	return int, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
