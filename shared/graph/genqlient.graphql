@@ -1,0 +1,8 @@
+mutation CreateHistoricPrices($input: NewHistoricPriceInput!) {
+  createHistoricPrices(input: $input) {
+    Pair {
+      Symbol
+      Price
+    }
+  }
+}

@@ -1,0 +1,74 @@
+version: "3"
+
+env:
+  ENV: dev
+
+dotenv: [".env.{{.ENV}}", ".env"]
+
+vars:
+  VERSION:
+    sh: cat ./VERSION
+  TEST_DATE:
+    sh: date '+%Y-%m-%d-%H-%M'
+
+tasks:
+  generate:
+    desc: Generate GQL client
+    cmds:
+      - echo "Running go generate in shared..."
+      - (cd shared && go generate -x ./...)
+
+    sources:
+      - shared/graph/sdl.gql
+      - shared/graph/genqlient
+      - shared/go.mod
+      - shared/go.sum
+      - shared/graph/genqlient_gen.go # Include the generated file in sources
+    generates:
+      - shared/graph/genqlient_gen.go
+
+  build:
+    desc: Build the Go Code
+    cmds:
+      - go build -o tradingBot main.go
+    env:
+      CGO_ENABLED: 0
+    sources:
+      - ./**/*.go
+    generates:
+      - ./tradingBot
+
+  bump_patch:
+    desc: Bump patch version number
+    vars:
+      VER:
+        sh: bump -b patch
+    cmds:
+      - git branch --show-current | grep ^releases || { echo "Use releases branch to bump versions"; exit 1; }
+      - git commit -m "Prepare patch v{{.VER}} for release" VERSION
+
+  bump_minor:
+    desc: Bump minor version number
+    vars:
+      VER:
+        sh: bump -b minor
+    cmds:
+      - git branch --show-current | grep ^releases || { echo "Use releases branch to bump versions"; exit 1; }
+      - git commit -m "Prepare minor v{{.VER}} for release" VERSION
+
+  bump_major:
+    desc: Bump major version number
+    vars:
+      VER:
+        sh: bump -b major
+    cmds:
+      - git branch --show-current | grep ^releases || { echo "Use releases branch to bump versions"; exit 1; }
+      - git commit -m "Prepare major v{{.VER}} for release" VERSION
+
+  tag:
+    desc: Tag repo and push to origin
+    cmds:
+      - git branch --show-current | grep ^releases || { echo "Use releases branch to tag versions"; exit 1; }
+      - git diff --cached --quiet --exit-code
+      - git tag v{{.VERSION}} -m "Tag version v{{.VERSION}}" && echo "Tagged tagged version v{{.VERSION}}"
+      - git push origin v{{.VERSION}}

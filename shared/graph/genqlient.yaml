@@ -1,0 +1,12 @@
+# Default genqlient config; for full documentation see:
+# https://github.com/Khan/genqlient/blob/main/docs/genqlient.yaml
+schema: ./sdl.gql
+operations:
+  - ./genqlient.graphql
+
+package: graph
+generated: ./genqlient_gen.go
+
+bindings:
+  DateTime:
+    type: string
