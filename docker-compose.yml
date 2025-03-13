@@ -1,5 +1,3 @@
-version: '3.9'
-
 networks:
   gotrading:
     name: gotrading
@@ -60,21 +58,19 @@ services:
     image: ${MICROSERVICES_IMAGE}
     env_file:
       - .env
-    # depends_on:
-    #   - nex
+    entrypoint: ["run_priceData.sh"]
+    depends_on:
+      - resolvers
     networks:
       - gotrading
 
-  # nex:
-  #   image: ${NEX_IMAGE}
-  #   depends_on:
-  #     - nats
-  #   environment:
-  #     - NATS_URL=nats://nats:4222
-  #   restart: unless-stopped
-  #   entrypoint: ["start-nex.sh"]
-  #   networks:
-  #     - gotrading
+  frontend:
+    image: ${FRONTEND_IMAGE}
+    env_file:
+      - .env
+    networks:
+      - gotrading
+
 
 volumes:
   database-data:
