@@ -1,27 +1,34 @@
-# Use a smaller base image for the final container
-FROM golang:1.18-alpine AS builder
+# Use official Golang image as a builder
+FROM golang:1.21 AS builder
 
 WORKDIR /app
+
+# Copy go modules files and download dependencies
 COPY go.mod go.sum ./
 RUN go mod download
+
+# Copy source code
 COPY . .
 
-# Build the Go application
-RUN CGO_ENABLED=0 GOOS=linux go build -o resolvers .
+# Set environment variables for static builds
+ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 
-# Use a minimal image for the final container
-FROM alpine:3.14.2
+# Build the binary
+RUN go build -o /resolvers-server ./server.go
 
-WORKDIR /app
+# Create a lightweight final image
+FROM alpine:latest
 
-# Copy the compiled binary from the builder stage
-COPY --from=builder /app/resolvers .
+WORKDIR /root/
 
-# Expose the port your application runs on
+# Copy the built binary from the builder
+COPY --from=builder /resolvers-server .
+
+# Expose the necessary port
 EXPOSE 8080
 
-# Command to run the executable
-CMD ["./resolvers"]
+# Run the service
+CMD ["./resolvers-server"]
 
 
 
