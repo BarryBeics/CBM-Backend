@@ -17,26 +17,28 @@ RUN go mod download
 COPY . .
 
 # Disable CGO and set target OS to Mac
-ENV CGO_ENABLED=0 GOOS=linux GOARCH=arm64
+ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 
 # Build each microservice binary
 # Add a new RUN command for each microservice binary
 WORKDIR /workdir/microservices/priceData
+RUN go mod tidy
 RUN go build -o /usr/local/bin/microservice-binaries/priceData main.go
 
 WORKDIR /workdir/microservices/utils
+RUN go mod tidy
 RUN go build -o /usr/local/bin/microservice-binaries/utils main.go
 
 
 # FROM nex:latest AS currentnex
 
 
-# # Create the Nex runtime image
-# FROM debian:12-slim AS nex
+# Create the Nex runtime image
+FROM debian:12-slim AS nex
 
-# RUN apt-get update \
-#     && apt-get install -y ca-certificates \
-#     && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+    && apt-get install -y ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create directories for microservice binaries
 RUN mkdir -p /usr/local/bin/microservice-binaries
