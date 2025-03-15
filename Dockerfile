@@ -25,10 +25,6 @@ WORKDIR /workdir/microservices/priceData
 RUN go mod tidy
 RUN go build -o /usr/local/bin/microservice-binaries/priceData main.go
 
-WORKDIR /workdir/microservices/utils
-RUN go mod tidy
-RUN go build -o /usr/local/bin/microservice-binaries/utils main.go
-
 
 # FROM nex:latest AS currentnex
 
@@ -45,7 +41,6 @@ RUN mkdir -p /usr/local/bin/microservice-binaries
 
 # Copy microservice binaries from the builder stage
 COPY --from=builder /usr/local/bin/microservice-binaries/priceData /usr/local/bin/microservice-binaries/
-COPY --from=builder /usr/local/bin/microservice-binaries/utils /usr/local/bin/microservice-binaries/
 
 # Set permissions for all binaries
 RUN chmod +x /usr/local/bin/microservice-binaries/*
