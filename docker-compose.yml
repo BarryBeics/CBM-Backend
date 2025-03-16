@@ -42,6 +42,11 @@ services:
       - gotrading
     volumes:
       - database-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   resolvers:
     image: ${RESOLVERS_IMAGE}
@@ -53,6 +58,7 @@ services:
       - database
     networks:
       - gotrading
+    entrypoint: ["/bin/sh", "-c", "wait-for-it database:27017 -- ./resolvers-server"]
 
   microservices:
     image: ${MICROSERVICES_IMAGE}
