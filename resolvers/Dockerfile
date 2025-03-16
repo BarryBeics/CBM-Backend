@@ -39,7 +39,7 @@ RUN apk add --no-cache curl && \
 EXPOSE 8080
 
 # Set entrypoint to wait for MongoDB, then start the server
-ENTRYPOINT ["/usr/local/bin/wait-for-it", "database:27017", "--timeout=30", "--", "/root/resolvers-server"]
+ENTRYPOINT ["/bin/sh", "-c", "/usr/local/bin/wait-for-it database:27017 --timeout=30 -- /root/resolvers-server"]
 
 
 
