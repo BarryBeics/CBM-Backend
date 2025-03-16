@@ -1,16 +1,10 @@
 # Use official Golang image as a builder
 FROM golang:1.23 AS builder
 
-# Install wait-for-it
-RUN apt-get update && apt-get install -y curl && \
-    curl -o /usr/local/bin/wait-for-it https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh && \
-    chmod +x /usr/local/bin/wait-for-it
-
-# Set working directory
 WORKDIR /app
 
 # Copy go modules files and download dependencies
-COPY go.mod go.sum ./
+COPY resolvers/go.mod resolvers/go.sum ./
 RUN go mod download
 
 # Copy source code
@@ -30,16 +24,8 @@ WORKDIR /root/
 # Copy the built binary from the builder
 COPY --from=builder /resolvers-server .
 
-# Install wait-for-it in the final image
-RUN apk add --no-cache curl && \
-    curl -o /usr/local/bin/wait-for-it https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh && \
-    chmod +x /usr/local/bin/wait-for-it
-
 # Expose the necessary port
 EXPOSE 8080
 
-# Set entrypoint to wait for MongoDB, then start the server
-ENTRYPOINT ["/bin/sh", "-c", "/usr/local/bin/wait-for-it database:27017 --timeout=30 -- /root/resolvers-server"]
-
-
-
+# Run the service
+CMD ["./resolvers-server"]
