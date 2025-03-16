@@ -33,8 +33,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Debug - Check Directory
-        run: ls -R
+      - name: Debug workspace
+        run: ls -lah
+        
      
       - name: Build & Push CBM Microservices
         uses: docker/build-push-action@v5
