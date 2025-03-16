@@ -49,7 +49,7 @@ jobs:
       - name: Build & Push Resolvers
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./Resolvers
           file: ./Resolvers/Dockerfile
           push: true
           platforms: linux/amd64
