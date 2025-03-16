@@ -49,10 +49,8 @@ jobs:
       - name: Build & Push Resolvers
         uses: docker/build-push-action@v5
         with:
-          context: ./Resolvers
-          file: ./Resolvers/Dockerfile
+          context: ./resolvers
+          file: ./resolvers/Dockerfile
           push: true
           platforms: linux/amd64
           tags: bazzamerx/cbmresolvers:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max

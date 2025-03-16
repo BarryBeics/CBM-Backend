@@ -4,7 +4,7 @@ FROM golang:1.23 AS builder
 WORKDIR /app
 
 # Copy go modules files and download dependencies
-COPY Resolvers/go.mod Resolvers/go.sum ./
+COPY resolvers/go.mod resolvers/go.sum ./
 RUN go mod download
 
 # Copy source code
