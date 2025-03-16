@@ -53,11 +53,11 @@ RUN chmod +x /usr/local/bin/registerMicroservices.sh
 RUN apt-get update && apt-get install -y cron
 
 # Copy cron job script
-COPY run_priceData.sh /usr/local/bin/run_priceData.sh
+COPY microservices/run_priceData.sh /usr/local/bin/run_priceData.sh
 RUN chmod +x /usr/local/bin/run_priceData.sh
 
 # Copy cronjob configuration
-COPY crontab.txt /etc/cron.d/priceData-cron
+COPY microservices/crontab.txt /etc/cron.d/priceData-cron
 
 # Set permissions & enable cron
 RUN chmod 0644 /etc/cron.d/priceData-cron && crontab /etc/cron.d/priceData-cron
