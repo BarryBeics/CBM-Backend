@@ -52,10 +52,6 @@ RUN chmod +x /usr/local/bin/registerMicroservices.sh
 # Install cron
 RUN apt-get update && apt-get install -y cron
 
-# Copy cron job script
-COPY microservices/run_priceData.sh /usr/local/bin/run_priceData.sh
-RUN chmod +x /usr/local/bin/run_priceData.sh
-
 # Copy cronjob configuration
 COPY microservices/crontab.txt /etc/cron.d/priceData-cron
 
