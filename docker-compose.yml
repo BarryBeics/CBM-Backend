@@ -4,33 +4,33 @@ networks:
     driver: bridge
 
 services:
-  nats:
-    image: ${NATS_IMAGE}
-    ports:
-      - 4222:4222
-      - 6222:6222
-      - 8222:8222
-    volumes:
-      - nats-data:/data
-    command: -m 8222 -js
-    healthcheck:
-      test: wget --spider http://127.0.0.1:8222 || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 2s
-    networks:
-      - gotrading
+  # nats:
+  #   image: ${NATS_IMAGE}
+  #   ports:
+  #     - 4222:4222
+  #     - 6222:6222
+  #     - 8222:8222
+  #   volumes:
+  #     - nats-data:/data
+  #   command: -m 8222 -js
+  #   healthcheck:
+  #     test: wget --spider http://127.0.0.1:8222 || exit 1
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 2s
+  #   networks:
+  #     - gotrading
 
-  nats-cli:
-    image: natsio/nats-box:latest
-    depends_on:
-      - nats
-    entrypoint: ["/bin/sh", "-c", "while true; do sleep 3600; done"]
-    environment:
-      - NATS_URL=nats://nats:4222
-    networks:
-      - gotrading
+  # nats-cli:
+  #   image: natsio/nats-box:latest
+  #   depends_on:
+  #     - nats
+  #   entrypoint: ["/bin/sh", "-c", "while true; do sleep 3600; done"]
+  #   environment:
+  #     - NATS_URL=nats://nats:4222
+  #   networks:
+  #     - gotrading
 
   database:
     image: ${MONGODB_IMAGE}
@@ -58,13 +58,12 @@ services:
       - database
     networks:
       - gotrading
-    entrypoint: ["/bin/sh", "-c", "wait-for-it database:27017 -- ./resolvers-server"]
+    
 
   microservices:
     image: ${MICROSERVICES_IMAGE}
     env_file:
       - .env
-    entrypoint: ["run_priceData.sh"]
     depends_on:
       - resolvers
     networks:

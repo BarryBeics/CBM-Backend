@@ -3,6 +3,7 @@ package functions
 import (
 	"context"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"os"
 	"time"
@@ -75,6 +76,42 @@ func SavePriceData(ctx context.Context, client graphql.Client, market []PriceDat
 	}
 
 	return nil
+}
+
+type ExportPriceData struct {
+	Pairs     []PriceData `json:"pairs"`
+	Timestamp int64       `json:"timestamp"`
+}
+
+// SavePriceDataAsJSON saves Binance price data to a JSON file, appending data in 5-minute intervals
+func SavePriceDataAsJSON(market []PriceData, timestamp int64) error {
+	// Convert epoch timestamp to UTC date (YYYY-MM-DD)
+	date := time.Unix(timestamp, 0).UTC().Format("2006-01-02")
+
+	// Define filename based on the date
+	filename := fmt.Sprintf("/var/log/binance_prices_%s.json", date)
+
+	// Read existing data (if file exists)
+	var priceHistory []ExportPriceData
+	file, err := os.Open(filename)
+	if err == nil {
+		defer file.Close()
+		json.NewDecoder(file).Decode(&priceHistory)
+	}
+
+	// Append new data
+	priceHistory = append(priceHistory, ExportPriceData{
+		Timestamp: timestamp,
+		Pairs:     market,
+	})
+
+	// Write updated JSON back to file
+	fileData, err := json.MarshalIndent(priceHistory, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(filename, fileData, 0644)
 }
 
 // ParseDemoCSVData reads a CSV file and saves the data to the GraphQL database
