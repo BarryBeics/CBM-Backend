@@ -36,6 +36,11 @@ func main() {
 		log.Error().Err(err).Msgf("Failed to get price data from Binance!")
 	}
 
+	err = functions.SavePriceDataAsJSON(market, int64(roundedEpochSeconds))
+	if err != nil {
+		log.Error().Err(err).Msgf("Failed to save price data to JSON!")
+	}
+
 	err = functions.SavePriceData(ctx, client, market, roundedEpochSeconds)
 	if err != nil {
 		log.Error().Err(err).Msgf("Save PriceData")
