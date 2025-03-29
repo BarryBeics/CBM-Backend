@@ -14,8 +14,7 @@ type DB struct {
 	client *mongo.Client
 }
 
-func Connect() *DB {
-
+func Connect() (*DB, error) {
 	uri := "mongodb://fudgebot:cookiebot@database:27017/go_trading_db"
 	log.Info().Str("mongodb_uri", uri).Msg("Connecting to MongoDB")
 
@@ -23,25 +22,19 @@ func Connect() *DB {
 	clientOptions.Auth = &options.Credential{
 		Username:   "fudgebot",
 		Password:   "cookiebot",
-		AuthSource: "admin",
-	}
-
-	client, err := mongo.NewClient(clientOptions)
-	if err != nil {
-		log.Error().Err(err).Msg("Error client options func:")
+		AuthSource: "go_trading_db",
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	err = client.Connect(ctx)
+	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
-		log.Error().Err(err).Msg("Error ctx func:")
+		log.Error().Err(err).Msg("Failed to connect to MongoDB")
+		return nil, err
 	}
 
-	return &DB{
-		client: client,
-	}
+	return &DB{client: client}, nil
 }
 
 func (db *DB) Close() {
