@@ -6,6 +6,7 @@ package resolvers
 
 import (
 	"cryptobotmanager.com/cbm-backend/Resolvers/database"
+	log "github.com/rs/zerolog/log"
 )
 
 // !!! WARNING !!!
@@ -14,4 +15,12 @@ import (
 //   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //     it when you're done.
 //   - You have helper methods in this file. Move them out to keep these resolver files clean.
-var db = database.Connect()
+var db *database.DB
+
+func init() {
+	var err error
+	db, err = database.Connect() // Get DB connection and error
+	if err != nil {              // If an error occurs
+		log.Fatal().Err(err).Msg("Failed to connect to database") // Log the error and terminate
+	}
+}
