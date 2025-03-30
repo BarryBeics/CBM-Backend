@@ -22,7 +22,7 @@ func Connect() (*DB, error) {
 	clientOptions.Auth = &options.Credential{
 		Username:   "fudgebot",
 		Password:   "cookiebot",
-		AuthSource: "go_trading_db",
+		AuthSource: "admin",
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
