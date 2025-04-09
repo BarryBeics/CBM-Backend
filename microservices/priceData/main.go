@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"cryptobotmanager.com/cbm-backend/microservices/priceData/functions"
+	"cryptobotmanager.com/cbm-backend/resolvers/graph/model"
 	"cryptobotmanager.com/cbm-backend/shared"
 	"github.com/Khan/genqlient/graphql"
 	"github.com/rs/zerolog/log"
@@ -28,7 +29,7 @@ func main() {
 	// Create Client & Context
 	client := graphql.NewClient(backend, &http.Client{})
 	ctx := context.Background()
-	var market []functions.PriceData
+	var market []model.Pair
 	var err error
 
 	market, err = functions.FetchPricesFromBinanceAPI()

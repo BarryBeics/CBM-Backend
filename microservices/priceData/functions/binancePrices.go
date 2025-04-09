@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	"cryptobotmanager.com/cbm-backend/resolvers/graph/model"
 	"cryptobotmanager.com/cbm-backend/shared"
 	"cryptobotmanager.com/cbm-backend/shared/graph"
 	"github.com/Khan/genqlient/graphql"
@@ -15,15 +16,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type PriceData struct {
-	Symbol string `json:"symbol"`
-	Price  string `json:"price"`
-}
-
 // FetchPricesFromBinanceAPI fetches market prices from Binance API
 // using API and Secret keys from environment variables.
 // It returns a slice of PriceData structs and an error if any.
-func FetchPricesFromBinanceAPI() (market []PriceData, err error) {
+func FetchPricesFromBinanceAPI() (market []model.Pair, err error) {
 	apiKey := os.Getenv("BINANCE_API_KEY")
 	secretKey := os.Getenv("BINANCE_SECRET_KEY")
 	client := binance.NewClient(apiKey, secretKey)
@@ -41,7 +37,7 @@ func FetchPricesFromBinanceAPI() (market []PriceData, err error) {
 
 	// iterate over prices and build into slice of structs
 	for _, price := range prices {
-		market = append(market, PriceData{Symbol: price.Symbol, Price: price.Price})
+		market = append(market, model.Pair{Symbol: price.Symbol, Price: price.Price})
 		log.Info().Str("Symbol:", price.Price).Str("Price", price.Price)
 	}
 
@@ -49,7 +45,7 @@ func FetchPricesFromBinanceAPI() (market []PriceData, err error) {
 }
 
 // SavePriceData writes market price data using GraphQL mutation
-func SavePriceData(ctx context.Context, client graphql.Client, market []PriceData, datetime int) error {
+func SavePriceData(ctx context.Context, client graphql.Client, market []model.Pair, datetime int) error {
 	// Create an array of PairInput from PriceData
 	var pairsInput []graph.PairInput
 	for _, price := range market {
@@ -78,13 +74,8 @@ func SavePriceData(ctx context.Context, client graphql.Client, market []PriceDat
 	return nil
 }
 
-type ExportPriceData struct {
-	Pairs     []PriceData `json:"pairs"`
-	Timestamp int64       `json:"timestamp"`
-}
-
 // SavePriceDataAsJSON saves Binance price data to a JSON file, appending data in 5-minute intervals
-func SavePriceDataAsJSON(market []PriceData, timestamp int64) error {
+func SavePriceDataAsJSON(market []model.Pair, timestamp int64) error {
 	// Convert epoch timestamp to UTC date (YYYY-MM-DD)
 	date := time.Unix(timestamp, 0).UTC().Format("2006-01-02")
 
@@ -92,17 +83,23 @@ func SavePriceDataAsJSON(market []PriceData, timestamp int64) error {
 	filename := fmt.Sprintf("/var/log/binance_prices_%s.json", date)
 
 	// Read existing data (if file exists)
-	var priceHistory []ExportPriceData
+	var priceHistory []model.HistoricPrices
 	file, err := os.Open(filename)
 	if err == nil {
 		defer file.Close()
 		json.NewDecoder(file).Decode(&priceHistory)
 	}
 
+	// Convert []model.Pair to []*model.Pair
+	var pairPtrs []*model.Pair
+	for i := range market {
+		pairPtrs = append(pairPtrs, &market[i])
+	}
+
 	// Append new data
-	priceHistory = append(priceHistory, ExportPriceData{
-		Timestamp: timestamp,
-		Pairs:     market,
+	priceHistory = append(priceHistory, model.HistoricPrices{
+		Pair:      pairPtrs,
+		Timestamp: int(timestamp),
 	})
 
 	// Write updated JSON back to file
@@ -115,7 +112,7 @@ func SavePriceDataAsJSON(market []PriceData, timestamp int64) error {
 }
 
 // ParseDemoCSVData reads a CSV file and saves the data to the GraphQL database
-func ParseDemoCSVData(ctx context.Context, client graphql.Client, csvFile string) ([]PriceData, error) {
+func ParseDemoCSVData(ctx context.Context, client graphql.Client, csvFile string) ([]model.Pair, error) {
 	// Open the CSV file
 	file, err := os.Open(csvFile)
 	if err != nil {
@@ -137,7 +134,7 @@ func ParseDemoCSVData(ctx context.Context, client graphql.Client, csvFile string
 	roundedEpochSeconds := shared.RoundTimeToFiveMinuteInterval(now) - 300
 
 	// Create the PriceData structure to hold the symbol-price pairs
-	var currentPrices []PriceData
+	var currentPrices []model.Pair
 	var rowCount int
 	// Process each row and save data to the database
 	for {
@@ -148,7 +145,7 @@ func ParseDemoCSVData(ctx context.Context, client graphql.Client, csvFile string
 		}
 
 		// Create the PriceData structure to hold the symbol-price pairs
-		var market []PriceData
+		var market []model.Pair
 
 		// Process each column, starting from index 1
 		for i := 0; i < len(headers); i++ {
@@ -156,7 +153,7 @@ func ParseDemoCSVData(ctx context.Context, client graphql.Client, csvFile string
 			price := record[i]
 
 			// Create the PriceData struct for the symbol-price pair
-			data := PriceData{
+			data := model.Pair{
 				Symbol: symbol,
 				Price:  price,
 			}
