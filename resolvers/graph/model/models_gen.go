@@ -12,6 +12,9 @@ type HistoricPrices struct {
 	Timestamp int     `json:"Timestamp"`
 }
 
+type Mutation struct {
+}
+
 type NewHistoricKlineDataInput struct {
 	Opentime int          `json:"Opentime"`
 	Coins    []*OHLCInput `json:"Coins"`
@@ -48,4 +51,7 @@ type Pair struct {
 type PairInput struct {
 	Symbol string `json:"Symbol"`
 	Price  string `json:"Price"`
+}
+
+type Query struct {
 }

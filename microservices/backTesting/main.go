@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"flag"
+	"fmt"
 	"io/fs"
 	"net/http"
 	"os"
@@ -11,12 +13,28 @@ import (
 
 	"cryptobotmanager.com/cbm-backend/microservices/backTesting/functions"
 	"cryptobotmanager.com/cbm-backend/resolvers/graph/model"
+	"cryptobotmanager.com/cbm-backend/shared"
 	"github.com/Khan/genqlient/graphql"
 	"github.com/rs/zerolog/log"
 	// Add any other necessary imports
 )
 
 func main() {
+
+	// Initialize logger
+	shared.SetupLogger()
+
+	if len(flag.Args()) == 1 {
+		switch flag.Arg(0) {
+		case "Report":
+			functions.PrintFunctionsWithoutTestCoverage()
+			return
+		default:
+			fmt.Println("Invalid argument. Usage: go run main.go [Report]")
+			os.Exit(1)
+		}
+	}
+
 	// Setup GraphQL backend client
 	backend := os.Getenv("TRADING_BOT_URL")
 	if backend == "" {

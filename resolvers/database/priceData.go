@@ -6,7 +6,7 @@ import (
 
 	"time"
 
-	"cryptobotmanager.com/cbm-backend/Resolvers/graph/model"
+	"cryptobotmanager.com/cbm-backend/resolvers/graph/model"
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"

@@ -11,7 +11,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"cryptobotmanager.com/cbm-backend/Resolvers/graph/model"
+	"cryptobotmanager.com/cbm-backend/resolvers/graph/model"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
 	gqlparser "github.com/vektah/gqlparser/v2"
@@ -283,8 +283,8 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 }
 
 func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
-	rc := graphql.GetOperationContext(ctx)
-	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
+	opCtx := graphql.GetOperationContext(ctx)
+	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputNewHistoricKlineDataInput,
 		ec.unmarshalInputNewHistoricPriceInput,
@@ -293,7 +293,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	)
 	first := true
 
-	switch rc.Operation.Operation {
+	switch opCtx.Operation.Operation {
 	case ast.Query:
 		return func(ctx context.Context) *graphql.Response {
 			var response graphql.Response
@@ -301,7 +301,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 			if first {
 				first = false
 				ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
-				data = ec._Query(ctx, rc.Operation.SelectionSet)
+				data = ec._Query(ctx, opCtx.Operation.SelectionSet)
 			} else {
 				if atomic.LoadInt32(&ec.pendingDeferred) > 0 {
 					result := <-ec.deferredResults
@@ -331,7 +331,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 			}
 			first = false
 			ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
-			data := ec._Mutation(ctx, rc.Operation.SelectionSet)
+			data := ec._Mutation(ctx, opCtx.Operation.SelectionSet)
 			var buf bytes.Buffer
 			data.MarshalGQL(&buf)
 
@@ -470,154 +470,343 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_createHistoricKline_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.NewHistoricKlineDataInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalONewHistoricKlineDataInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐNewHistoricKlineDataInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_createHistoricKline_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_createHistoricKline_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*model.NewHistoricKlineDataInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal *model.NewHistoricKlineDataInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalONewHistoricKlineDataInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐNewHistoricKlineDataInput(ctx, tmp)
+	}
+
+	var zeroVal *model.NewHistoricKlineDataInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_createHistoricPrices_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.NewHistoricPriceInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalONewHistoricPriceInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐNewHistoricPriceInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_createHistoricPrices_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_createHistoricPrices_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*model.NewHistoricPriceInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal *model.NewHistoricPriceInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalONewHistoricPriceInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐNewHistoricPriceInput(ctx, tmp)
+	}
+
+	var zeroVal *model.NewHistoricPriceInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_deleteHistoricPrices_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 int
-	if tmp, ok := rawArgs["Timestamp"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Timestamp"))
-		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_deleteHistoricPrices_argsTimestamp(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["Timestamp"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_deleteHistoricPrices_argsTimestamp(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (int, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["Timestamp"]
+	if !ok {
+		var zeroVal int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("Timestamp"))
+	if tmp, ok := rawArgs["Timestamp"]; ok {
+		return ec.unmarshalNInt2int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["name"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Query___type_argsName(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["name"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Query___type_argsName(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["name"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+	if tmp, ok := rawArgs["name"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Query_getHistoricKlineData_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["symbol"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbol"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Query_getHistoricKlineData_argsSymbol(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["symbol"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := ec.field_Query_getHistoricKlineData_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["limit"] = arg1
 	return args, nil
+}
+func (ec *executionContext) field_Query_getHistoricKlineData_argsSymbol(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["symbol"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("symbol"))
+	if tmp, ok := rawArgs["symbol"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getHistoricKlineData_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*int, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["limit"]
+	if !ok {
+		var zeroVal *int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Query_getHistoricPrice_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["symbol"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbol"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Query_getHistoricPrice_argsSymbol(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["symbol"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := ec.field_Query_getHistoricPrice_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["limit"] = arg1
 	return args, nil
+}
+func (ec *executionContext) field_Query_getHistoricPrice_argsSymbol(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["symbol"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("symbol"))
+	if tmp, ok := rawArgs["symbol"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getHistoricPrice_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*int, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["limit"]
+	if !ok {
+		var zeroVal *int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Query_getHistoricPricesAtTimestamp_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 int
-	if tmp, ok := rawArgs["Timestamp"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Timestamp"))
-		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Query_getHistoricPricesAtTimestamp_argsTimestamp(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["Timestamp"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Query_getHistoricPricesAtTimestamp_argsTimestamp(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (int, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["Timestamp"]
+	if !ok {
+		var zeroVal int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("Timestamp"))
+	if tmp, ok := rawArgs["Timestamp"]; ok {
+		return ec.unmarshalNInt2int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field___Type_enumValues_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 bool
-	if tmp, ok := rawArgs["includeDeprecated"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("includeDeprecated"))
-		arg0, err = ec.unmarshalOBoolean2bool(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field___Type_enumValues_argsIncludeDeprecated(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["includeDeprecated"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field___Type_enumValues_argsIncludeDeprecated(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (bool, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["includeDeprecated"]
+	if !ok {
+		var zeroVal bool
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("includeDeprecated"))
+	if tmp, ok := rawArgs["includeDeprecated"]; ok {
+		return ec.unmarshalOBoolean2bool(ctx, tmp)
+	}
+
+	var zeroVal bool
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 bool
-	if tmp, ok := rawArgs["includeDeprecated"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("includeDeprecated"))
-		arg0, err = ec.unmarshalOBoolean2bool(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field___Type_fields_argsIncludeDeprecated(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["includeDeprecated"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field___Type_fields_argsIncludeDeprecated(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (bool, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["includeDeprecated"]
+	if !ok {
+		var zeroVal bool
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("includeDeprecated"))
+	if tmp, ok := rawArgs["includeDeprecated"]; ok {
+		return ec.unmarshalOBoolean2bool(ctx, tmp)
+	}
+
+	var zeroVal bool
+	return zeroVal, nil
 }
 
 // endregion ***************************** args.gotpl *****************************
@@ -659,7 +848,7 @@ func (ec *executionContext) _HistoricKlineData_opentime(ctx context.Context, fie
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_HistoricKlineData_opentime(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_HistoricKlineData_opentime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "HistoricKlineData",
 		Field:      field,
@@ -700,10 +889,10 @@ func (ec *executionContext) _HistoricKlineData_coins(ctx context.Context, field 
 	}
 	res := resTmp.([]*model.Ohlc)
 	fc.Result = res
-	return ec.marshalNOHLC2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐOhlcᚄ(ctx, field.Selections, res)
+	return ec.marshalNOHLC2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐOhlcᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_HistoricKlineData_coins(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_HistoricKlineData_coins(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "HistoricKlineData",
 		Field:      field,
@@ -755,10 +944,10 @@ func (ec *executionContext) _HistoricPrices_Pair(ctx context.Context, field grap
 	}
 	res := resTmp.([]*model.Pair)
 	fc.Result = res
-	return ec.marshalOPair2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐPairᚄ(ctx, field.Selections, res)
+	return ec.marshalOPair2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐPairᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_HistoricPrices_Pair(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_HistoricPrices_Pair(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "HistoricPrices",
 		Field:      field,
@@ -808,7 +997,7 @@ func (ec *executionContext) _HistoricPrices_Timestamp(ctx context.Context, field
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_HistoricPrices_Timestamp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_HistoricPrices_Timestamp(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "HistoricPrices",
 		Field:      field,
@@ -849,7 +1038,7 @@ func (ec *executionContext) _Mutation_createHistoricPrices(ctx context.Context, 
 	}
 	res := resTmp.([]*model.HistoricPrices)
 	fc.Result = res
-	return ec.marshalNHistoricPrices2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐHistoricPricesᚄ(ctx, field.Selections, res)
+	return ec.marshalNHistoricPrices2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐHistoricPricesᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createHistoricPrices(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -910,7 +1099,7 @@ func (ec *executionContext) _Mutation_createHistoricKline(ctx context.Context, f
 	}
 	res := resTmp.([]*model.HistoricKlineData)
 	fc.Result = res
-	return ec.marshalNHistoricKlineData2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐHistoricKlineDataᚄ(ctx, field.Selections, res)
+	return ec.marshalNHistoricKlineData2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐHistoricKlineDataᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createHistoricKline(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1029,7 +1218,7 @@ func (ec *executionContext) _OHLC_OpenPrice(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OHLC_OpenPrice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OHLC_OpenPrice(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OHLC",
 		Field:      field,
@@ -1073,7 +1262,7 @@ func (ec *executionContext) _OHLC_HighPrice(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OHLC_HighPrice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OHLC_HighPrice(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OHLC",
 		Field:      field,
@@ -1117,7 +1306,7 @@ func (ec *executionContext) _OHLC_LowPrice(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OHLC_LowPrice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OHLC_LowPrice(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OHLC",
 		Field:      field,
@@ -1161,7 +1350,7 @@ func (ec *executionContext) _OHLC_ClosePrice(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OHLC_ClosePrice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OHLC_ClosePrice(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OHLC",
 		Field:      field,
@@ -1205,7 +1394,7 @@ func (ec *executionContext) _OHLC_TradeVolume(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OHLC_TradeVolume(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OHLC_TradeVolume(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OHLC",
 		Field:      field,
@@ -1249,7 +1438,7 @@ func (ec *executionContext) _OHLC_Symbol(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OHLC_Symbol(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OHLC_Symbol(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OHLC",
 		Field:      field,
@@ -1293,7 +1482,7 @@ func (ec *executionContext) _Pair_Symbol(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Pair_Symbol(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Pair_Symbol(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Pair",
 		Field:      field,
@@ -1337,7 +1526,7 @@ func (ec *executionContext) _Pair_Price(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Pair_Price(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Pair_Price(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Pair",
 		Field:      field,
@@ -1378,7 +1567,7 @@ func (ec *executionContext) _Query_getHistoricPrice(ctx context.Context, field g
 	}
 	res := resTmp.([]*model.HistoricPrices)
 	fc.Result = res
-	return ec.marshalNHistoricPrices2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐHistoricPricesᚄ(ctx, field.Selections, res)
+	return ec.marshalNHistoricPrices2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐHistoricPricesᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getHistoricPrice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1439,7 +1628,7 @@ func (ec *executionContext) _Query_getHistoricPricesAtTimestamp(ctx context.Cont
 	}
 	res := resTmp.([]*model.HistoricPrices)
 	fc.Result = res
-	return ec.marshalNHistoricPrices2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐHistoricPricesᚄ(ctx, field.Selections, res)
+	return ec.marshalNHistoricPrices2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐHistoricPricesᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getHistoricPricesAtTimestamp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1500,7 +1689,7 @@ func (ec *executionContext) _Query_getHistoricKlineData(ctx context.Context, fie
 	}
 	res := resTmp.([]*model.HistoricKlineData)
 	fc.Result = res
-	return ec.marshalNHistoricKlineData2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐHistoricKlineDataᚄ(ctx, field.Selections, res)
+	return ec.marshalNHistoricKlineData2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐHistoricKlineDataᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getHistoricKlineData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1564,7 +1753,7 @@ func (ec *executionContext) _Query_getUniqueTimestampCount(ctx context.Context, 
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getUniqueTimestampCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_getUniqueTimestampCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -1679,7 +1868,7 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -1737,7 +1926,7 @@ func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Directive_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Directive_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Directive",
 		Field:      field,
@@ -1778,7 +1967,7 @@ func (ec *executionContext) ___Directive_description(ctx context.Context, field 
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Directive_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Directive_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Directive",
 		Field:      field,
@@ -1822,7 +2011,7 @@ func (ec *executionContext) ___Directive_locations(ctx context.Context, field gr
 	return ec.marshalN__DirectiveLocation2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Directive_locations(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Directive_locations(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Directive",
 		Field:      field,
@@ -1866,7 +2055,7 @@ func (ec *executionContext) ___Directive_args(ctx context.Context, field graphql
 	return ec.marshalN__InputValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐInputValueᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Directive_args(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Directive_args(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Directive",
 		Field:      field,
@@ -1920,7 +2109,7 @@ func (ec *executionContext) ___Directive_isRepeatable(ctx context.Context, field
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Directive_isRepeatable(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Directive_isRepeatable(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Directive",
 		Field:      field,
@@ -1964,7 +2153,7 @@ func (ec *executionContext) ___EnumValue_name(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___EnumValue_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___EnumValue_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__EnumValue",
 		Field:      field,
@@ -2005,7 +2194,7 @@ func (ec *executionContext) ___EnumValue_description(ctx context.Context, field 
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___EnumValue_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___EnumValue_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__EnumValue",
 		Field:      field,
@@ -2049,7 +2238,7 @@ func (ec *executionContext) ___EnumValue_isDeprecated(ctx context.Context, field
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___EnumValue_isDeprecated(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___EnumValue_isDeprecated(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__EnumValue",
 		Field:      field,
@@ -2090,7 +2279,7 @@ func (ec *executionContext) ___EnumValue_deprecationReason(ctx context.Context, 
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___EnumValue_deprecationReason(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___EnumValue_deprecationReason(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__EnumValue",
 		Field:      field,
@@ -2134,7 +2323,7 @@ func (ec *executionContext) ___Field_name(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Field_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Field_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Field",
 		Field:      field,
@@ -2175,7 +2364,7 @@ func (ec *executionContext) ___Field_description(ctx context.Context, field grap
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Field_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Field_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Field",
 		Field:      field,
@@ -2219,7 +2408,7 @@ func (ec *executionContext) ___Field_args(ctx context.Context, field graphql.Col
 	return ec.marshalN__InputValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐInputValueᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Field_args(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Field_args(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Field",
 		Field:      field,
@@ -2273,7 +2462,7 @@ func (ec *executionContext) ___Field_type(ctx context.Context, field graphql.Col
 	return ec.marshalN__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Field_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Field_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Field",
 		Field:      field,
@@ -2339,7 +2528,7 @@ func (ec *executionContext) ___Field_isDeprecated(ctx context.Context, field gra
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Field_isDeprecated(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Field_isDeprecated(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Field",
 		Field:      field,
@@ -2380,7 +2569,7 @@ func (ec *executionContext) ___Field_deprecationReason(ctx context.Context, fiel
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Field_deprecationReason(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Field_deprecationReason(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Field",
 		Field:      field,
@@ -2424,7 +2613,7 @@ func (ec *executionContext) ___InputValue_name(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___InputValue_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___InputValue_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__InputValue",
 		Field:      field,
@@ -2465,7 +2654,7 @@ func (ec *executionContext) ___InputValue_description(ctx context.Context, field
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___InputValue_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___InputValue_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__InputValue",
 		Field:      field,
@@ -2509,7 +2698,7 @@ func (ec *executionContext) ___InputValue_type(ctx context.Context, field graphq
 	return ec.marshalN__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___InputValue_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___InputValue_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__InputValue",
 		Field:      field,
@@ -2572,7 +2761,7 @@ func (ec *executionContext) ___InputValue_defaultValue(ctx context.Context, fiel
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___InputValue_defaultValue(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___InputValue_defaultValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__InputValue",
 		Field:      field,
@@ -2613,7 +2802,7 @@ func (ec *executionContext) ___Schema_description(ctx context.Context, field gra
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Schema_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Schema_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Schema",
 		Field:      field,
@@ -2657,7 +2846,7 @@ func (ec *executionContext) ___Schema_types(ctx context.Context, field graphql.C
 	return ec.marshalN__Type2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐTypeᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Schema_types(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Schema_types(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Schema",
 		Field:      field,
@@ -2723,7 +2912,7 @@ func (ec *executionContext) ___Schema_queryType(ctx context.Context, field graph
 	return ec.marshalN__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Schema_queryType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Schema_queryType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Schema",
 		Field:      field,
@@ -2786,7 +2975,7 @@ func (ec *executionContext) ___Schema_mutationType(ctx context.Context, field gr
 	return ec.marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Schema_mutationType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Schema_mutationType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Schema",
 		Field:      field,
@@ -2849,7 +3038,7 @@ func (ec *executionContext) ___Schema_subscriptionType(ctx context.Context, fiel
 	return ec.marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Schema_subscriptionType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Schema_subscriptionType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Schema",
 		Field:      field,
@@ -2915,7 +3104,7 @@ func (ec *executionContext) ___Schema_directives(ctx context.Context, field grap
 	return ec.marshalN__Directive2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirectiveᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Schema_directives(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Schema_directives(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Schema",
 		Field:      field,
@@ -2971,7 +3160,7 @@ func (ec *executionContext) ___Type_kind(ctx context.Context, field graphql.Coll
 	return ec.marshalN__TypeKind2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_kind(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_kind(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -3012,7 +3201,7 @@ func (ec *executionContext) ___Type_name(ctx context.Context, field graphql.Coll
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -3053,7 +3242,7 @@ func (ec *executionContext) ___Type_description(ctx context.Context, field graph
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -3160,7 +3349,7 @@ func (ec *executionContext) ___Type_interfaces(ctx context.Context, field graphq
 	return ec.marshalO__Type2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐTypeᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_interfaces(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_interfaces(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -3223,7 +3412,7 @@ func (ec *executionContext) ___Type_possibleTypes(ctx context.Context, field gra
 	return ec.marshalO__Type2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐTypeᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_possibleTypes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_possibleTypes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -3348,7 +3537,7 @@ func (ec *executionContext) ___Type_inputFields(ctx context.Context, field graph
 	return ec.marshalO__InputValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐInputValueᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_inputFields(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_inputFields(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -3399,7 +3588,7 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 	return ec.marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_ofType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_ofType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -3462,7 +3651,7 @@ func (ec *executionContext) ___Type_specifiedByURL(ctx context.Context, field gr
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_specifiedByURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -3494,8 +3683,6 @@ func (ec *executionContext) unmarshalInputNewHistoricKlineDataInput(ctx context.
 		}
 		switch k {
 		case "Opentime":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Opentime"))
 			data, err := ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
@@ -3503,10 +3690,8 @@ func (ec *executionContext) unmarshalInputNewHistoricKlineDataInput(ctx context.
 			}
 			it.Opentime = data
 		case "Coins":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Coins"))
-			data, err := ec.unmarshalNOHLCInput2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐOHLCInputᚄ(ctx, v)
+			data, err := ec.unmarshalNOHLCInput2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐOHLCInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3532,17 +3717,13 @@ func (ec *executionContext) unmarshalInputNewHistoricPriceInput(ctx context.Cont
 		}
 		switch k {
 		case "pairs":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pairs"))
-			data, err := ec.unmarshalNPairInput2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐPairInputᚄ(ctx, v)
+			data, err := ec.unmarshalNPairInput2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐPairInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Pairs = data
 		case "Timestamp":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Timestamp"))
 			data, err := ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
@@ -3570,8 +3751,6 @@ func (ec *executionContext) unmarshalInputOHLCInput(ctx context.Context, obj int
 		}
 		switch k {
 		case "OpenPrice":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("OpenPrice"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -3579,8 +3758,6 @@ func (ec *executionContext) unmarshalInputOHLCInput(ctx context.Context, obj int
 			}
 			it.OpenPrice = data
 		case "HighPrice":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("HighPrice"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -3588,8 +3765,6 @@ func (ec *executionContext) unmarshalInputOHLCInput(ctx context.Context, obj int
 			}
 			it.HighPrice = data
 		case "LowPrice":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("LowPrice"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -3597,8 +3772,6 @@ func (ec *executionContext) unmarshalInputOHLCInput(ctx context.Context, obj int
 			}
 			it.LowPrice = data
 		case "ClosePrice":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ClosePrice"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -3606,8 +3779,6 @@ func (ec *executionContext) unmarshalInputOHLCInput(ctx context.Context, obj int
 			}
 			it.ClosePrice = data
 		case "TradeVolume":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("TradeVolume"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -3615,8 +3786,6 @@ func (ec *executionContext) unmarshalInputOHLCInput(ctx context.Context, obj int
 			}
 			it.TradeVolume = data
 		case "Symbol":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Symbol"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -3644,8 +3813,6 @@ func (ec *executionContext) unmarshalInputPairInput(ctx context.Context, obj int
 		}
 		switch k {
 		case "Symbol":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Symbol"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -3653,8 +3820,6 @@ func (ec *executionContext) unmarshalInputPairInput(ctx context.Context, obj int
 			}
 			it.Symbol = data
 		case "Price":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Price"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -4410,7 +4575,7 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNHistoricKlineData2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐHistoricKlineDataᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.HistoricKlineData) graphql.Marshaler {
+func (ec *executionContext) marshalNHistoricKlineData2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐHistoricKlineDataᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.HistoricKlineData) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -4434,7 +4599,7 @@ func (ec *executionContext) marshalNHistoricKlineData2ᚕᚖcryptobotmanagerᚗc
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNHistoricKlineData2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐHistoricKlineData(ctx, sel, v[i])
+			ret[i] = ec.marshalNHistoricKlineData2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐHistoricKlineData(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4454,7 +4619,7 @@ func (ec *executionContext) marshalNHistoricKlineData2ᚕᚖcryptobotmanagerᚗc
 	return ret
 }
 
-func (ec *executionContext) marshalNHistoricKlineData2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐHistoricKlineData(ctx context.Context, sel ast.SelectionSet, v *model.HistoricKlineData) graphql.Marshaler {
+func (ec *executionContext) marshalNHistoricKlineData2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐHistoricKlineData(ctx context.Context, sel ast.SelectionSet, v *model.HistoricKlineData) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4464,7 +4629,7 @@ func (ec *executionContext) marshalNHistoricKlineData2ᚖcryptobotmanagerᚗcom�
 	return ec._HistoricKlineData(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNHistoricPrices2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐHistoricPricesᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.HistoricPrices) graphql.Marshaler {
+func (ec *executionContext) marshalNHistoricPrices2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐHistoricPricesᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.HistoricPrices) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -4488,7 +4653,7 @@ func (ec *executionContext) marshalNHistoricPrices2ᚕᚖcryptobotmanagerᚗcom�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNHistoricPrices2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐHistoricPrices(ctx, sel, v[i])
+			ret[i] = ec.marshalNHistoricPrices2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐHistoricPrices(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4508,7 +4673,7 @@ func (ec *executionContext) marshalNHistoricPrices2ᚕᚖcryptobotmanagerᚗcom�
 	return ret
 }
 
-func (ec *executionContext) marshalNHistoricPrices2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐHistoricPrices(ctx context.Context, sel ast.SelectionSet, v *model.HistoricPrices) graphql.Marshaler {
+func (ec *executionContext) marshalNHistoricPrices2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐHistoricPrices(ctx context.Context, sel ast.SelectionSet, v *model.HistoricPrices) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4533,7 +4698,7 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNOHLC2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐOhlcᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Ohlc) graphql.Marshaler {
+func (ec *executionContext) marshalNOHLC2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐOhlcᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Ohlc) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -4557,7 +4722,7 @@ func (ec *executionContext) marshalNOHLC2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑba
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNOHLC2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐOhlc(ctx, sel, v[i])
+			ret[i] = ec.marshalNOHLC2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐOhlc(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4577,7 +4742,7 @@ func (ec *executionContext) marshalNOHLC2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑba
 	return ret
 }
 
-func (ec *executionContext) marshalNOHLC2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐOhlc(ctx context.Context, sel ast.SelectionSet, v *model.Ohlc) graphql.Marshaler {
+func (ec *executionContext) marshalNOHLC2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐOhlc(ctx context.Context, sel ast.SelectionSet, v *model.Ohlc) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4587,7 +4752,7 @@ func (ec *executionContext) marshalNOHLC2ᚖcryptobotmanagerᚗcomᚋcbmᚑbacke
 	return ec._OHLC(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNOHLCInput2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐOHLCInputᚄ(ctx context.Context, v interface{}) ([]*model.OHLCInput, error) {
+func (ec *executionContext) unmarshalNOHLCInput2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐOHLCInputᚄ(ctx context.Context, v interface{}) ([]*model.OHLCInput, error) {
 	var vSlice []interface{}
 	if v != nil {
 		vSlice = graphql.CoerceList(v)
@@ -4596,7 +4761,7 @@ func (ec *executionContext) unmarshalNOHLCInput2ᚕᚖcryptobotmanagerᚗcomᚋc
 	res := make([]*model.OHLCInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNOHLCInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐOHLCInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNOHLCInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐOHLCInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -4604,12 +4769,12 @@ func (ec *executionContext) unmarshalNOHLCInput2ᚕᚖcryptobotmanagerᚗcomᚋc
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalNOHLCInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐOHLCInput(ctx context.Context, v interface{}) (*model.OHLCInput, error) {
+func (ec *executionContext) unmarshalNOHLCInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐOHLCInput(ctx context.Context, v interface{}) (*model.OHLCInput, error) {
 	res, err := ec.unmarshalInputOHLCInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNPair2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐPair(ctx context.Context, sel ast.SelectionSet, v *model.Pair) graphql.Marshaler {
+func (ec *executionContext) marshalNPair2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐPair(ctx context.Context, sel ast.SelectionSet, v *model.Pair) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4619,7 +4784,7 @@ func (ec *executionContext) marshalNPair2ᚖcryptobotmanagerᚗcomᚋcbmᚑbacke
 	return ec._Pair(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNPairInput2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐPairInputᚄ(ctx context.Context, v interface{}) ([]*model.PairInput, error) {
+func (ec *executionContext) unmarshalNPairInput2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐPairInputᚄ(ctx context.Context, v interface{}) ([]*model.PairInput, error) {
 	var vSlice []interface{}
 	if v != nil {
 		vSlice = graphql.CoerceList(v)
@@ -4628,7 +4793,7 @@ func (ec *executionContext) unmarshalNPairInput2ᚕᚖcryptobotmanagerᚗcomᚋc
 	res := make([]*model.PairInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNPairInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐPairInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNPairInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐPairInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -4636,7 +4801,7 @@ func (ec *executionContext) unmarshalNPairInput2ᚕᚖcryptobotmanagerᚗcomᚋc
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalNPairInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐPairInput(ctx context.Context, v interface{}) (*model.PairInput, error) {
+func (ec *executionContext) unmarshalNPairInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐPairInput(ctx context.Context, v interface{}) (*model.PairInput, error) {
 	res, err := ec.unmarshalInputPairInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
@@ -4951,7 +5116,7 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return res
 }
 
-func (ec *executionContext) unmarshalONewHistoricKlineDataInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐNewHistoricKlineDataInput(ctx context.Context, v interface{}) (*model.NewHistoricKlineDataInput, error) {
+func (ec *executionContext) unmarshalONewHistoricKlineDataInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐNewHistoricKlineDataInput(ctx context.Context, v interface{}) (*model.NewHistoricKlineDataInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -4959,7 +5124,7 @@ func (ec *executionContext) unmarshalONewHistoricKlineDataInput2ᚖcryptobotmana
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalONewHistoricPriceInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐNewHistoricPriceInput(ctx context.Context, v interface{}) (*model.NewHistoricPriceInput, error) {
+func (ec *executionContext) unmarshalONewHistoricPriceInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐNewHistoricPriceInput(ctx context.Context, v interface{}) (*model.NewHistoricPriceInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -4967,7 +5132,7 @@ func (ec *executionContext) unmarshalONewHistoricPriceInput2ᚖcryptobotmanager�
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOPair2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐPairᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Pair) graphql.Marshaler {
+func (ec *executionContext) marshalOPair2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐPairᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Pair) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -4994,7 +5159,7 @@ func (ec *executionContext) marshalOPair2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑba
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNPair2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋResolversᚋgraphᚋmodelᚐPair(ctx, sel, v[i])
+			ret[i] = ec.marshalNPair2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋresolversᚋgraphᚋmodelᚐPair(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
