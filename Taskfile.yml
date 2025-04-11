@@ -30,7 +30,9 @@ tasks:
   build:
     desc: Build the Go Code
     cmds:
-      - go build -o tradingBot main.go
+      - go generate ./shared ./resolvers ./microservices/backTesting ./microservices/priceData
+      - go test ./shared/tests/...
+      - go build -o backTesting microservices/BackTesting/main.go
     env:
       CGO_ENABLED: 0
     sources:
