@@ -1,31 +1,27 @@
-# Use official Golang image as a builder
-FROM golang:1.23 AS builder
+# Stage 1: Builder
+FROM golang:1.24 AS builder
 
+# Set working directory inside container
 WORKDIR /app
 
-# Copy go modules files and download dependencies
-COPY /go.mod /go.sum ./
-RUN go mod download
-
-# Copy source code
+# Copy entire monorepo so go.work and all modules are available
 COPY . .
 
-# Set environment variables for static builds
+# Set environment for static binary
 ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 
-# Build the binary
-RUN go build -o /resolvers-server ./server.go
+# Tidy and download dependencies using go.work context
+RUN go work sync && go mod tidy && go build -o /resolvers-server ./resolvers/server.go
 
-# Create a lightweight final image
+# Stage 2: Minimal image
 FROM alpine:latest
 
 WORKDIR /root/
 
-# Copy the built binary from the builder
+# Copy binary from builder
 COPY --from=builder /resolvers-server .
 
-# Expose the necessary port
+# Expose resolver service port
 EXPOSE 8080
 
-# Run the service
 CMD ["./resolvers-server"]

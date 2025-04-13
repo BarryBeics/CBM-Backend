@@ -4,7 +4,7 @@ go 1.23
 
 replace cryptobotmanager.com/cbm-backend/shared => ../../shared
 
-replace cryptobotmanager.com/cbm-backend/microservices/filters => ../filters
+replace cryptobotmanager.com/cbm-backend/microservices/filters/functions => ../filters
 
 replace cryptobotmanager.com/cbm-backend/shared/graph => ../graph
 

@@ -41,6 +41,86 @@ func (v *CreateHistoricPricesResponse) GetCreateHistoricPrices() []CreateHistori
 	return v.CreateHistoricPrices
 }
 
+// GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices includes the requested fields of the GraphQL type HistoricPrices.
+type GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices struct {
+	Pair      []GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair `json:"Pair"`
+	Timestamp int                                                                          `json:"Timestamp"`
+}
+
+// GetPair returns GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices.Pair, and is useful for accessing the field via an interface.
+func (v *GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices) GetPair() []GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair {
+	return v.Pair
+}
+
+// GetTimestamp returns GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices.Timestamp, and is useful for accessing the field via an interface.
+func (v *GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices) GetTimestamp() int {
+	return v.Timestamp
+}
+
+// GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair includes the requested fields of the GraphQL type Pair.
+type GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair struct {
+	Symbol string `json:"Symbol"`
+	Price  string `json:"Price"`
+}
+
+// GetSymbol returns GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair.Symbol, and is useful for accessing the field via an interface.
+func (v *GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair) GetSymbol() string {
+	return v.Symbol
+}
+
+// GetPrice returns GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair.Price, and is useful for accessing the field via an interface.
+func (v *GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair) GetPrice() string {
+	return v.Price
+}
+
+// GetHistoricPricesAtTimestampResponse is returned by GetHistoricPricesAtTimestamp on success.
+type GetHistoricPricesAtTimestampResponse struct {
+	// Gets all prices data at a given timestamp
+	GetHistoricPricesAtTimestamp []GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices `json:"getHistoricPricesAtTimestamp"`
+}
+
+// GetGetHistoricPricesAtTimestamp returns GetHistoricPricesAtTimestampResponse.GetHistoricPricesAtTimestamp, and is useful for accessing the field via an interface.
+func (v *GetHistoricPricesAtTimestampResponse) GetGetHistoricPricesAtTimestamp() []GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices {
+	return v.GetHistoricPricesAtTimestamp
+}
+
+// GetPriceDataGetHistoricPriceHistoricPrices includes the requested fields of the GraphQL type HistoricPrices.
+type GetPriceDataGetHistoricPriceHistoricPrices struct {
+	Pair      []GetPriceDataGetHistoricPriceHistoricPricesPair `json:"Pair"`
+	Timestamp int                                              `json:"Timestamp"`
+}
+
+// GetPair returns GetPriceDataGetHistoricPriceHistoricPrices.Pair, and is useful for accessing the field via an interface.
+func (v *GetPriceDataGetHistoricPriceHistoricPrices) GetPair() []GetPriceDataGetHistoricPriceHistoricPricesPair {
+	return v.Pair
+}
+
+// GetTimestamp returns GetPriceDataGetHistoricPriceHistoricPrices.Timestamp, and is useful for accessing the field via an interface.
+func (v *GetPriceDataGetHistoricPriceHistoricPrices) GetTimestamp() int { return v.Timestamp }
+
+// GetPriceDataGetHistoricPriceHistoricPricesPair includes the requested fields of the GraphQL type Pair.
+type GetPriceDataGetHistoricPriceHistoricPricesPair struct {
+	Symbol string `json:"Symbol"`
+	Price  string `json:"Price"`
+}
+
+// GetSymbol returns GetPriceDataGetHistoricPriceHistoricPricesPair.Symbol, and is useful for accessing the field via an interface.
+func (v *GetPriceDataGetHistoricPriceHistoricPricesPair) GetSymbol() string { return v.Symbol }
+
+// GetPrice returns GetPriceDataGetHistoricPriceHistoricPricesPair.Price, and is useful for accessing the field via an interface.
+func (v *GetPriceDataGetHistoricPriceHistoricPricesPair) GetPrice() string { return v.Price }
+
+// GetPriceDataResponse is returned by GetPriceData on success.
+type GetPriceDataResponse struct {
+	// Fetches price data for a given symbol up to a given limit of records
+	GetHistoricPrice []GetPriceDataGetHistoricPriceHistoricPrices `json:"getHistoricPrice"`
+}
+
+// GetGetHistoricPrice returns GetPriceDataResponse.GetHistoricPrice, and is useful for accessing the field via an interface.
+func (v *GetPriceDataResponse) GetGetHistoricPrice() []GetPriceDataGetHistoricPriceHistoricPrices {
+	return v.GetHistoricPrice
+}
+
 type NewHistoricPriceInput struct {
 	Pairs     []PairInput `json:"pairs"`
 	Timestamp int         `json:"Timestamp"`
@@ -71,7 +151,27 @@ type __CreateHistoricPricesInput struct {
 // GetInput returns __CreateHistoricPricesInput.Input, and is useful for accessing the field via an interface.
 func (v *__CreateHistoricPricesInput) GetInput() NewHistoricPriceInput { return v.Input }
 
-// The query or mutation executed by CreateHistoricPrices.
+// __GetHistoricPricesAtTimestampInput is used internally by genqlient
+type __GetHistoricPricesAtTimestampInput struct {
+	Datetime int `json:"datetime"`
+}
+
+// GetDatetime returns __GetHistoricPricesAtTimestampInput.Datetime, and is useful for accessing the field via an interface.
+func (v *__GetHistoricPricesAtTimestampInput) GetDatetime() int { return v.Datetime }
+
+// __GetPriceDataInput is used internally by genqlient
+type __GetPriceDataInput struct {
+	Symbol string `json:"symbol"`
+	Limit  int    `json:"limit"`
+}
+
+// GetSymbol returns __GetPriceDataInput.Symbol, and is useful for accessing the field via an interface.
+func (v *__GetPriceDataInput) GetSymbol() string { return v.Symbol }
+
+// GetLimit returns __GetPriceDataInput.Limit, and is useful for accessing the field via an interface.
+func (v *__GetPriceDataInput) GetLimit() int { return v.Limit }
+
+// The mutation executed by CreateHistoricPrices.
 const CreateHistoricPrices_Operation = `
 mutation CreateHistoricPrices ($input: NewHistoricPriceInput!) {
 	createHistoricPrices(input: $input) {
@@ -87,7 +187,7 @@ func CreateHistoricPrices(
 	ctx_ context.Context,
 	client_ graphql.Client,
 	input NewHistoricPriceInput,
-) (*CreateHistoricPricesResponse, error) {
+) (data_ *CreateHistoricPricesResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "CreateHistoricPrices",
 		Query:  CreateHistoricPrices_Operation,
@@ -95,10 +195,9 @@ func CreateHistoricPrices(
 			Input: input,
 		},
 	}
-	var err_ error
 
-	var data_ CreateHistoricPricesResponse
-	resp_ := &graphql.Response{Data: &data_}
+	data_ = &CreateHistoricPricesResponse{}
+	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
 		ctx_,
@@ -106,5 +205,83 @@ func CreateHistoricPrices(
 		resp_,
 	)
 
-	return &data_, err_
+	return data_, err_
+}
+
+// The query executed by GetHistoricPricesAtTimestamp.
+const GetHistoricPricesAtTimestamp_Operation = `
+query GetHistoricPricesAtTimestamp ($datetime: Int!) {
+	getHistoricPricesAtTimestamp(Timestamp: $datetime) {
+		Pair {
+			Symbol
+			Price
+		}
+		Timestamp
+	}
+}
+`
+
+func GetHistoricPricesAtTimestamp(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	datetime int,
+) (data_ *GetHistoricPricesAtTimestampResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetHistoricPricesAtTimestamp",
+		Query:  GetHistoricPricesAtTimestamp_Operation,
+		Variables: &__GetHistoricPricesAtTimestampInput{
+			Datetime: datetime,
+		},
+	}
+
+	data_ = &GetHistoricPricesAtTimestampResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetPriceData.
+const GetPriceData_Operation = `
+query GetPriceData ($symbol: String!, $limit: Int!) {
+	getHistoricPrice(symbol: $symbol, limit: $limit) {
+		Pair {
+			Symbol
+			Price
+		}
+		Timestamp
+	}
+}
+`
+
+func GetPriceData(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	symbol string,
+	limit int,
+) (data_ *GetPriceDataResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetPriceData",
+		Query:  GetPriceData_Operation,
+		Variables: &__GetPriceDataInput{
+			Symbol: symbol,
+			Limit:  limit,
+		},
+	}
+
+	data_ = &GetPriceDataResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
 }

@@ -47,8 +47,6 @@ func CSVPrices(backend string) error {
 			continue
 		}
 
-		//fmt.Print(marketData)
-
 		for _, snapshot := range marketData {
 			var market []model.Pair
 			for _, p := range snapshot.Pairs {
@@ -65,14 +63,12 @@ func CSVPrices(backend string) error {
 				continue
 			}
 
-			err := SavePriceData(ctx, client, market, int(snapshot.Timestamp))
+			// Start trading
+			err := letTrade(ctx, client, market, int(snapshot.Timestamp))
 			if err != nil {
-				log.Error().Err(err).Int("timestamp", snapshot.Timestamp).Msg("Failed to save snapshot")
-			} else {
-				log.Info().Int("timestamp", snapshot.Timestamp).Msg("Replayed snapshot")
+				log.Error().Err(err).Int("timestamp", snapshot.Timestamp).Msg("lets trade")
 			}
 		}
-
 	}
 	return nil
 }
@@ -100,9 +96,11 @@ func BinancePrices(backend string) error {
 		log.Error().Err(err).Msgf("Failed to save price data to JSON!")
 	}
 
-	err = SavePriceData(ctx, client, market, roundedEpochSeconds)
+	// Start trading
+	err = letTrade(ctx, client, market, roundedEpochSeconds)
 	if err != nil {
-		log.Error().Err(err).Msgf("Save PriceData")
+		log.Error().Err(err).Int("timestamp", roundedEpochSeconds).Msg("lets trade")
 	}
+
 	return nil
 }

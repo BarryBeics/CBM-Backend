@@ -76,3 +76,12 @@ func FindUniqueStrings(slice1, slice2 []string) []string {
 
 	return uniqueItems
 }
+
+// Percentage calculates the percentage of inputTwo relative to inputOne.
+// It returns the calculated percentage rounded to two decimal places.
+func Percentage(inputOne, inputTwo float64) (result float64) {
+	share := 100 / inputOne
+	result = share * inputTwo
+
+	return RoundFloatToDecimal(result, 2)
+}

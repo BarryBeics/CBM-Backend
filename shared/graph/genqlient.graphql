@@ -6,3 +6,31 @@ mutation CreateHistoricPrices($input: NewHistoricPriceInput!) {
     }
   }
 }
+
+query GetHistoricPricesAtTimestamp(
+  $datetime: Int!
+  ){
+  getHistoricPricesAtTimestamp(
+    Timestamp: $datetime) {
+    Pair {
+      Symbol
+      Price
+    }
+    Timestamp
+  }
+}
+
+query GetPriceData(
+  $symbol: String!
+  $limit: Int!
+){
+  getHistoricPrice(
+    symbol: $symbol
+    limit: $limit) {
+    Pair {
+      Symbol
+      Price
+    }
+    Timestamp
+  }
+}

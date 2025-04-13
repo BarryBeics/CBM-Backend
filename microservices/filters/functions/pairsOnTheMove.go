@@ -1,0 +1,144 @@
+package filters
+
+import (
+	"context"
+	"strconv"
+	"time"
+
+	"cryptobotmanager.com/cbm-backend/resolvers/graph/model"
+	"cryptobotmanager.com/cbm-backend/shared"
+	"cryptobotmanager.com/cbm-backend/shared/graph"
+	"github.com/Khan/genqlient/graphql"
+	"github.com/rs/zerolog/log"
+)
+
+// PairsOnTheMove is a function that takes in two slices of PriceData, currentPrices
+// and previousPrices, and a float64 value marketMomentum, and returns a slice of
+// Gainers structs and an error. The function calculates the percentage change
+// between the current price and the previous price for each symbol in the currentPrices
+// slice. If the percentage change is greater than or equal to marketMomentum, the
+// function appends a Gainers struct to the pairsOnTheMoveList slice. The function
+// uses the PercentageChange function to calculate the percentage change and
+// strconv.ParseFloat function to parse the price data. The function prints out a
+// message for each pair that meets the marketMomentum condition.
+func PairsOnTheMove(currentPrices, previousPrices []model.Pair, marketMomentum float64) (pairsOnTheMoveList []shared.Gainers, err error) {
+
+	for i := 0; i < len(currentPrices); i++ {
+
+		priceNow, _ := strconv.ParseFloat(currentPrices[i].Price, 64)
+		priceNowSymbol := currentPrices[i].Symbol
+
+		for i := range previousPrices {
+			if previousPrices[i].Symbol == priceNowSymbol {
+				previousPrice, _ := strconv.ParseFloat(previousPrices[i].Price, 64)
+				change := shared.Percentage(previousPrice, priceNow)
+				log.Debug().Float64("Price Now", priceNow).Float64("previous Price", previousPrice).Float64("change", change).Msg("Check")
+
+				if change >= float64(marketMomentum) {
+					pairsOnTheMoveList = append(pairsOnTheMoveList, shared.Gainers{Symbol: priceNowSymbol, IncrementPriceGain: change})
+					log.Debug().Str("Current", currentPrices[0].Price).Str("Previous", previousPrices[0].Price).Str("Symbol:", priceNowSymbol).Float64("Increment Price Gain:", change).Msg("On the move")
+				}
+			}
+		}
+	}
+
+	return pairsOnTheMoveList, nil
+}
+
+// FirstFilter is a function that takes in a path to historical price data,
+// and a market momentum value. It then loads and compares the current and
+// previous price data, and returns pairs of assets that have moved in the
+// market by at least the specified momentum value. If an error occurs during
+// any of the steps, an error is returned along with a nil slice of Gainers.
+func FirstFilter(ctx context.Context, client graphql.Client, datetime int, marketMomentum float64) (pairsOnTheMove []shared.Gainers, err error) {
+
+	log.Debug().Int("datetime", datetime).Float64("market momentum", marketMomentum).Msg("Loading current Prices ...")
+	currentPrices, err := GetPriceData(ctx, client, datetime, "pre routines")
+	if err != nil {
+		log.Error().Msgf("Failed to get comparison prices!")
+		return nil, err
+	}
+	var previousTime int
+
+	returnedPreviousTime, err := getPreviousTime(datetime, 5)
+	if err != nil {
+		log.Error().Msgf("Failed to get previous time!")
+		return nil, err
+	}
+	previousTime = int(returnedPreviousTime)
+
+	log.Info().Int("Previous", previousTime).Msg("Loading previous Prices ...")
+	previousPrices, err := GetPriceData(ctx, client, previousTime, "pre routines")
+	if err != nil {
+		log.Error().Msgf("Failed to get previous prices!")
+		return nil, err
+	}
+	log.Info().Msg("Identifing Pairs on the move ...")
+
+	pairsOnTheMove, err = PairsOnTheMove(currentPrices, previousPrices, marketMomentum)
+	if err != nil {
+		log.Error().Msgf("Failed to get pairs on the move!")
+		return nil, err
+	}
+
+	return pairsOnTheMove, nil
+}
+
+// GetPriceData function retrieves price data from MongoDB using a GraphQL client
+// and a timestamp. It returns a slice of PriceData.
+func GetPriceData(ctx context.Context, client graphql.Client, datetime int, botName string) ([]model.Pair, error) {
+	// Call the appropriate function to get historic prices at the specified timestamp
+
+	log.Debug().Int("Time", datetime).Msg("getting data for")
+	pricesList, err := graph.GetHistoricPricesAtTimestamp(ctx, client, datetime)
+	if err != nil {
+		log.Error().Int("timestamp", datetime).Err(err).Msg("failed to load prices list from MongoDB")
+		return nil, err
+	}
+
+	// Convert the GraphQL response to the desired output structure
+	priceDataList, err := convertToPriceDataList(pricesList)
+	if err != nil {
+		log.Error().Int("timestamp", datetime).Err(err).Msg("failed to convert prices list")
+		return nil, err
+	}
+
+	if len(priceDataList) == 0 {
+		log.Warn().Int("Timestamp", datetime).Str("Bot", botName).Msg("No prices found for the specified timestamp")
+	} else {
+		log.Debug().Int("Timestamp", datetime).Interface("Prices", priceDataList).Msg("Prices fetched successfully")
+	}
+
+	return priceDataList, nil
+}
+
+func convertToPriceDataList(response *graph.GetHistoricPricesAtTimestampResponse) ([]model.Pair, error) {
+	var priceDataList []model.Pair
+
+	for _, historicPrices := range response.GetGetHistoricPricesAtTimestamp() {
+		for _, pair := range historicPrices.GetPair() {
+			priceData := model.Pair{
+				Symbol: pair.GetSymbol(),
+				Price:  pair.GetPrice(),
+				// Add other fields as needed
+			}
+
+			priceDataList = append(priceDataList, priceData)
+		}
+	}
+
+	return priceDataList, nil
+}
+
+func getPreviousTime(currentTime int, minutesToSubtract int) (int64, error) {
+	// Convert the integer currentTime to time.Time
+	currentTimeAsTime := time.Unix(int64(currentTime), 0)
+
+	// Subtract minutes from the current time
+	subtractedTime := currentTimeAsTime.Add(time.Duration(-minutesToSubtract) * time.Minute)
+
+	// Convert the result to epoch time (seconds since 1970)
+	epochTime := subtractedTime.Unix()
+
+	return epochTime, nil
+}
