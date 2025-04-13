@@ -1,52 +1,46 @@
-# Step 1: Shared base stage for dependencies
+# ---------- Stage 1: Builder ----------
 FROM golang:1.23 AS builder
 
 # Set the working directory
 WORKDIR /workdir
 
-# Copy shared dependencies
-COPY shared/go.mod shared/go.sum ./
-
-# Copy the shared directory, which is referenced in the replace directive in go.mod
-COPY shared ./shared
-
-# Download dependencies
-RUN go mod download
-
-# Copy the entire source directory
+# Copy the entire monorepo (required for local module resolution with go.work)
 COPY . .
 
-# Disable CGO and set target OS to Mac
+# Optional: ensure go.work is synced (not strictly needed in newer Go versions)
+RUN go work sync
+
+# Set Go env for static binary compilation
 ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 
-# Build each microservice binary
-# Add a new RUN command for each microservice binary
+# Tidy and download all deps in context of backTesting microservice
 WORKDIR /workdir/microservices/backTesting
-RUN go mod tidy
+
+RUN go mod tidy && go mod download
+
+# Build backTesting binary
 RUN go build -o /usr/local/bin/microservice-binaries/backTesting main.go
 
-
-# FROM nex:latest AS currentnex
-
-# Create the Nex runtime image
+# ---------- Stage 2: Runtime ----------
 FROM debian:12-slim AS nex
 
+# Install ca-certificates only (minimal base image)
 RUN apt-get update \
     && apt-get install -y ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Create directories for microservice binaries
+# Create directory for binaries
 RUN mkdir -p /usr/local/bin/microservice-binaries
 
-# Copy microservice binaries from the builder stage
+# Copy the built binary from builder stage
 COPY --from=builder /usr/local/bin/microservice-binaries/backTesting /usr/local/bin/microservice-binaries/
 
-# Set permissions for all binaries
+# Make binaries executable
 RUN chmod +x /usr/local/bin/microservice-binaries/*
 
-# Copy the startup script for Nex
+# Copy and make startup script executable
 COPY registerMicroservices.sh /usr/local/bin/registerMicroservices.sh
 RUN chmod +x /usr/local/bin/registerMicroservices.sh
 
-# Start cron in the background, then run Nex services
+# Start services
 CMD cron && /usr/local/bin/registerMicroservices.sh
