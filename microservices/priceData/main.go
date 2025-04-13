@@ -1,50 +1,38 @@
 package main
 
-import (
-	"context"
-	"net/http"
-	"os"
-	"time"
-
-	"cryptobotmanager.com/cbm-backend/microservices/priceData/functions"
-	"cryptobotmanager.com/cbm-backend/resolvers/graph/model"
-	"cryptobotmanager.com/cbm-backend/shared"
-	"github.com/Khan/genqlient/graphql"
-	"github.com/rs/zerolog/log"
-	// Add any other necessary imports
-)
+// Add any other necessary imports
 
 func main() {
 
-	backend := os.Getenv("TRADING_BOT_URL")
-	if backend == "" {
-		backend = "http://resolvers:8080/query"
-	}
+	// backend := os.Getenv("TRADING_BOT_URL")
+	// if backend == "" {
+	// 	backend = "http://resolvers:8080/query"
+	// }
 
-	// Get the nearest whole 5 minutes & print the current time
-	now := time.Now().Unix()
-	roundedEpochSeconds := shared.RoundTimeToFiveMinuteInterval(now)
-	log.Info().Int64("Executing task at:", now).Int("Rounded time", roundedEpochSeconds).Msg("Time")
+	// // Get the nearest whole 5 minutes & print the current time
+	// now := time.Now().Unix()
+	// roundedEpochSeconds := shared.RoundTimeToFiveMinuteInterval(now)
+	// log.Info().Int64("Executing task at:", now).Int("Rounded time", roundedEpochSeconds).Msg("Time")
 
-	// Create Client & Context
-	client := graphql.NewClient(backend, &http.Client{})
-	ctx := context.Background()
-	var market []model.Pair
-	var err error
+	// // Create Client & Context
+	// client := graphql.NewClient(backend, &http.Client{})
+	// ctx := context.Background()
+	// var market []model.Pair
+	// var err error
 
-	market, err = functions.FetchPricesFromBinanceAPI()
-	if err != nil {
-		log.Error().Err(err).Msgf("Failed to get price data from Binance!")
-	}
+	// market, err = functions.FetchPricesFromBinanceAPI()
+	// if err != nil {
+	// 	log.Error().Err(err).Msgf("Failed to get price data from Binance!")
+	// }
 
-	err = functions.SavePriceDataAsJSON(market, int64(roundedEpochSeconds))
-	if err != nil {
-		log.Error().Err(err).Msgf("Failed to save price data to JSON!")
-	}
+	// err = functions.SavePriceDataAsJSON(market, int64(roundedEpochSeconds))
+	// if err != nil {
+	// 	log.Error().Err(err).Msgf("Failed to save price data to JSON!")
+	// }
 
-	err = functions.SavePriceData(ctx, client, market, roundedEpochSeconds)
-	if err != nil {
-		log.Error().Err(err).Msgf("Save PriceData")
-	}
+	// err = functions.SavePriceData(ctx, client, market, roundedEpochSeconds)
+	// if err != nil {
+	// 	log.Error().Err(err).Msgf("Save PriceData")
+	// }
 
 }
