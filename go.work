@@ -2,7 +2,7 @@ go 1.23.6
 
 use (
 	./microservices/backTesting
-	./microservices/priceData
+	./microservices/filters
 	./resolvers
 	./shared
 )
