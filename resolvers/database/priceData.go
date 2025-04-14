@@ -106,7 +106,7 @@ func (db *DB) HistoricPricesAtTimestamp(timestamp int) ([]model.HistoricPrices, 
 	defer cancel()
 
 	// Filter by timestamp
-	filter := bson.M{"Timestamp": timestamp}
+	filter := bson.M{"timestamp": timestamp}
 
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {

@@ -1,8 +1,8 @@
-go 1.23.6
+go 1.24
 
 use (
 	./microservices/backTesting
-	./microservices/priceData
+	./microservices/filters
 	./resolvers
 	./shared
 )

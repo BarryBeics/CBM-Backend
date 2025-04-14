@@ -1,5 +1,5 @@
 # ---------- Stage 1: Builder ----------
-FROM golang:1.23 AS builder
+FROM golang:1.24 AS builder
 
 # Set the working directory
 WORKDIR /workdir
@@ -7,11 +7,11 @@ WORKDIR /workdir
 # Copy the entire monorepo (required for local module resolution with go.work)
 COPY . .
 
-# Optional: ensure go.work is synced (not strictly needed in newer Go versions)
-RUN go work sync
-
 # Set Go env for static binary compilation
 ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
+
+# Optional: ensure go.work is synced (not strictly needed in newer Go versions)
+RUN go work sync
 
 # Tidy and download all deps in context of backTesting microservice
 WORKDIR /workdir/microservices/backTesting

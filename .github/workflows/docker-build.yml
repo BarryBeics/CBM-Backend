@@ -49,7 +49,7 @@ jobs:
       - name: Build & Push Resolvers
         uses: docker/build-push-action@v5
         with:
-          context: ./resolvers
+          context: .                   # build context set to root so go.work is visible
           file: ./resolvers/Dockerfile
           push: true
           platforms: linux/amd64
