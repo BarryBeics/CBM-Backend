@@ -1,16 +1,17 @@
 module cryptobotmanager.com/cbm-backend/microservices/backTesting
 
-go 1.23
+go 1.24
 
 replace cryptobotmanager.com/cbm-backend/shared => ../../shared
 
-replace cryptobotmanager.com/cbm-backend/microservices/filters/functions => ../filters
+replace cryptobotmanager.com/cbm-backend/microservices/filters => ../filters
 
 replace cryptobotmanager.com/cbm-backend/shared/graph => ../graph
 
 replace cryptobotmanager.com/cbm-backend/resolvers => ../../resolvers
 
 require (
+	cryptobotmanager.com/cbm-backend/microservices/filters v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/resolvers v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/shared v0.0.0-00010101000000-000000000000
 	github.com/Khan/genqlient v0.8.0

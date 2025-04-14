@@ -3,7 +3,7 @@
 {
     "name": "Go",
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-    "image": "mcr.microsoft.com/devcontainers/go:1.23-bullseye",
+    "image": "mcr.microsoft.com/devcontainers/go:1.24-bullseye",
     "runArgs": [
         "--network=gotrading",
         "--privileged"
@@ -12,7 +12,7 @@
     "features": {
         // https://github.com/devcontainers/features/blob/main/src/go/README.md
         "ghcr.io/devcontainers/features/go:1": {
-            "VERSION": "1.23"
+            "VERSION": "1.24"
         },
         "ghcr.io/azutake/devcontainer-features/go-packages-install:0": {
             "PACKAGES": "github.com/go-task/task/v3/cmd/task@latest,github.com/thisisdevelopment/bump@latest,golang.org/x/vuln/cmd/govulncheck@latest,github.com/suessflorian/gqlfetch/gqlfetch@latest"
