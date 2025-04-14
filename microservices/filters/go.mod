@@ -1,6 +1,6 @@
 module cryptobotmanager.com/cbm-backend/microservices/filters
 
-go 1.23
+go 1.24
 
 replace cryptobotmanager.com/cbm-backend/shared => ../../shared
 
