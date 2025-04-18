@@ -82,6 +82,7 @@ func FindUniqueStrings(slice1, slice2 []string) []string {
 func Percentage(inputOne, inputTwo float64) (result float64) {
 	share := 100 / inputOne
 	result = share * inputTwo
+	result = result - 100
 
 	return RoundFloatToDecimal(result, 2)
 }
