@@ -25,6 +25,7 @@ tasks:
 
   generate:
     desc: Generate GQL models
+    dir: ./resolvers # <- NEW!
     cmds:
       - go generate ./...
     sources:

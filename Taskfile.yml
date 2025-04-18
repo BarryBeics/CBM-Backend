@@ -20,7 +20,7 @@ tasks:
 
     sources:
       - shared/graph/sdl.gql
-      - shared/graph/genqlient
+      - "shared/graph/*.graphql"
       - shared/go.mod
       - shared/go.sum
       - shared/graph/genqlient_gen.go # Include the generated file in sources
@@ -30,7 +30,7 @@ tasks:
   build:
     desc: Build the Go Code
     cmds:
-      - go generate ./shared ./resolvers ./microservices/backTesting ./microservices/filters
+      - go generate ./shared ./microservices/backTesting ./microservices/filters ./microservices/reports
       - go test ./shared/tests/...
       - go build -o backTesting microservices/BackTesting/main.go
     env:

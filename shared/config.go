@@ -1,6 +1,7 @@
 package shared
 
 type AppConfig struct {
+	TopAverages                   []int
 	TradeDuration                 int
 	PackageNames, TestExemptFuncs []string
 	ActiveMarketThreshold         float64
@@ -9,6 +10,9 @@ type AppConfig struct {
 func GetDefaultCfg() AppConfig {
 
 	var activeMarketThreshold = 0.1
+
+	// Select how many top coin to return
+	topAverages := []int{3, 5, 10}
 
 	// VALUES THAT WILL COME FROM A UI AT SOME POINT
 	tradeDuration := 5
@@ -30,6 +34,7 @@ func GetDefaultCfg() AppConfig {
 		TradeDuration:         tradeDuration,
 		PackageNames:          packageNames,
 		TestExemptFuncs:       testExemptFuncs,
+		TopAverages:           topAverages,
 	}
 
 	return *cfg

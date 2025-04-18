@@ -8,6 +8,53 @@ import (
 	"github.com/Khan/genqlient/graphql"
 )
 
+// CreateActivityReportCreateActivityReport includes the requested fields of the GraphQL type ActivityReport.
+type CreateActivityReportCreateActivityReport struct {
+	Id             string  `json:"_id"`
+	Timestamp      int     `json:"Timestamp"`
+	Qty            int     `json:"Qty"`
+	AvgGain        float64 `json:"AvgGain"`
+	TopAGain       float64 `json:"TopAGain"`
+	TopBGain       float64 `json:"TopBGain"`
+	TopCGain       float64 `json:"TopCGain"`
+	FearGreedIndex int     `json:"FearGreedIndex"`
+}
+
+// GetId returns CreateActivityReportCreateActivityReport.Id, and is useful for accessing the field via an interface.
+func (v *CreateActivityReportCreateActivityReport) GetId() string { return v.Id }
+
+// GetTimestamp returns CreateActivityReportCreateActivityReport.Timestamp, and is useful for accessing the field via an interface.
+func (v *CreateActivityReportCreateActivityReport) GetTimestamp() int { return v.Timestamp }
+
+// GetQty returns CreateActivityReportCreateActivityReport.Qty, and is useful for accessing the field via an interface.
+func (v *CreateActivityReportCreateActivityReport) GetQty() int { return v.Qty }
+
+// GetAvgGain returns CreateActivityReportCreateActivityReport.AvgGain, and is useful for accessing the field via an interface.
+func (v *CreateActivityReportCreateActivityReport) GetAvgGain() float64 { return v.AvgGain }
+
+// GetTopAGain returns CreateActivityReportCreateActivityReport.TopAGain, and is useful for accessing the field via an interface.
+func (v *CreateActivityReportCreateActivityReport) GetTopAGain() float64 { return v.TopAGain }
+
+// GetTopBGain returns CreateActivityReportCreateActivityReport.TopBGain, and is useful for accessing the field via an interface.
+func (v *CreateActivityReportCreateActivityReport) GetTopBGain() float64 { return v.TopBGain }
+
+// GetTopCGain returns CreateActivityReportCreateActivityReport.TopCGain, and is useful for accessing the field via an interface.
+func (v *CreateActivityReportCreateActivityReport) GetTopCGain() float64 { return v.TopCGain }
+
+// GetFearGreedIndex returns CreateActivityReportCreateActivityReport.FearGreedIndex, and is useful for accessing the field via an interface.
+func (v *CreateActivityReportCreateActivityReport) GetFearGreedIndex() int { return v.FearGreedIndex }
+
+// CreateActivityReportResponse is returned by CreateActivityReport on success.
+type CreateActivityReportResponse struct {
+	// Creates a new market Activity Report
+	CreateActivityReport CreateActivityReportCreateActivityReport `json:"createActivityReport"`
+}
+
+// GetCreateActivityReport returns CreateActivityReportResponse.CreateActivityReport, and is useful for accessing the field via an interface.
+func (v *CreateActivityReportResponse) GetCreateActivityReport() CreateActivityReportCreateActivityReport {
+	return v.CreateActivityReport
+}
+
 // CreateHistoricPricesCreateHistoricPrices includes the requested fields of the GraphQL type HistoricPrices.
 type CreateHistoricPricesCreateHistoricPrices struct {
 	Pair []CreateHistoricPricesCreateHistoricPricesPair `json:"Pair"`
@@ -39,6 +86,75 @@ type CreateHistoricPricesResponse struct {
 // GetCreateHistoricPrices returns CreateHistoricPricesResponse.CreateHistoricPrices, and is useful for accessing the field via an interface.
 func (v *CreateHistoricPricesResponse) GetCreateHistoricPrices() []CreateHistoricPricesCreateHistoricPrices {
 	return v.CreateHistoricPrices
+}
+
+// CreateTradeOutcomeReportCreateTradeOutcomeReport includes the requested fields of the GraphQL type TradeOutcomeReport.
+type CreateTradeOutcomeReportCreateTradeOutcomeReport struct {
+	Id               string  `json:"_id"`
+	Timestamp        int     `json:"Timestamp"`
+	BotName          string  `json:"BotName"`
+	PercentageChange float64 `json:"PercentageChange"`
+	Balance          float64 `json:"Balance"`
+	Symbol           string  `json:"Symbol"`
+	Outcome          string  `json:"Outcome"`
+	Fee              float64 `json:"Fee"`
+	ElapsedTime      int     `json:"ElapsedTime"`
+	Volume           float64 `json:"Volume"`
+	FearGreedIndex   int     `json:"FearGreedIndex"`
+	MarketStatus     string  `json:"MarketStatus"`
+}
+
+// GetId returns CreateTradeOutcomeReportCreateTradeOutcomeReport.Id, and is useful for accessing the field via an interface.
+func (v *CreateTradeOutcomeReportCreateTradeOutcomeReport) GetId() string { return v.Id }
+
+// GetTimestamp returns CreateTradeOutcomeReportCreateTradeOutcomeReport.Timestamp, and is useful for accessing the field via an interface.
+func (v *CreateTradeOutcomeReportCreateTradeOutcomeReport) GetTimestamp() int { return v.Timestamp }
+
+// GetBotName returns CreateTradeOutcomeReportCreateTradeOutcomeReport.BotName, and is useful for accessing the field via an interface.
+func (v *CreateTradeOutcomeReportCreateTradeOutcomeReport) GetBotName() string { return v.BotName }
+
+// GetPercentageChange returns CreateTradeOutcomeReportCreateTradeOutcomeReport.PercentageChange, and is useful for accessing the field via an interface.
+func (v *CreateTradeOutcomeReportCreateTradeOutcomeReport) GetPercentageChange() float64 {
+	return v.PercentageChange
+}
+
+// GetBalance returns CreateTradeOutcomeReportCreateTradeOutcomeReport.Balance, and is useful for accessing the field via an interface.
+func (v *CreateTradeOutcomeReportCreateTradeOutcomeReport) GetBalance() float64 { return v.Balance }
+
+// GetSymbol returns CreateTradeOutcomeReportCreateTradeOutcomeReport.Symbol, and is useful for accessing the field via an interface.
+func (v *CreateTradeOutcomeReportCreateTradeOutcomeReport) GetSymbol() string { return v.Symbol }
+
+// GetOutcome returns CreateTradeOutcomeReportCreateTradeOutcomeReport.Outcome, and is useful for accessing the field via an interface.
+func (v *CreateTradeOutcomeReportCreateTradeOutcomeReport) GetOutcome() string { return v.Outcome }
+
+// GetFee returns CreateTradeOutcomeReportCreateTradeOutcomeReport.Fee, and is useful for accessing the field via an interface.
+func (v *CreateTradeOutcomeReportCreateTradeOutcomeReport) GetFee() float64 { return v.Fee }
+
+// GetElapsedTime returns CreateTradeOutcomeReportCreateTradeOutcomeReport.ElapsedTime, and is useful for accessing the field via an interface.
+func (v *CreateTradeOutcomeReportCreateTradeOutcomeReport) GetElapsedTime() int { return v.ElapsedTime }
+
+// GetVolume returns CreateTradeOutcomeReportCreateTradeOutcomeReport.Volume, and is useful for accessing the field via an interface.
+func (v *CreateTradeOutcomeReportCreateTradeOutcomeReport) GetVolume() float64 { return v.Volume }
+
+// GetFearGreedIndex returns CreateTradeOutcomeReportCreateTradeOutcomeReport.FearGreedIndex, and is useful for accessing the field via an interface.
+func (v *CreateTradeOutcomeReportCreateTradeOutcomeReport) GetFearGreedIndex() int {
+	return v.FearGreedIndex
+}
+
+// GetMarketStatus returns CreateTradeOutcomeReportCreateTradeOutcomeReport.MarketStatus, and is useful for accessing the field via an interface.
+func (v *CreateTradeOutcomeReportCreateTradeOutcomeReport) GetMarketStatus() string {
+	return v.MarketStatus
+}
+
+// CreateTradeOutcomeReportResponse is returned by CreateTradeOutcomeReport on success.
+type CreateTradeOutcomeReportResponse struct {
+	// Creates a new Trade Outcome Report
+	CreateTradeOutcomeReport CreateTradeOutcomeReportCreateTradeOutcomeReport `json:"createTradeOutcomeReport"`
+}
+
+// GetCreateTradeOutcomeReport returns CreateTradeOutcomeReportResponse.CreateTradeOutcomeReport, and is useful for accessing the field via an interface.
+func (v *CreateTradeOutcomeReportResponse) GetCreateTradeOutcomeReport() CreateTradeOutcomeReportCreateTradeOutcomeReport {
+	return v.CreateTradeOutcomeReport
 }
 
 // GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices includes the requested fields of the GraphQL type HistoricPrices.
@@ -143,6 +259,38 @@ func (v *PairInput) GetSymbol() string { return v.Symbol }
 // GetPrice returns PairInput.Price, and is useful for accessing the field via an interface.
 func (v *PairInput) GetPrice() string { return v.Price }
 
+// __CreateActivityReportInput is used internally by genqlient
+type __CreateActivityReportInput struct {
+	TimeStamp      int     `json:"timeStamp"`
+	Qty            int     `json:"qty"`
+	AvgGain        float64 `json:"avgGain"`
+	TopAGain       float64 `json:"topAGain"`
+	TopBGain       float64 `json:"topBGain"`
+	TopCGain       float64 `json:"topCGain"`
+	FearGreedIndex int     `json:"fearGreedIndex"`
+}
+
+// GetTimeStamp returns __CreateActivityReportInput.TimeStamp, and is useful for accessing the field via an interface.
+func (v *__CreateActivityReportInput) GetTimeStamp() int { return v.TimeStamp }
+
+// GetQty returns __CreateActivityReportInput.Qty, and is useful for accessing the field via an interface.
+func (v *__CreateActivityReportInput) GetQty() int { return v.Qty }
+
+// GetAvgGain returns __CreateActivityReportInput.AvgGain, and is useful for accessing the field via an interface.
+func (v *__CreateActivityReportInput) GetAvgGain() float64 { return v.AvgGain }
+
+// GetTopAGain returns __CreateActivityReportInput.TopAGain, and is useful for accessing the field via an interface.
+func (v *__CreateActivityReportInput) GetTopAGain() float64 { return v.TopAGain }
+
+// GetTopBGain returns __CreateActivityReportInput.TopBGain, and is useful for accessing the field via an interface.
+func (v *__CreateActivityReportInput) GetTopBGain() float64 { return v.TopBGain }
+
+// GetTopCGain returns __CreateActivityReportInput.TopCGain, and is useful for accessing the field via an interface.
+func (v *__CreateActivityReportInput) GetTopCGain() float64 { return v.TopCGain }
+
+// GetFearGreedIndex returns __CreateActivityReportInput.FearGreedIndex, and is useful for accessing the field via an interface.
+func (v *__CreateActivityReportInput) GetFearGreedIndex() int { return v.FearGreedIndex }
+
 // __CreateHistoricPricesInput is used internally by genqlient
 type __CreateHistoricPricesInput struct {
 	Input NewHistoricPriceInput `json:"input"`
@@ -150,6 +298,54 @@ type __CreateHistoricPricesInput struct {
 
 // GetInput returns __CreateHistoricPricesInput.Input, and is useful for accessing the field via an interface.
 func (v *__CreateHistoricPricesInput) GetInput() NewHistoricPriceInput { return v.Input }
+
+// __CreateTradeOutcomeReportInput is used internally by genqlient
+type __CreateTradeOutcomeReportInput struct {
+	TimeStamp        int     `json:"timeStamp"`
+	BotName          string  `json:"botName"`
+	PercentageChange float64 `json:"percentageChange"`
+	Balance          float64 `json:"balance"`
+	Symbol           string  `json:"symbol"`
+	Outcome          string  `json:"outcome"`
+	Fee              float64 `json:"Fee"`
+	ElapsedTime      int     `json:"elapsedTime"`
+	Volume           float64 `json:"volume"`
+	FearGreedIndex   int     `json:"fearGreedIndex"`
+	MarketStatus     string  `json:"marketStatus"`
+}
+
+// GetTimeStamp returns __CreateTradeOutcomeReportInput.TimeStamp, and is useful for accessing the field via an interface.
+func (v *__CreateTradeOutcomeReportInput) GetTimeStamp() int { return v.TimeStamp }
+
+// GetBotName returns __CreateTradeOutcomeReportInput.BotName, and is useful for accessing the field via an interface.
+func (v *__CreateTradeOutcomeReportInput) GetBotName() string { return v.BotName }
+
+// GetPercentageChange returns __CreateTradeOutcomeReportInput.PercentageChange, and is useful for accessing the field via an interface.
+func (v *__CreateTradeOutcomeReportInput) GetPercentageChange() float64 { return v.PercentageChange }
+
+// GetBalance returns __CreateTradeOutcomeReportInput.Balance, and is useful for accessing the field via an interface.
+func (v *__CreateTradeOutcomeReportInput) GetBalance() float64 { return v.Balance }
+
+// GetSymbol returns __CreateTradeOutcomeReportInput.Symbol, and is useful for accessing the field via an interface.
+func (v *__CreateTradeOutcomeReportInput) GetSymbol() string { return v.Symbol }
+
+// GetOutcome returns __CreateTradeOutcomeReportInput.Outcome, and is useful for accessing the field via an interface.
+func (v *__CreateTradeOutcomeReportInput) GetOutcome() string { return v.Outcome }
+
+// GetFee returns __CreateTradeOutcomeReportInput.Fee, and is useful for accessing the field via an interface.
+func (v *__CreateTradeOutcomeReportInput) GetFee() float64 { return v.Fee }
+
+// GetElapsedTime returns __CreateTradeOutcomeReportInput.ElapsedTime, and is useful for accessing the field via an interface.
+func (v *__CreateTradeOutcomeReportInput) GetElapsedTime() int { return v.ElapsedTime }
+
+// GetVolume returns __CreateTradeOutcomeReportInput.Volume, and is useful for accessing the field via an interface.
+func (v *__CreateTradeOutcomeReportInput) GetVolume() float64 { return v.Volume }
+
+// GetFearGreedIndex returns __CreateTradeOutcomeReportInput.FearGreedIndex, and is useful for accessing the field via an interface.
+func (v *__CreateTradeOutcomeReportInput) GetFearGreedIndex() int { return v.FearGreedIndex }
+
+// GetMarketStatus returns __CreateTradeOutcomeReportInput.MarketStatus, and is useful for accessing the field via an interface.
+func (v *__CreateTradeOutcomeReportInput) GetMarketStatus() string { return v.MarketStatus }
 
 // __GetHistoricPricesAtTimestampInput is used internally by genqlient
 type __GetHistoricPricesAtTimestampInput struct {
@@ -170,6 +366,59 @@ func (v *__GetPriceDataInput) GetSymbol() string { return v.Symbol }
 
 // GetLimit returns __GetPriceDataInput.Limit, and is useful for accessing the field via an interface.
 func (v *__GetPriceDataInput) GetLimit() int { return v.Limit }
+
+// The mutation executed by CreateActivityReport.
+const CreateActivityReport_Operation = `
+mutation CreateActivityReport ($timeStamp: Int!, $qty: Int!, $avgGain: Float!, $topAGain: Float, $topBGain: Float, $topCGain: Float, $fearGreedIndex: Int!) {
+	createActivityReport(input: {Timestamp:$timeStamp,Qty:$qty,AvgGain:$avgGain,TopAGain:$topAGain,TopBGain:$topBGain,TopCGain:$topCGain,FearGreedIndex:$fearGreedIndex}) {
+		_id
+		Timestamp
+		Qty
+		AvgGain
+		TopAGain
+		TopBGain
+		TopCGain
+		FearGreedIndex
+	}
+}
+`
+
+func CreateActivityReport(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	timeStamp int,
+	qty int,
+	avgGain float64,
+	topAGain float64,
+	topBGain float64,
+	topCGain float64,
+	fearGreedIndex int,
+) (data_ *CreateActivityReportResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "CreateActivityReport",
+		Query:  CreateActivityReport_Operation,
+		Variables: &__CreateActivityReportInput{
+			TimeStamp:      timeStamp,
+			Qty:            qty,
+			AvgGain:        avgGain,
+			TopAGain:       topAGain,
+			TopBGain:       topBGain,
+			TopCGain:       topCGain,
+			FearGreedIndex: fearGreedIndex,
+		},
+	}
+
+	data_ = &CreateActivityReportResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
 
 // The mutation executed by CreateHistoricPrices.
 const CreateHistoricPrices_Operation = `
@@ -197,6 +446,71 @@ func CreateHistoricPrices(
 	}
 
 	data_ = &CreateHistoricPricesResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by CreateTradeOutcomeReport.
+const CreateTradeOutcomeReport_Operation = `
+mutation CreateTradeOutcomeReport ($timeStamp: Int!, $botName: String!, $percentageChange: Float!, $balance: Float!, $symbol: String!, $outcome: String!, $Fee: Float, $elapsedTime: Int!, $volume: Float!, $fearGreedIndex: Int!, $marketStatus: String!) {
+	createTradeOutcomeReport(input: {Timestamp:$timeStamp,BotName:$botName,PercentageChange:$percentageChange,Balance:$balance,Symbol:$symbol,Outcome:$outcome,Fee:$Fee,ElapsedTime:$elapsedTime,Volume:$volume,FearGreedIndex:$fearGreedIndex,MarketStatus:$marketStatus}) {
+		_id
+		Timestamp
+		BotName
+		PercentageChange
+		Balance
+		Symbol
+		Outcome
+		Fee
+		ElapsedTime
+		Volume
+		FearGreedIndex
+		MarketStatus
+	}
+}
+`
+
+func CreateTradeOutcomeReport(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	timeStamp int,
+	botName string,
+	percentageChange float64,
+	balance float64,
+	symbol string,
+	outcome string,
+	Fee float64,
+	elapsedTime int,
+	volume float64,
+	fearGreedIndex int,
+	marketStatus string,
+) (data_ *CreateTradeOutcomeReportResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "CreateTradeOutcomeReport",
+		Query:  CreateTradeOutcomeReport_Operation,
+		Variables: &__CreateTradeOutcomeReportInput{
+			TimeStamp:        timeStamp,
+			BotName:          botName,
+			PercentageChange: percentageChange,
+			Balance:          balance,
+			Symbol:           symbol,
+			Outcome:          outcome,
+			Fee:              Fee,
+			ElapsedTime:      elapsedTime,
+			Volume:           volume,
+			FearGreedIndex:   fearGreedIndex,
+			MarketStatus:     marketStatus,
+		},
+	}
+
+	data_ = &CreateTradeOutcomeReportResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
