@@ -1,6 +1,6 @@
 module cryptobotmanager.com/cbm-backend/shared
 
-go 1.23
+go 1.24.2
 
 require (
 	cryptobotmanager.com/cbm-backend/microservices/backTesting v0.0.0-00010101000000-000000000000
