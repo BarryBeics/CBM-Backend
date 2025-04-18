@@ -67,13 +67,13 @@ func FirstFilter(ctx context.Context, client graphql.Client, datetime int, marke
 	}
 	previousTime = int(returnedPreviousTime)
 
-	log.Info().Int("Previous", previousTime).Msg("Loading previous Prices ...")
+	log.Debug().Int("Previous", previousTime).Msg("Loading previous Prices ...")
 	previousPrices, err := GetPriceData(ctx, client, previousTime, "Baz")
 	if err != nil {
 		log.Error().Msgf("Failed to get previous prices!")
 		return nil, err
 	}
-	log.Info().Msg("Identifing Pairs on the move ...")
+	log.Debug().Msg("Identifing Pairs on the move ...")
 
 	pairsOnTheMove, err = PairsOnTheMove(currentPrices, previousPrices, marketMomentum)
 	if err != nil {
@@ -89,7 +89,7 @@ func FirstFilter(ctx context.Context, client graphql.Client, datetime int, marke
 func GetPriceData(ctx context.Context, client graphql.Client, datetime int, botName string) ([]model.Pair, error) {
 	// Call the appropriate function to get historic prices at the specified timestamp
 
-	log.Info().Int("Time", datetime).Msg("getting data for")
+	log.Debug().Int("Time", datetime).Msg("getting data for")
 	pricesList, err := graph.GetHistoricPricesAtTimestamp(ctx, client, datetime)
 	if err != nil {
 		log.Error().Int("timestamp", datetime).Err(err).Msg("failed to load prices list from MongoDB")
@@ -117,15 +117,11 @@ func convertToPriceDataList(response *graph.GetHistoricPricesAtTimestampResponse
 
 	for _, historicPrices := range response.GetGetHistoricPricesAtTimestamp() {
 		for _, pair := range historicPrices.GetPair() {
-			symbol := pair.GetSymbol()
-			price := pair.GetPrice()
 			priceData := model.Pair{
-				Symbol: symbol,
-				Price:  price,
+				Symbol: pair.GetSymbol(),
+				Price:  pair.GetPrice(),
 				// Add other fields as needed
-
 			}
-			log.Info().Str("Price", price).Str("Symbol", symbol).Msg("Details")
 			priceDataList = append(priceDataList, priceData)
 		}
 	}

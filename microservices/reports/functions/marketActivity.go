@@ -37,7 +37,7 @@ func MarketActivityReport(client graphql.Client, TopAverages []int, pairsOnTheMo
 	allMovers := AverageGain(&pairsOnTheMove, allPairs)
 
 	// Log the number of pairs on the move
-	log.Info().Int("pairs_count", allPairs).Msg("the market activity report")
+	log.Debug().Int("pairs_count", allPairs).Msg("the market activity report")
 	ctx := context.Background()
 
 	const fearGreedIndex = 80 // Set a constant value for fearGreedIndex
@@ -62,7 +62,7 @@ func MarketActivityReport(client graphql.Client, TopAverages []int, pairsOnTheMo
 			}
 			avgGain := AverageGain(&pairsOnTheMove, numberOfCoins)
 
-			log.Info().Int("time", now).Int("Qty", numberOfCoins).Float64("avgGain", avgGain).Msg("Check")
+			log.Debug().Int("time", now).Int("Qty", numberOfCoins).Float64("avgGain", avgGain).Msg("Check")
 		}
 
 		// Move the GraphQL mutation request here with the correct values for topA, topB, topC

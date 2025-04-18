@@ -35,3 +35,28 @@ query GetPriceData(
   }
 }
 
+query GetAllStrategies
+{
+  getAllStrategies {
+    BotInstanceName
+    TradeDuration
+    IncrementsATR
+    LongSMADuration
+    ShortSMADuration
+    WINCounter
+    LOSSCounter
+    TIMEOUTGainCounter
+    TIMEOUTLossCounter
+    NetGainCounter
+    NetLossCounter
+    AccountBalance
+    MovingAveMomentum
+    TakeProfitPercentage
+    StopLossPercentage
+    ATRtollerance
+    FeesTotal
+    Tested
+    Owner
+    CreatedOn
+  }
+}
