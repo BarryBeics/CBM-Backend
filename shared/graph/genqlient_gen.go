@@ -157,6 +157,117 @@ func (v *CreateTradeOutcomeReportResponse) GetCreateTradeOutcomeReport() CreateT
 	return v.CreateTradeOutcomeReport
 }
 
+// GetAllStrategiesGetAllStrategiesStrategy includes the requested fields of the GraphQL type Strategy.
+type GetAllStrategiesGetAllStrategiesStrategy struct {
+	BotInstanceName      string  `json:"BotInstanceName"`
+	TradeDuration        int     `json:"TradeDuration"`
+	IncrementsATR        int     `json:"IncrementsATR"`
+	LongSMADuration      int     `json:"LongSMADuration"`
+	ShortSMADuration     int     `json:"ShortSMADuration"`
+	WINCounter           int     `json:"WINCounter"`
+	LOSSCounter          int     `json:"LOSSCounter"`
+	TIMEOUTGainCounter   int     `json:"TIMEOUTGainCounter"`
+	TIMEOUTLossCounter   int     `json:"TIMEOUTLossCounter"`
+	NetGainCounter       int     `json:"NetGainCounter"`
+	NetLossCounter       int     `json:"NetLossCounter"`
+	AccountBalance       float64 `json:"AccountBalance"`
+	MovingAveMomentum    float64 `json:"MovingAveMomentum"`
+	TakeProfitPercentage float64 `json:"TakeProfitPercentage"`
+	StopLossPercentage   float64 `json:"StopLossPercentage"`
+	ATRtollerance        float64 `json:"ATRtollerance"`
+	FeesTotal            float64 `json:"FeesTotal"`
+	Tested               bool    `json:"Tested"`
+	Owner                string  `json:"Owner"`
+	CreatedOn            int     `json:"CreatedOn"`
+}
+
+// GetBotInstanceName returns GetAllStrategiesGetAllStrategiesStrategy.BotInstanceName, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetBotInstanceName() string {
+	return v.BotInstanceName
+}
+
+// GetTradeDuration returns GetAllStrategiesGetAllStrategiesStrategy.TradeDuration, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetTradeDuration() int { return v.TradeDuration }
+
+// GetIncrementsATR returns GetAllStrategiesGetAllStrategiesStrategy.IncrementsATR, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetIncrementsATR() int { return v.IncrementsATR }
+
+// GetLongSMADuration returns GetAllStrategiesGetAllStrategiesStrategy.LongSMADuration, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetLongSMADuration() int { return v.LongSMADuration }
+
+// GetShortSMADuration returns GetAllStrategiesGetAllStrategiesStrategy.ShortSMADuration, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetShortSMADuration() int {
+	return v.ShortSMADuration
+}
+
+// GetWINCounter returns GetAllStrategiesGetAllStrategiesStrategy.WINCounter, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetWINCounter() int { return v.WINCounter }
+
+// GetLOSSCounter returns GetAllStrategiesGetAllStrategiesStrategy.LOSSCounter, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetLOSSCounter() int { return v.LOSSCounter }
+
+// GetTIMEOUTGainCounter returns GetAllStrategiesGetAllStrategiesStrategy.TIMEOUTGainCounter, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetTIMEOUTGainCounter() int {
+	return v.TIMEOUTGainCounter
+}
+
+// GetTIMEOUTLossCounter returns GetAllStrategiesGetAllStrategiesStrategy.TIMEOUTLossCounter, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetTIMEOUTLossCounter() int {
+	return v.TIMEOUTLossCounter
+}
+
+// GetNetGainCounter returns GetAllStrategiesGetAllStrategiesStrategy.NetGainCounter, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetNetGainCounter() int { return v.NetGainCounter }
+
+// GetNetLossCounter returns GetAllStrategiesGetAllStrategiesStrategy.NetLossCounter, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetNetLossCounter() int { return v.NetLossCounter }
+
+// GetAccountBalance returns GetAllStrategiesGetAllStrategiesStrategy.AccountBalance, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetAccountBalance() float64 {
+	return v.AccountBalance
+}
+
+// GetMovingAveMomentum returns GetAllStrategiesGetAllStrategiesStrategy.MovingAveMomentum, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetMovingAveMomentum() float64 {
+	return v.MovingAveMomentum
+}
+
+// GetTakeProfitPercentage returns GetAllStrategiesGetAllStrategiesStrategy.TakeProfitPercentage, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetTakeProfitPercentage() float64 {
+	return v.TakeProfitPercentage
+}
+
+// GetStopLossPercentage returns GetAllStrategiesGetAllStrategiesStrategy.StopLossPercentage, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetStopLossPercentage() float64 {
+	return v.StopLossPercentage
+}
+
+// GetATRtollerance returns GetAllStrategiesGetAllStrategiesStrategy.ATRtollerance, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetATRtollerance() float64 { return v.ATRtollerance }
+
+// GetFeesTotal returns GetAllStrategiesGetAllStrategiesStrategy.FeesTotal, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetFeesTotal() float64 { return v.FeesTotal }
+
+// GetTested returns GetAllStrategiesGetAllStrategiesStrategy.Tested, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetTested() bool { return v.Tested }
+
+// GetOwner returns GetAllStrategiesGetAllStrategiesStrategy.Owner, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetOwner() string { return v.Owner }
+
+// GetCreatedOn returns GetAllStrategiesGetAllStrategiesStrategy.CreatedOn, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesGetAllStrategiesStrategy) GetCreatedOn() int { return v.CreatedOn }
+
+// GetAllStrategiesResponse is returned by GetAllStrategies on success.
+type GetAllStrategiesResponse struct {
+	// Get all strategies
+	GetAllStrategies []GetAllStrategiesGetAllStrategiesStrategy `json:"getAllStrategies"`
+}
+
+// GetGetAllStrategies returns GetAllStrategiesResponse.GetAllStrategies, and is useful for accessing the field via an interface.
+func (v *GetAllStrategiesResponse) GetGetAllStrategies() []GetAllStrategiesGetAllStrategiesStrategy {
+	return v.GetAllStrategies
+}
+
 // GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices includes the requested fields of the GraphQL type HistoricPrices.
 type GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices struct {
 	Pair      []GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair `json:"Pair"`
@@ -511,6 +622,55 @@ func CreateTradeOutcomeReport(
 	}
 
 	data_ = &CreateTradeOutcomeReportResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetAllStrategies.
+const GetAllStrategies_Operation = `
+query GetAllStrategies {
+	getAllStrategies {
+		BotInstanceName
+		TradeDuration
+		IncrementsATR
+		LongSMADuration
+		ShortSMADuration
+		WINCounter
+		LOSSCounter
+		TIMEOUTGainCounter
+		TIMEOUTLossCounter
+		NetGainCounter
+		NetLossCounter
+		AccountBalance
+		MovingAveMomentum
+		TakeProfitPercentage
+		StopLossPercentage
+		ATRtollerance
+		FeesTotal
+		Tested
+		Owner
+		CreatedOn
+	}
+}
+`
+
+func GetAllStrategies(
+	ctx_ context.Context,
+	client_ graphql.Client,
+) (data_ *GetAllStrategiesResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetAllStrategies",
+		Query:  GetAllStrategies_Operation,
+	}
+
+	data_ = &GetAllStrategiesResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
