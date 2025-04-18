@@ -5,7 +5,7 @@ FROM golang:1.24 AS builder
 WORKDIR /app
 
 # Copy entire monorepo so go.work and all modules are available
-COPY . .
+COPY ../.. . 
 
 # Set environment for static binary
 ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
