@@ -1,4 +1,4 @@
-package filters
+package functions
 
 import (
 	"context"
@@ -31,7 +31,7 @@ func PairsOnTheMove(currentPrices, previousPrices []model.Pair, marketMomentum f
 		for i := range previousPrices {
 			if previousPrices[i].Symbol == priceNowSymbol {
 				previousPrice, _ := strconv.ParseFloat(previousPrices[i].Price, 64)
-				change := shared.Percentage(previousPrice, priceNow)
+				change := shared.PercentageChange(previousPrice, priceNow)
 				log.Debug().Float64("Price Now", priceNow).Float64("previous Price", previousPrice).Float64("change", change).Msg("Check")
 
 				if change >= float64(marketMomentum) {
