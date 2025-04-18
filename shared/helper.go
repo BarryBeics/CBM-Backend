@@ -85,3 +85,21 @@ func Percentage(inputOne, inputTwo float64) (result float64) {
 
 	return RoundFloatToDecimal(result, 2)
 }
+
+func Round(x, decimal float64) float64 {
+	unit := calculateValue(decimal)
+	return math.Round(x*unit) / unit
+}
+
+// not sure what this is for - i will probably discover it when I rebuild the application
+func calculateValue(num float64) float64 {
+	if num == 1 {
+		return 10
+	} else if num == 2 {
+		return 100
+	} else if num == 3 {
+		return 1000
+	} else {
+		return 0
+	}
+}
