@@ -1,0 +1,74 @@
+mutation CreateTradeOutcomeReport(
+  $timeStamp: Int!
+  $botName: String!
+  $percentageChange: Float!
+  $balance: Float!
+  $symbol: String!
+  $outcome: String!
+  $Fee: Float
+  $elapsedTime: Int!
+  $volume: Float!
+  $fearGreedIndex: Int!
+  $marketStatus: String!
+) {
+  createTradeOutcomeReport(
+    input: {
+    Timestamp: $timeStamp
+    BotName: $botName
+    PercentageChange: $percentageChange
+    Balance: $balance
+    Symbol: $symbol
+    Outcome: $outcome
+    Fee: $Fee
+    ElapsedTime: $elapsedTime
+    Volume: $volume
+    FearGreedIndex: $fearGreedIndex
+    MarketStatus: $marketStatus
+    }
+  ) {
+    _id
+    Timestamp
+    BotName
+    PercentageChange
+    Balance
+    Symbol
+    Outcome
+    Fee
+    ElapsedTime
+    Volume
+    FearGreedIndex
+    MarketStatus
+  }
+}
+
+
+mutation CreateActivityReport(
+  $timeStamp: Int!
+  $qty: Int!
+  $avgGain: Float!
+  $topAGain: Float
+  $topBGain: Float
+  $topCGain: Float
+  $fearGreedIndex: Int!
+) {
+  createActivityReport(
+    input: {
+      Timestamp: $timeStamp
+      Qty: $qty
+      AvgGain: $avgGain
+      TopAGain: $topAGain
+      TopBGain: $topBGain
+      TopCGain: $topCGain
+      FearGreedIndex: $fearGreedIndex
+    }
+  ) {
+    _id
+    Timestamp
+    Qty
+    AvgGain
+    TopAGain
+    TopBGain
+    TopCGain
+    FearGreedIndex
+  }
+}

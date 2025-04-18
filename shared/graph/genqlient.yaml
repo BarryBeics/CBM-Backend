@@ -2,7 +2,7 @@
 # https://github.com/Khan/genqlient/blob/main/docs/genqlient.yaml
 schema: ./sdl.gql
 operations:
-  - ./genqlient.graphql
+  - ./*.graphql
 
 package: graph
 generated: ./genqlient_gen.go
