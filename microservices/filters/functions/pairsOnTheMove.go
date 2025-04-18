@@ -53,7 +53,7 @@ func PairsOnTheMove(currentPrices, previousPrices []model.Pair, marketMomentum f
 func FirstFilter(ctx context.Context, client graphql.Client, datetime int, marketMomentum float64) (pairsOnTheMove []shared.Gainers, err error) {
 
 	log.Debug().Int("datetime", datetime).Float64("market momentum", marketMomentum).Msg("Loading current Prices ...")
-	currentPrices, err := GetPriceData(ctx, client, datetime, "pre routines")
+	currentPrices, err := GetPriceData(ctx, client, datetime, "Baz")
 	if err != nil {
 		log.Error().Msgf("Failed to get comparison prices!")
 		return nil, err
@@ -68,7 +68,7 @@ func FirstFilter(ctx context.Context, client graphql.Client, datetime int, marke
 	previousTime = int(returnedPreviousTime)
 
 	log.Info().Int("Previous", previousTime).Msg("Loading previous Prices ...")
-	previousPrices, err := GetPriceData(ctx, client, previousTime, "pre routines")
+	previousPrices, err := GetPriceData(ctx, client, previousTime, "Baz")
 	if err != nil {
 		log.Error().Msgf("Failed to get previous prices!")
 		return nil, err
@@ -89,7 +89,7 @@ func FirstFilter(ctx context.Context, client graphql.Client, datetime int, marke
 func GetPriceData(ctx context.Context, client graphql.Client, datetime int, botName string) ([]model.Pair, error) {
 	// Call the appropriate function to get historic prices at the specified timestamp
 
-	log.Debug().Int("Time", datetime).Msg("getting data for")
+	log.Info().Int("Time", datetime).Msg("getting data for")
 	pricesList, err := graph.GetHistoricPricesAtTimestamp(ctx, client, datetime)
 	if err != nil {
 		log.Error().Int("timestamp", datetime).Err(err).Msg("failed to load prices list from MongoDB")
@@ -117,12 +117,15 @@ func convertToPriceDataList(response *graph.GetHistoricPricesAtTimestampResponse
 
 	for _, historicPrices := range response.GetGetHistoricPricesAtTimestamp() {
 		for _, pair := range historicPrices.GetPair() {
+			symbol := pair.GetSymbol()
+			price := pair.GetPrice()
 			priceData := model.Pair{
-				Symbol: pair.GetSymbol(),
-				Price:  pair.GetPrice(),
+				Symbol: symbol,
+				Price:  price,
 				// Add other fields as needed
-			}
 
+			}
+			log.Info().Str("Price", price).Str("Symbol", symbol).Msg("Details")
 			priceDataList = append(priceDataList, priceData)
 		}
 	}
