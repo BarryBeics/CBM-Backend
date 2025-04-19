@@ -28,16 +28,6 @@ func RoundTimeToFiveMinuteInterval(epochTime int64) int {
 	return roundedEpochTime
 }
 
-// RoundFloatToDecimal rounds the given floating-point number 'x'
-// to the specified number of decimal places.
-func RoundFloatToDecimal(x, decimal float64) float64 {
-	if decimal < 1 || decimal > 4 {
-		return x // Do not round if decimal is not 1, 2, or 3
-	}
-	unit := CalculateMultiplier(decimal)
-	return math.Round(x*unit) / unit
-}
-
 // CalculateMultiplier returns the multiplier corresponding to the given number.
 // For example, when 'num' is 1, it returns 10; when 'num' is 2, it returns 100; and so on.
 func CalculateMultiplier(num float64) float64 {
@@ -77,18 +67,31 @@ func FindUniqueStrings(slice1, slice2 []string) []string {
 	return uniqueItems
 }
 
-// Percentage calculates the percentage of inputTwo relative to inputOne.
-// It returns the calculated percentage rounded to two decimal places.
-func Percentage(inputOne, inputTwo float64) (result float64) {
-	share := 100 / inputOne
-	result = share * inputTwo
-	result = result - 100
+// PercentageChange function takes in two float64 values as arguments, calculates
+// the percentage change between the two values and returns it as a float64 value.
+// It also logs debug messages using zerolog package.
+func PercentageChange(inputOne, inputTwo float64) (result float64) {
+	difference := inputTwo - inputOne
+	result = difference / inputOne * 100
 
-	return RoundFloatToDecimal(result, 2)
+	// Log percentage change
+	//log.Trace().Float64("input_one", inputOne).Float64("input_two", inputTwo).Float64("change", result).Msg("percentage change")
+
+	return Round(result, 2)
 }
 
 func Round(x, decimal float64) float64 {
 	unit := calculateValue(decimal)
+	return math.Round(x*unit) / unit
+}
+
+// RoundFloatToDecimal rounds the given floating-point number 'x'
+// to the specified number of decimal places.
+func RoundFloatToDecimal(x, decimal float64) float64 {
+	if decimal < 1 || decimal > 4 {
+		return x // Do not round if decimal is not 1, 2, or 3
+	}
+	unit := CalculateMultiplier(decimal)
 	return math.Round(x*unit) / unit
 }
 

@@ -8,6 +8,8 @@ replace cryptobotmanager.com/cbm-backend/microservices/filters => ../filters
 
 replace cryptobotmanager.com/cbm-backend/microservices/reports => ../reports
 
+replace cryptobotmanager.com/cbm-backend/microservices/tradingBots => ../tradingBots
+
 replace cryptobotmanager.com/cbm-backend/shared/graph => ../graph
 
 replace cryptobotmanager.com/cbm-backend/resolvers => ../../resolvers
@@ -15,6 +17,7 @@ replace cryptobotmanager.com/cbm-backend/resolvers => ../../resolvers
 require (
 	cryptobotmanager.com/cbm-backend/microservices/filters v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/microservices/reports v0.0.0-00010101000000-000000000000
+	cryptobotmanager.com/cbm-backend/microservices/tradingBots v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/resolvers v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/shared v0.0.0-00010101000000-000000000000
 	github.com/Khan/genqlient v0.8.0
