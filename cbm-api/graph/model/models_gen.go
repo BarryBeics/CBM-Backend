@@ -28,6 +28,9 @@ type MarkAsTestedInput struct {
 	Tested          bool   `json:"Tested"`
 }
 
+type Mutation struct {
+}
+
 type NewActivityReport struct {
 	Timestamp      int      `json:"Timestamp"`
 	Qty            int      `json:"Qty"`
@@ -44,7 +47,7 @@ type NewHistoricKlineDataInput struct {
 }
 
 type NewHistoricPriceInput struct {
-	Pairs     []*PairInput `json:"pairs"`
+	Pairs     []*PairInput `json:"Pairs"`
 	Timestamp int          `json:"Timestamp"`
 }
 
@@ -88,6 +91,9 @@ type Pair struct {
 type PairInput struct {
 	Symbol string `json:"Symbol"`
 	Price  string `json:"Price"`
+}
+
+type Query struct {
 }
 
 type Strategy struct {

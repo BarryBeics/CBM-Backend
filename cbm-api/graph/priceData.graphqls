@@ -9,13 +9,13 @@ type Pair {
   }
   
   type HistoricPrices {
-	pair: [Pair!]
-	timestamp: Int!
+	Pair: [Pair!]
+	Timestamp: Int!
   }
   
   input NewHistoricPriceInput {
-	pairs: [PairInput!]!
-	timestamp: Int!
+	Pairs: [PairInput!]!
+	Timestamp: Int!
   }
   
   type OHLC {
@@ -60,7 +60,7 @@ type Pair {
   
   extend type Query {
 	"Fetches price data for a given symbol up to a given limit of records"
-	getHistoricPrice(symbol: String!, limit: Int): [HistoricPrices!]!
+	getHistoricPrice(symbol: String!, limit: Int, ascending: Boolean): [HistoricPrices!]!
   
 	"Gets all prices data at a given timestamp"
 	getHistoricPricesAtTimestamp(Timestamp: Int!): [HistoricPrices!]!

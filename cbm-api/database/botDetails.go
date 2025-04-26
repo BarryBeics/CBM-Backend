@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 
-	"cryptobotmanager.com/cbm-backend/resolvers/graph/model"
+	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
 )

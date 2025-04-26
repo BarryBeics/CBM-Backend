@@ -7,8 +7,8 @@ import (
 	"os"
 	"os/signal"
 
-	"cryptobotmanager.com/cbm-backend/resolvers/graph/generated"
-	"cryptobotmanager.com/cbm-backend/resolvers/graph/resolvers"
+	"cryptobotmanager.com/cbm-backend/cbm-api/graph/generated"
+	"cryptobotmanager.com/cbm-backend/cbm-api/graph/resolvers"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/rs/zerolog"

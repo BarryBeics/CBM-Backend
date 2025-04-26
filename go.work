@@ -4,6 +4,6 @@ use (
 	./microservices/backTesting
 	./microservices/filters
 	./microservices/reports
-	./resolvers
+	./cbm-api
 	./shared
 )

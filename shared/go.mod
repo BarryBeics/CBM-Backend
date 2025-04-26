@@ -13,11 +13,11 @@ replace cryptobotmanager.com/cbm-backend/microservices/backTesting => ../microse
 
 replace cryptobotmanager.com/cbm-backend/microservices/filters => ../microservices/filters
 
-replace cryptobotmanager.com/cbm-backend/resolvers => ../resolvers
+replace cryptobotmanager.com/cbm-backend/cbm-api => ../cbm-api
 
 require (
 	cryptobotmanager.com/cbm-backend/microservices/filters v0.0.0-00010101000000-000000000000 // indirect
-	cryptobotmanager.com/cbm-backend/resolvers v0.0.0-00010101000000-000000000000 // indirect
+	cryptobotmanager.com/cbm-backend/cbm-api v0.0.0-00010101000000-000000000000 // indirect
 	github.com/adshao/go-binance/v2 v2.8.2 // indirect
 	github.com/bitly/go-simplejson v0.5.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect

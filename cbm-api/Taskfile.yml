@@ -15,17 +15,17 @@ tasks:
   build:
     desc: Build the Go Code
     cmds:
-      - go build -o resolvers server.go
+      - go build -o cbm-api server.go
     env:
       CGO_ENABLED: 0
     sources:
       - ./**/*.go
     generates:
-      - ./resolvers
+      - ./cbm-api
 
   generate:
     desc: Generate GQL models
-    dir: ./resolvers # <- NEW!
+    dir: ./cbm-api # <- NEW!
     cmds:
       - go generate ./...
     sources:

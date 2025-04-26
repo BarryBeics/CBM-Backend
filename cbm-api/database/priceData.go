@@ -6,7 +6,7 @@ import (
 
 	"time"
 
-	"cryptobotmanager.com/cbm-backend/resolvers/graph/model"
+	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -46,33 +46,41 @@ func (db *DB) SaveHistoricPrices(input *model.NewHistoricPriceInput) ([]*model.H
 }
 
 // HistoricPricesBySymbol fetches historic prices based on the given symbol and limit.
-func (db *DB) HistoricPricesBySymbol(symbol string, limit int) ([]model.HistoricPrices, error) {
+func (db *DB) HistoricPricesBySymbol(symbol string, limit int, ascending bool) ([]model.HistoricPrices, error) {
 	collection := db.client.Database("go_trading_db").Collection("HistoricPrices")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	filter := bson.M{"pair.symbol": symbol} // Assuming your data model has a nested "pair" field
+	filter := bson.D{{"Pair.Symbol", symbol}}
 
-	// Sort the results in descending order based on the timestamp field.
-	sort := options.Find().SetSort(bson.D{{"Timestamp", -1}})
+	findOptions := options.Find()
+	if limit > 0 {
+		findOptions.SetLimit(int64(limit))
+	}
 
-	cursor, err := collection.Find(ctx, filter, sort, options.Find().SetLimit(int64(limit)))
+	sortOrder := -1
+	if ascending {
+		sortOrder = 1
+	}
+	findOptions.SetSort(bson.D{{Key: "Timestamp", Value: sortOrder}})
+
+	cursor, err := collection.Find(ctx, filter, findOptions)
 	if err != nil {
-		log.Error().Err(err).Msg("Error fetching historic prices by symbol")
+		log.Error().Err(err).Msg("Error querying historic prices by symbol")
 		return nil, err
 	}
 	defer cursor.Close(ctx)
 
 	var historicPrices []model.HistoricPrices
 	if err := cursor.All(ctx, &historicPrices); err != nil {
-		log.Error().Err(err).Msg("Error decoding historic prices")
+		log.Error().Err(err).Msg("Error decoding historic prices by symbol")
 		return nil, err
 	}
 
 	return historicPrices, nil
 }
 
-func (db *DB) AllHistoricPrices(limit int) ([]model.HistoricPrices, error) {
+func (db *DB) AllHistoricPrices(limit int, ascending bool) ([]model.HistoricPrices, error) {
 	collection := db.client.Database("go_trading_db").Collection("HistoricPrices")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -81,6 +89,11 @@ func (db *DB) AllHistoricPrices(limit int) ([]model.HistoricPrices, error) {
 	if limit > 0 {
 		findOptions.SetLimit(int64(limit))
 	}
+	sortOrder := -1
+	if ascending {
+		sortOrder = 1
+	}
+	findOptions.SetSort(bson.D{{Key: "Timestamp", Value: -sortOrder}})
 
 	cursor, err := collection.Find(ctx, bson.D{}, findOptions)
 	if err != nil {

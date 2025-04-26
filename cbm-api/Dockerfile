@@ -11,7 +11,7 @@ COPY ../.. .
 ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 
 # Tidy and download dependencies using go.work context
-RUN go work sync && go mod tidy && go build -o /resolvers-server ./resolvers/server.go
+RUN go work sync && go mod tidy && go build -o /cbm-api-server ./cbm-api/server.go
 
 # Stage 2: Minimal image
 FROM alpine:latest
@@ -19,9 +19,9 @@ FROM alpine:latest
 WORKDIR /root/
 
 # Copy binary from builder
-COPY --from=builder /resolvers-server .
+COPY --from=builder /cbm-api-server .
 
 # Expose resolver service port
 EXPOSE 8080
 
-CMD ["./resolvers-server"]
+CMD ["./cbm-api-server"]

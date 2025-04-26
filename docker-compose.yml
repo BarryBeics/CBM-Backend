@@ -48,8 +48,8 @@ services:
       timeout: 5s
       retries: 5
 
-  resolvers:
-    image: ${RESOLVERS_IMAGE}
+  cbm-api:
+    image: ${CBM_API_IMAGE}
     ports:
       - "8080:8080"
     env_file: 
@@ -65,18 +65,18 @@ services:
     env_file:
       - .env
     depends_on:
-      - resolvers
+      - cbm-api
     networks:
       - gotrading
 
-  frontend:
-    image: ${FRONTEND_IMAGE}
-    env_file:
-      - .env
-    networks:
-      - gotrading
-    ports:
-      - "80:80"
+  # frontend:
+  #   image: ${FRONTEND_IMAGE}
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - gotrading
+  #   ports:
+  #     - "80:80"
 
 
 volumes:
