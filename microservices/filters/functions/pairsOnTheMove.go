@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"cryptobotmanager.com/cbm-backend/resolvers/graph/model"
+	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	"cryptobotmanager.com/cbm-backend/shared"
 	"cryptobotmanager.com/cbm-backend/shared/graph"
 	"github.com/Khan/genqlient/graphql"
@@ -17,10 +17,10 @@ import (
 // Gainers structs and an error. The function calculates the percentage change
 // between the current price and the previous price for each symbol in the currentPrices
 // slice. If the percentage change is greater than or equal to marketMomentum, the
-// function appends a Gainers struct to the pairsOnTheMoveList slice. The function
+// function appends a Gainers struct to the PairsOnTheMoveList slice. The function
 // uses the PercentageChange function to calculate the percentage change and
 // strconv.ParseFloat function to parse the price data. The function prints out a
-// message for each pair that meets the marketMomentum condition.
+// message for each Pair that meets the marketMomentum condition.
 func PairsOnTheMove(currentPrices, previousPrices []model.Pair, marketMomentum float64) (pairsOnTheMoveList []shared.Gainers, err error) {
 
 	for i := 0; i < len(currentPrices); i++ {
@@ -116,10 +116,10 @@ func convertToPriceDataList(response *graph.GetHistoricPricesAtTimestampResponse
 	var priceDataList []model.Pair
 
 	for _, historicPrices := range response.GetGetHistoricPricesAtTimestamp() {
-		for _, pair := range historicPrices.GetPair() {
+		for _, Pair := range historicPrices.GetPair() {
 			priceData := model.Pair{
-				Symbol: pair.GetSymbol(),
-				Price:  pair.GetPrice(),
+				Symbol: Pair.GetSymbol(),
+				Price:  Pair.GetPrice(),
 				// Add other fields as needed
 			}
 			priceDataList = append(priceDataList, priceData)

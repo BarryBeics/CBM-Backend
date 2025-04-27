@@ -1,10 +1,22 @@
 """
-The @defer directive may be specified on a fragment spread to imply de-prioritization, that causes the fragment to be omitted in the initial response, and delivered as a subsequent response afterward. A query with @defer directive will cause the request to potentially return multiple responses, where non-deferred data is delivered in the initial response and data deferred delivered in a subsequent response. @include and @skip take precedence over @defer.
+Directs the executor to defer this fragment when the `if` argument is true or undefined.
 """
 directive @defer(
+  """
+  Deferred when true or undefined.
+  """
   if: Boolean = true
+
+  """
+  Unique name
+  """
   label: String
 ) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"""
+Indicates exactly one field must be supplied and this field must not be `null`.
+"""
+directive @oneOf on INPUT_OBJECT
 
 type ActivityReport {
   _id: ID!
@@ -15,6 +27,11 @@ type ActivityReport {
   TopBGain: Float
   TopCGain: Float
   FearGreedIndex: Int!
+}
+
+type HistoricKlineData {
+  opentime: Int!
+  coins: [OHLC!]!
 }
 
 type HistoricPrices {
@@ -74,6 +91,11 @@ type Mutation {
   createHistoricPrices(input: NewHistoricPriceInput): [HistoricPrices!]!
 
   """
+  Creates an array of Historic Kline Data
+  """
+  createHistoricKline(input: NewHistoricKlineDataInput): [HistoricKlineData!]!
+
+  """
   Deletes all prices data for the matching given timestamp
   """
   deleteHistoricPrices(Timestamp: Int!): Boolean!
@@ -89,8 +111,13 @@ input NewActivityReport {
   FearGreedIndex: Int!
 }
 
+input NewHistoricKlineDataInput {
+  Opentime: Int!
+  Coins: [OHLCInput!]!
+}
+
 input NewHistoricPriceInput {
-  pairs: [PairInput!]!
+  Pairs: [PairInput!]!
   Timestamp: Int!
 }
 
@@ -106,6 +133,24 @@ input NewTradeOutcomeReport {
   Volume: Float!
   FearGreedIndex: Int!
   MarketStatus: String!
+}
+
+type OHLC {
+  OpenPrice: String!
+  HighPrice: String!
+  LowPrice: String!
+  ClosePrice: String!
+  TradeVolume: String!
+  Symbol: String!
+}
+
+input OHLCInput {
+  OpenPrice: String!
+  HighPrice: String!
+  LowPrice: String!
+  ClosePrice: String!
+  TradeVolume: String!
+  Symbol: String!
 }
 
 type Pair {
@@ -166,12 +211,21 @@ type Query {
   """
   Fetches price data for a given symbol up to a given limit of records
   """
-  getHistoricPrice(symbol: String!, limit: Int): [HistoricPrices!]!
+  getHistoricPrice(
+    symbol: String!
+    limit: Int
+    ascending: Boolean
+  ): [HistoricPrices!]!
 
   """
   Gets all prices data at a given timestamp
   """
   getHistoricPricesAtTimestamp(Timestamp: Int!): [HistoricPrices!]!
+
+  """
+  Fetches kline data data for a given symbol up to a given limit of records
+  """
+  getHistoricKlineData(symbol: String!, limit: Int): [HistoricKlineData!]!
 
   """
   Returns a count of timestamps in the DB

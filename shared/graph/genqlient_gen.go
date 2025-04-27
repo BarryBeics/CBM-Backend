@@ -349,7 +349,7 @@ func (v *GetPriceDataResponse) GetGetHistoricPrice() []GetPriceDataGetHistoricPr
 }
 
 type NewHistoricPriceInput struct {
-	Pairs     []PairInput `json:"pairs"`
+	Pairs     []PairInput `json:"Pairs"`
 	Timestamp int         `json:"Timestamp"`
 }
 
@@ -468,8 +468,9 @@ func (v *__GetHistoricPricesAtTimestampInput) GetDatetime() int { return v.Datet
 
 // __GetPriceDataInput is used internally by genqlient
 type __GetPriceDataInput struct {
-	Symbol string `json:"symbol"`
-	Limit  int    `json:"limit"`
+	Symbol    string `json:"symbol"`
+	Limit     int    `json:"limit"`
+	Ascending bool   `json:"ascending"`
 }
 
 // GetSymbol returns __GetPriceDataInput.Symbol, and is useful for accessing the field via an interface.
@@ -477,6 +478,9 @@ func (v *__GetPriceDataInput) GetSymbol() string { return v.Symbol }
 
 // GetLimit returns __GetPriceDataInput.Limit, and is useful for accessing the field via an interface.
 func (v *__GetPriceDataInput) GetLimit() int { return v.Limit }
+
+// GetAscending returns __GetPriceDataInput.Ascending, and is useful for accessing the field via an interface.
+func (v *__GetPriceDataInput) GetAscending() bool { return v.Ascending }
 
 // The mutation executed by CreateActivityReport.
 const CreateActivityReport_Operation = `
@@ -722,8 +726,8 @@ func GetHistoricPricesAtTimestamp(
 
 // The query executed by GetPriceData.
 const GetPriceData_Operation = `
-query GetPriceData ($symbol: String!, $limit: Int!) {
-	getHistoricPrice(symbol: $symbol, limit: $limit) {
+query GetPriceData ($symbol: String!, $limit: Int!, $ascending: Boolean!) {
+	getHistoricPrice(symbol: $symbol, limit: $limit, ascending: $ascending) {
 		Pair {
 			Symbol
 			Price
@@ -738,13 +742,15 @@ func GetPriceData(
 	client_ graphql.Client,
 	symbol string,
 	limit int,
+	ascending bool,
 ) (data_ *GetPriceDataResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "GetPriceData",
 		Query:  GetPriceData_Operation,
 		Variables: &__GetPriceDataInput{
-			Symbol: symbol,
-			Limit:  limit,
+			Symbol:    symbol,
+			Limit:     limit,
+			Ascending: ascending,
 		},
 	}
 

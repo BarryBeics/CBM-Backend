@@ -8,12 +8,12 @@ replace cryptobotmanager.com/cbm-backend/shared/graph => ../graph
 
 replace cryptobotmanager.com/cbm-backend/microservices/backTesting => ../backTesting
 
-replace cryptobotmanager.com/cbm-backend/resolvers => ../../resolvers
+replace cryptobotmanager.com/cbm-backend/cbm-api => ../../cbm-api
 
-replace cryptobotmanager.com/cbm-backend/resolvers/graph/generated => ../../resolvers/graph/generated
+replace cryptobotmanager.com/cbm-backend/cbm-api/graph/generated => ../../cbm-api/graph/generated
 
 require (
-	cryptobotmanager.com/cbm-backend/resolvers v0.0.0-00010101000000-000000000000
+	cryptobotmanager.com/cbm-backend/cbm-api v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/shared v0.0.0-00010101000000-000000000000
 	github.com/rs/zerolog v1.34.0
 )

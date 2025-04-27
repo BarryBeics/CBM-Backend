@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"cryptobotmanager.com/cbm-backend/resolvers/graph/model"
+	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	"cryptobotmanager.com/cbm-backend/shared"
 	"github.com/Khan/genqlient/graphql"
 	"github.com/rs/zerolog/log"
@@ -21,7 +21,7 @@ type RollingTotal struct {
 	RollingTotal float64
 }
 
-// CompareSimpleMovingAverages iterates through the list of crypto pairs to determine if their simple moving averages (SMAs)
+// CompareSimpleMovingAverages iterates through the list of crypto Pairs to determine if their simple moving averages (SMAs)
 // for a given short and long period indicate momentum in the market. It calculates the SMAs for each time frame of historic
 // data loaded from JSON files, and compares the short and long SMAs. If the short SMA is greater than the long SMA, it
 // calculates the percentage gain and adds the coin symbol and gain to the coinsWithMomentum slice if it meets or exceeds
@@ -95,10 +95,10 @@ func extractPriceData(ctx context.Context, client graphql.Client, trackGainers *
 		var Price float64
 
 		for i := 0; i < len(historicPricesList); i++ {
-			for j, pair := range *trackGainers {
+			for j, Pair := range *trackGainers {
 				coin := historicPricesList[i].Symbol
-				if coin == pair.Symbol {
-					log.Info().Str("coin", coin).Str("Symbol", pair.Symbol).Msg("start")
+				if coin == Pair.Symbol {
+					log.Info().Str("coin", coin).Str("Symbol", Pair.Symbol).Msg("start")
 
 					// Convert coin.Price to a float64
 					Price, err = strconv.ParseFloat(historicPricesList[i].Price, 64)
@@ -108,19 +108,19 @@ func extractPriceData(ctx context.Context, client graphql.Client, trackGainers *
 					}
 
 					// Increment the rolling total for this coin
-					if rt, found := rollingTotals[pair.Symbol]; found {
-						rollingTotals[pair.Symbol] = RollingTotal{
-							Symbol:       pair.Symbol,
+					if rt, found := rollingTotals[Pair.Symbol]; found {
+						rollingTotals[Pair.Symbol] = RollingTotal{
+							Symbol:       Pair.Symbol,
 							RollingTotal: rt.RollingTotal + Price,
 						}
 					} else {
-						rollingTotals[pair.Symbol] = RollingTotal{
-							Symbol:       pair.Symbol,
+						rollingTotals[Pair.Symbol] = RollingTotal{
+							Symbol:       Pair.Symbol,
 							RollingTotal: Price,
 						}
 					}
 					// Update the priceDataArray
-					priceDataArray[j] = model.Pair{Symbol: pair.Symbol, Price: historicPricesList[i].Price}
+					priceDataArray[j] = model.Pair{Symbol: Pair.Symbol, Price: historicPricesList[i].Price}
 					timeFramePrices = SMA{TimeFrame: timeFrameCount, PriceDataArray: priceDataArray}
 
 				}
