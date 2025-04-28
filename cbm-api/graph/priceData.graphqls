@@ -70,4 +70,7 @@ type Pair {
   
 	"Returns a count of timestamps in the DB"
 	getUniqueTimestampCount: Int!
+
+    "This will give you a []string of all available trading symbols in your HistoricPrices collection."
+	availableSymbols: [String!]!
   }

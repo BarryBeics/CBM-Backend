@@ -370,3 +370,27 @@ func (db *DB) DeleteHistoricKlineDataByOpentime(ctx context.Context, opentime in
 
 	return nil
 }
+
+// AvailableSymbols fetches the distinct list of trading symbols.
+func (db *DB) AvailableSymbols() ([]string, error) {
+	collection := db.client.Database("go_trading_db").Collection("HistoricPrices")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	// Distinct query on the "pair.symbol" field
+	symbols, err := collection.Distinct(ctx, "pair.symbol", bson.M{})
+	if err != nil {
+		log.Error().Err(err).Msg("Error fetching distinct symbols")
+		return nil, err
+	}
+
+	// Convert to []string
+	var result []string
+	for _, s := range symbols {
+		if str, ok := s.(string); ok {
+			result = append(result, str)
+		}
+	}
+
+	return result, nil
+}
