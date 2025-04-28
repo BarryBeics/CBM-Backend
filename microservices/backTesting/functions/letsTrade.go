@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	filter "cryptobotmanager.com/cbm-backend/microservices/filters/functions"
 	reports "cryptobotmanager.com/cbm-backend/microservices/reports/functions"
 	tradingBots "cryptobotmanager.com/cbm-backend/microservices/tradingBots/functions"
-	"cryptobotmanager.com/cbm-backend/resolvers/graph/model"
 	"cryptobotmanager.com/cbm-backend/shared"
 	"github.com/Khan/genqlient/graphql"
 	"github.com/rs/zerolog/log"

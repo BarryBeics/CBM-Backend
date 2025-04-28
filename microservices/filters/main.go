@@ -6,7 +6,7 @@ func main() {
 
 	// backend := os.Getenv("TRADING_BOT_URL")
 	// if backend == "" {
-	// 	backend = "http://resolvers:8080/query"
+	// 	backend = "http://cbm-api:8080/query"
 	// }
 
 	// // Get the nearest whole 5 minutes & print the current time

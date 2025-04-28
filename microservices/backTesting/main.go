@@ -35,7 +35,7 @@ func main() {
 	// Setup GraphQL backend client
 	backend := os.Getenv("TRADING_BOT_URL")
 	if backend == "" {
-		backend = "http://resolvers:8080/query"
+		backend = "http://cbm-api:8080/query"
 	}
 
 	fmt.Println("SYSTEM_MODE is:", os.Getenv("SYSTEM_MODE"))

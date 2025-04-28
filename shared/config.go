@@ -18,7 +18,7 @@ func GetDefaultCfg() AppConfig {
 	tradeDuration := 5
 
 	packageNames := []string{
-		"filters", "backTesting", "resolvers"}
+		"filters", "backTesting", "cbm-api"}
 	testExemptFuncs := []string{
 		"GetDefaultCfg",
 		"PrettyPrint",

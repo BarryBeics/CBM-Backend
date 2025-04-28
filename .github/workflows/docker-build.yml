@@ -46,11 +46,11 @@ jobs:
           platforms: linux/amd64
           tags: bazzamerx/cbmmicroservices:latest
 
-      - name: Build & Push Resolvers
+      - name: Build & Push cbm-api
         uses: docker/build-push-action@v5
         with:
           context: .                   # build context set to root so go.work is visible
-          file: ./resolvers/Dockerfile
+          file: ./cbm-api/Dockerfile
           push: true
           platforms: linux/amd64
-          tags: bazzamerx/cbmresolvers:latest
+          tags: bazzamerx/cbm-api:latest

@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"cryptobotmanager.com/cbm-backend/resolvers/graph/model"
+	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	"cryptobotmanager.com/cbm-backend/shared/graph"
 	"github.com/Khan/genqlient/graphql"
 )
