@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"errors"
+	"sort"
 
 	"time"
 
@@ -48,36 +49,60 @@ func (db *DB) SaveHistoricPrices(input *model.NewHistoricPriceInput) ([]*model.H
 // HistoricPricesBySymbol fetches historic prices based on the given symbol and limit.
 func (db *DB) HistoricPricesBySymbol(symbol string, limit int, ascending bool) ([]model.HistoricPrices, error) {
 	collection := db.client.Database("go_trading_db").Collection("HistoricPrices")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 
-	filter := bson.D{{"Pair.Symbol", symbol}}
+	// Build the filter for the query
+	filter := bson.M{"pair.symbol": symbol}
+	log.Debug().Msgf("Constructed Filter: %v", filter)
 
+	// Set find options (limit and sort order)
 	findOptions := options.Find()
 	if limit > 0 {
 		findOptions.SetLimit(int64(limit))
 	}
 
+	// Determine the sort order (ascending or descending)
 	sortOrder := -1
 	if ascending {
 		sortOrder = 1
 	}
 	findOptions.SetSort(bson.D{{Key: "Timestamp", Value: sortOrder}})
+	log.Debug().Msgf("Sorting by Timestamp in order: %d", sortOrder)
 
+	// Log the final query options
+	log.Info().Msgf("Mongo Query - Filter: %v, Limit: %d, Sort: %v", filter, limit, bson.D{{Key: "Timestamp", Value: sortOrder}})
+
+	// Execute the query
+	log.Info().Msg("Executing query...")
 	cursor, err := collection.Find(ctx, filter, findOptions)
 	if err != nil {
-		log.Error().Err(err).Msg("Error querying historic prices by symbol")
+		log.Error().Err(err).Msg("Error fetching historic prices by symbol")
 		return nil, err
 	}
 	defer cursor.Close(ctx)
 
-	var historicPrices []model.HistoricPrices
-	if err := cursor.All(ctx, &historicPrices); err != nil {
-		log.Error().Err(err).Msg("Error decoding historic prices by symbol")
+	// Decode the results
+	var prices []model.HistoricPrices
+	if err := cursor.All(ctx, &prices); err != nil {
+		log.Error().Err(err).Msg("Error decoding historic prices into model")
 		return nil, err
 	}
 
-	return historicPrices, nil
+	// Sort manually if needed
+	sort.Slice(prices, func(i, j int) bool {
+		if ascending {
+			return prices[i].Timestamp < prices[j].Timestamp
+		}
+		return prices[i].Timestamp > prices[j].Timestamp
+	})
+
+	if len(prices) == 0 {
+		log.Warn().Msg("No historic prices found for given symbol")
+	}
+
+	// Return the result
+	return prices, nil
 }
 
 func (db *DB) AllHistoricPrices(limit int, ascending bool) ([]model.HistoricPrices, error) {
