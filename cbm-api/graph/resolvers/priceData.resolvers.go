@@ -128,3 +128,8 @@ func (r *queryResolver) GetUniqueTimestampCount(ctx context.Context) (int, error
 
 	return int, nil
 }
+
+// AvailableSymbols is the resolver for the availableSymbols field.
+func (r *queryResolver) AvailableSymbols(ctx context.Context) ([]string, error) {
+	return db.AvailableSymbols()
+}
