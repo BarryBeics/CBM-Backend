@@ -1,0 +1,206 @@
+[
+    {
+        "pairs": [
+            {
+                "symbol": "ETHBTC",
+                "price": "0.02204000"
+            },
+            {
+                "symbol": "LTCBTC",
+                "price": "0.00104400"
+            },
+            {
+                "symbol": "BNBBTC",
+                "price": "0.00729200"
+            }
+        ],
+        "timestamp": 1743369300
+    },
+    {
+        "pairs": [
+            {
+                "symbol": "ETHBTC",
+                "price": "0.02203000"
+            },
+            {
+                "symbol": "LTCBTC",
+                "price": "0.00104500"
+            },
+            {
+                "symbol": "BNBBTC",
+                "price": "0.00729100"
+            }
+        ],
+        "timestamp": 1743369600
+    },
+    {
+        "pairs": [
+            {
+                "symbol": "ETHBTC",
+                "price": "0.02199000"
+            },
+            {
+                "symbol": "LTCBTC",
+                "price": "0.00104300"
+            },
+            {
+                "symbol": "BNBBTC",
+                "price": "0.00728400"
+            }
+        ],
+        "timestamp": 1743369900
+    },
+    {
+        "pairs": [
+            {
+                "symbol": "ETHBTC",
+                "price": "0.02204000"
+            },
+            {
+                "symbol": "LTCBTC",
+                "price": "0.00104400"
+            },
+            {
+                "symbol": "BNBBTC",
+                "price": "0.00729200"
+            }
+        ],
+        "timestamp": 1743370200
+    },
+    {
+        "pairs": [
+            {
+                "symbol": "ETHBTC",
+                "price": "0.02203000"
+            },
+            {
+                "symbol": "LTCBTC",
+                "price": "0.00104500"
+            },
+            {
+                "symbol": "BNBBTC",
+                "price": "0.00729100"
+            }
+        ],
+        "timestamp": 1743370500
+    },
+    {
+        "pairs": [
+            {
+                "symbol": "ETHBTC",
+                "price": "0.02199000"
+            },
+            {
+                "symbol": "LTCBTC",
+                "price": "0.00104300"
+            },
+            {
+                "symbol": "BNBBTC",
+                "price": "0.00728400"
+            }
+        ],
+        "timestamp": 1743370800
+    },
+    {
+        "pairs": [
+            {
+                "symbol": "ETHBTC",
+                "price": "0.02204000"
+            },
+            {
+                "symbol": "LTCBTC",
+                "price": "0.00104400"
+            },
+            {
+                "symbol": "BNBBTC",
+                "price": "0.00729200"
+            }
+        ],
+        "timestamp": 1743371100
+    },
+    {
+        "pairs": [
+            {
+                "symbol": "ETHBTC",
+                "price": "0.02203000"
+            },
+            {
+                "symbol": "LTCBTC",
+                "price": "0.00104500"
+            },
+            {
+                "symbol": "BNBBTC",
+                "price": "0.00729100"
+            }
+        ],
+        "timestamp": 1743371400
+    },
+    {
+        "pairs": [
+            {
+                "symbol": "ETHBTC",
+                "price": "0.02199000"
+            },
+            {
+                "symbol": "LTCBTC",
+                "price": "0.00104300"
+            },
+            {
+                "symbol": "BNBBTC",
+                "price": "0.00728400"
+            }
+        ],
+        "timestamp": 1743371700
+    },
+    {
+        "pairs": [
+            {
+                "symbol": "ETHBTC",
+                "price": "0.02204000"
+            },
+            {
+                "symbol": "LTCBTC",
+                "price": "0.00104400"
+            },
+            {
+                "symbol": "BNBBTC",
+                "price": "0.00729200"
+            }
+        ],
+        "timestamp": 1743372000
+    },
+    {
+        "pairs": [
+            {
+                "symbol": "ETHBTC",
+                "price": "0.02203000"
+            },
+            {
+                "symbol": "LTCBTC",
+                "price": "0.00104500"
+            },
+            {
+                "symbol": "BNBBTC",
+                "price": "0.00729100"
+            }
+        ],
+        "timestamp": 1743372300
+    },
+    {
+        "pairs": [
+            {
+                "symbol": "ETHBTC",
+                "price": "0.02199000"
+            },
+            {
+                "symbol": "LTCBTC",
+                "price": "0.00104300"
+            },
+            {
+                "symbol": "BNBBTC",
+                "price": "0.00728400"
+            }
+        ],
+        "timestamp": 1743372600
+    }
+]
