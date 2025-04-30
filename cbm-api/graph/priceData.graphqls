@@ -60,7 +60,7 @@ type Pair {
   
   extend type Query {
 	"Fetches price data for a given symbol up to a given limit of records"
-	getHistoricPrice(symbol: String!, limit: Int, ascending: Boolean): [HistoricPrices!]!
+	getHistoricPrice(symbol: String!, limit: Int): [HistoricPrices!]!
   
 	"Gets all prices data at a given timestamp"
 	getHistoricPricesAtTimestamp(Timestamp: Int!): [HistoricPrices!]!

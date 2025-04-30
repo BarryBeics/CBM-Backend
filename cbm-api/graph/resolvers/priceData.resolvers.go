@@ -50,18 +50,13 @@ func (r *mutationResolver) DeleteHistoricPrices(ctx context.Context, timestamp i
 }
 
 // GetHistoricPrice is the resolver for the getHistoricPrice field.
-func (r *queryResolver) GetHistoricPrice(ctx context.Context, symbol string, limit *int, ascending *bool) ([]*model.HistoricPrices, error) {
-	asc := false
-	if ascending != nil {
-		asc = *ascending
-	}
-
+func (r *queryResolver) GetHistoricPrice(ctx context.Context, symbol string, limit *int) ([]*model.HistoricPrices, error) {
 	l := 0
 	if limit != nil {
 		l = *limit
 	}
 
-	historicPrices, err := db.HistoricPricesBySymbol(symbol, l, asc)
+	historicPrices, err := db.HistoricPricesBySymbol(symbol, l)
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting historic prices")
 		return nil, err
@@ -70,7 +65,7 @@ func (r *queryResolver) GetHistoricPrice(ctx context.Context, symbol string, lim
 	// Convert slice of model.HistoricPrice to slice of *model.HistoricPrice
 	var result []*model.HistoricPrices
 	for i := range historicPrices {
-		result = append(result, &historicPrices[i])
+		result = append(result, &*historicPrices[i])
 	}
 
 	// Return the slice of pointers to historic prices
