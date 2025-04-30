@@ -101,7 +101,7 @@ type ComplexityRoot struct {
 		AvailableSymbols             func(childComplexity int) int
 		GetAllStrategies             func(childComplexity int) int
 		GetHistoricKlineData         func(childComplexity int, symbol string, limit *int) int
-		GetHistoricPrice             func(childComplexity int, symbol string, limit *int, ascending *bool) int
+		GetHistoricPrice             func(childComplexity int, symbol string, limit *int) int
 		GetHistoricPricesAtTimestamp func(childComplexity int, timestamp int) int
 		GetStrategyByName            func(childComplexity int, botInstanceName string) int
 		GetUniqueTimestampCount      func(childComplexity int) int
@@ -172,7 +172,7 @@ type QueryResolver interface {
 	TradeOutcomeReports(ctx context.Context) ([]*model.TradeOutcomeReport, error)
 	GetStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error)
 	GetAllStrategies(ctx context.Context) ([]*model.Strategy, error)
-	GetHistoricPrice(ctx context.Context, symbol string, limit *int, ascending *bool) ([]*model.HistoricPrices, error)
+	GetHistoricPrice(ctx context.Context, symbol string, limit *int) ([]*model.HistoricPrices, error)
 	GetHistoricPricesAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricPrices, error)
 	GetHistoricKlineData(ctx context.Context, symbol string, limit *int) ([]*model.HistoricKlineData, error)
 	GetUniqueTimestampCount(ctx context.Context) (int, error)
@@ -525,7 +525,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.GetHistoricPrice(childComplexity, args["symbol"].(string), args["limit"].(*int), args["ascending"].(*bool)), true
+		return e.complexity.Query.GetHistoricPrice(childComplexity, args["symbol"].(string), args["limit"].(*int)), true
 
 	case "Query.getHistoricPricesAtTimestamp":
 		if e.complexity.Query.GetHistoricPricesAtTimestamp == nil {
@@ -1097,7 +1097,7 @@ extend type Mutation {
   
   extend type Query {
 	"Fetches price data for a given symbol up to a given limit of records"
-	getHistoricPrice(symbol: String!, limit: Int, ascending: Boolean): [HistoricPrices!]!
+	getHistoricPrice(symbol: String!, limit: Int): [HistoricPrices!]!
   
 	"Gets all prices data at a given timestamp"
 	getHistoricPricesAtTimestamp(Timestamp: Int!): [HistoricPrices!]!
@@ -1783,11 +1783,6 @@ func (ec *executionContext) field_Query_getHistoricPrice_args(ctx context.Contex
 		return nil, err
 	}
 	args["limit"] = arg1
-	arg2, err := ec.field_Query_getHistoricPrice_argsAscending(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["ascending"] = arg2
 	return args, nil
 }
 func (ec *executionContext) field_Query_getHistoricPrice_argsSymbol(
@@ -1823,24 +1818,6 @@ func (ec *executionContext) field_Query_getHistoricPrice_argsLimit(
 	}
 
 	var zeroVal *int
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Query_getHistoricPrice_argsAscending(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (*bool, error) {
-	if _, ok := rawArgs["ascending"]; !ok {
-		var zeroVal *bool
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("ascending"))
-	if tmp, ok := rawArgs["ascending"]; ok {
-		return ec.unmarshalOBoolean2ᚖbool(ctx, tmp)
-	}
-
-	var zeroVal *bool
 	return zeroVal, nil
 }
 
@@ -4277,7 +4254,7 @@ func (ec *executionContext) _Query_getHistoricPrice(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetHistoricPrice(rctx, fc.Args["symbol"].(string), fc.Args["limit"].(*int), fc.Args["ascending"].(*bool))
+		return ec.resolvers.Query().GetHistoricPrice(rctx, fc.Args["symbol"].(string), fc.Args["limit"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

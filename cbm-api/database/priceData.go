@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"errors"
-	"sort"
 
 	"time"
 
@@ -19,90 +18,69 @@ func (db *DB) SaveHistoricPrices(input *model.NewHistoricPriceInput) ([]*model.H
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// Create a slice to store the inserted HistoricPrices
-	var insertedHistoricPrices []*model.HistoricPrices
-
 	// Iterate over pairs and insert each one into the collection
-	for _, pairInput := range input.Pairs {
-		// Create a new HistoricPrices object for each pair with the provided timestamp
-		historicPrices := &model.HistoricPrices{
-			Pair:      []*model.Pair{{Symbol: pairInput.Symbol, Price: pairInput.Price}},
-			Timestamp: input.Timestamp,
-		}
-
-		// Insert the new HistoricPrices object into the collection
-		_, err := collection.InsertOne(ctx, historicPrices)
-		if err != nil {
-			log.Error().Err(err).Msg("Error saving historic price:")
-			// Handle the error, perhaps return an error or log it
-			return nil, err
-		}
-
-		// Append the inserted HistoricPrices to the result slice
-		insertedHistoricPrices = append(insertedHistoricPrices, historicPrices)
+	historicPrices := &model.HistoricPrices{
+		Pair:      make([]*model.Pair, len(input.Pairs)),
+		Timestamp: input.Timestamp,
 	}
 
-	// Return the array of inserted HistoricPrices
+	for i, pairInput := range input.Pairs {
+		historicPrices.Pair[i] = &model.Pair{
+			Symbol: pairInput.Symbol,
+			Price:  pairInput.Price,
+		}
+	}
+
+	_, err := collection.InsertOne(ctx, historicPrices)
+	if err != nil {
+		log.Error().Err(err).Msg("Error saving historic price:")
+		return nil, err
+	}
+
+	insertedHistoricPrices := []*model.HistoricPrices{historicPrices}
 	return insertedHistoricPrices, nil
 }
 
 // HistoricPricesBySymbol fetches historic prices based on the given symbol and limit.
-func (db *DB) HistoricPricesBySymbol(symbol string, limit int, ascending bool) ([]model.HistoricPrices, error) {
+func (db *DB) HistoricPricesBySymbol(symbol string, limit int) ([]*model.HistoricPrices, error) {
 	collection := db.client.Database("go_trading_db").Collection("HistoricPrices")
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 
-	// Build the filter for the query
-	filter := bson.M{"pair.symbol": symbol}
-	log.Debug().Msgf("Constructed Filter: %v", filter)
+	// Fetch documents sorted by timestamp descending
+	findOptions := options.Find().
+		SetSort(bson.D{{Key: "timestamp", Value: -1}}).
+		SetLimit(int64(limit))
 
-	// Set find options (limit and sort order)
-	findOptions := options.Find()
-	if limit > 0 {
-		findOptions.SetLimit(int64(limit))
-	}
-
-	// Determine the sort order (ascending or descending)
-	sortOrder := -1
-	if ascending {
-		sortOrder = 1
-	}
-	findOptions.SetSort(bson.D{{Key: "Timestamp", Value: sortOrder}})
-	log.Debug().Msgf("Sorting by Timestamp in order: %d", sortOrder)
-
-	// Log the final query options
-	log.Info().Msgf("Mongo Query - Filter: %v, Limit: %d, Sort: %v", filter, limit, bson.D{{Key: "Timestamp", Value: sortOrder}})
-
-	// Execute the query
-	log.Info().Msg("Executing query...")
-	cursor, err := collection.Find(ctx, filter, findOptions)
+	cursor, err := collection.Find(ctx, bson.M{
+		"pair.symbol": symbol, // Only fetch documents containing the symbol
+	}, findOptions)
 	if err != nil {
-		log.Error().Err(err).Msg("Error fetching historic prices by symbol")
 		return nil, err
 	}
 	defer cursor.Close(ctx)
 
-	// Decode the results
-	var prices []model.HistoricPrices
-	if err := cursor.All(ctx, &prices); err != nil {
-		log.Error().Err(err).Msg("Error decoding historic prices into model")
+	var rawResults []*model.HistoricPrices
+	if err := cursor.All(ctx, &rawResults); err != nil {
 		return nil, err
 	}
 
-	// Sort manually if needed
-	sort.Slice(prices, func(i, j int) bool {
-		if ascending {
-			return prices[i].Timestamp < prices[j].Timestamp
+	// Filter to return ONLY the matched symbol in the response
+	var filteredResults []*model.HistoricPrices
+	for _, entry := range rawResults {
+		for _, pair := range entry.Pair {
+			if pair.Symbol == symbol {
+				filteredResults = append(filteredResults, &model.HistoricPrices{
+					Timestamp: entry.Timestamp,
+					Pair:      []*model.Pair{pair}, // Only include matched pair
+				})
+				break
+			}
 		}
-		return prices[i].Timestamp > prices[j].Timestamp
-	})
-
-	if len(prices) == 0 {
-		log.Warn().Msg("No historic prices found for given symbol")
 	}
 
-	// Return the result
-	return prices, nil
+	return filteredResults, nil
+
 }
 
 func (db *DB) AllHistoricPrices(limit int, ascending bool) ([]model.HistoricPrices, error) {
