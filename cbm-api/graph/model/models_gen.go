@@ -13,6 +13,17 @@ type ActivityReport struct {
 	FearGreedIndex int      `json:"FearGreedIndex"`
 }
 
+type CreateUserInput struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	Contact   string `json:"contact"`
+	Address1  string `json:"address1"`
+	Address2  string `json:"address2"`
+	Role      string `json:"role"`
+}
+
 type HistoricKlineData struct {
 	Opentime int     `json:"opentime"`
 	Coins    []*Ohlc `json:"coins"`
@@ -21,6 +32,16 @@ type HistoricKlineData struct {
 type HistoricPrices struct {
 	Pair      []*Pair `json:"Pair,omitempty"`
 	Timestamp int     `json:"Timestamp"`
+}
+
+type LoginInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type LoginResponse struct {
+	Token string `json:"token"`
+	User  *User  `json:"user"`
 }
 
 type MarkAsTestedInput struct {
@@ -167,4 +188,16 @@ type UpdateCountersInput struct {
 	NetLossCounter     *bool    `json:"NetLossCounter,omitempty"`
 	AccountBalance     float64  `json:"AccountBalance"`
 	FeesTotal          *float64 `json:"FeesTotal,omitempty"`
+}
+
+type User struct {
+	ID        string `json:"id"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	Contact   string `json:"contact"`
+	Address1  string `json:"address1"`
+	Address2  string `json:"address2"`
+	Role      string `json:"role"`
 }
