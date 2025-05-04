@@ -6,32 +6,62 @@ package resolvers
 
 import (
 	"context"
-	"fmt"
 
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
+	"github.com/rs/zerolog/log"
 )
 
 // CreateTask is the resolver for the createTask field.
 func (r *mutationResolver) CreateTask(ctx context.Context, input model.CreateTaskInput) (*model.Task, error) {
-	panic(fmt.Errorf("not implemented: CreateTask - createTask"))
+	task, err := db.CreateTask(ctx, input)
+	if err != nil {
+		log.Error().Err(err).Msg("Error creating task:")
+		return nil, err
+	}
+
+	return task, nil
 }
 
 // UpdateTask is the resolver for the updateTask field.
 func (r *mutationResolver) UpdateTask(ctx context.Context, input model.UpdateTaskInput) (*model.Task, error) {
-	panic(fmt.Errorf("not implemented: UpdateTask - updateTask"))
+	task, err := db.UpdateTask(ctx, input)
+	if err != nil {
+		log.Error().Err(err).Msg("Error updating task:")
+		return nil, err
+	}
+
+	return task, nil
 }
 
 // DeleteTask is the resolver for the deleteTask field.
 func (r *mutationResolver) DeleteTask(ctx context.Context, id string) (*bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteTask - deleteTask"))
+	success, err := db.DeleteTaskByID(ctx, id)
+	if err != nil {
+		log.Error().Err(err).Msg("Error deleting task:")
+		return nil, err
+	}
+
+	return &success, nil
 }
 
 // Tasks is the resolver for the tasks field.
 func (r *queryResolver) Tasks(ctx context.Context) ([]*model.Task, error) {
-	panic(fmt.Errorf("not implemented: Tasks - tasks"))
+	tasks, err := db.GetAllTasks(ctx)
+	if err != nil {
+		log.Error().Err(err).Msg("Error fetching tasks:")
+		return nil, err
+	}
+
+	return tasks, nil
 }
 
 // Task is the resolver for the task field.
 func (r *queryResolver) Task(ctx context.Context, id string) (*model.Task, error) {
-	panic(fmt.Errorf("not implemented: Task - task"))
+	task, err := db.GetTaskByID(ctx, id)
+	if err != nil {
+		log.Error().Err(err).Msg("Error fetching task by ID:")
+		return nil, err
+	}
+
+	return task, nil
 }

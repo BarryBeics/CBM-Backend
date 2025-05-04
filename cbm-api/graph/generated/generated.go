@@ -157,6 +157,7 @@ type ComplexityRoot struct {
 		DueDate     func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Priority    func(childComplexity int) int
+		SopLink     func(childComplexity int) int
 		Status      func(childComplexity int) int
 		Title       func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
@@ -964,6 +965,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Task.Priority(childComplexity), true
 
+	case "Task.sopLink":
+		if e.complexity.Task.SopLink == nil {
+			break
+		}
+
+		return e.complexity.Task.SopLink(childComplexity), true
+
 	case "Task.status":
 		if e.complexity.Task.Status == nil {
 			break
@@ -1564,9 +1572,7 @@ type Query {
 
 
 `, BuiltIn: false},
-	{Name: "../tasks.graphqls", Input: `# tasks.graphqls
-
-type Task {
+	{Name: "../tasks.graphqls", Input: `type Task {
   id: ID!
   title: String!
   description: String
@@ -1575,8 +1581,9 @@ type Task {
   assignedTo: String
   dueDate: String
   category: String
-  createdAt: String
-  updatedAt: String
+  sopLink: String
+  createdAt: String!
+  updatedAt: String!
 }
 
 input CreateTaskInput {
@@ -1587,6 +1594,7 @@ input CreateTaskInput {
   assignedTo: String
   dueDate: String
   category: String
+  sopLink: String
 }
 
 input UpdateTaskInput {
@@ -1598,8 +1606,8 @@ input UpdateTaskInput {
   assignedTo: String
   dueDate: String
   category: String
+  sopLink: String
 }
-
 
 extend type Query {
   tasks: [Task]
@@ -4249,6 +4257,8 @@ func (ec *executionContext) fieldContext_Mutation_createTask(ctx context.Context
 				return ec.fieldContext_Task_dueDate(ctx, field)
 			case "category":
 				return ec.fieldContext_Task_category(ctx, field)
+			case "sopLink":
+				return ec.fieldContext_Task_sopLink(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Task_createdAt(ctx, field)
 			case "updatedAt":
@@ -4323,6 +4333,8 @@ func (ec *executionContext) fieldContext_Mutation_updateTask(ctx context.Context
 				return ec.fieldContext_Task_dueDate(ctx, field)
 			case "category":
 				return ec.fieldContext_Task_category(ctx, field)
+			case "sopLink":
+				return ec.fieldContext_Task_sopLink(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Task_createdAt(ctx, field)
 			case "updatedAt":
@@ -5833,6 +5845,8 @@ func (ec *executionContext) fieldContext_Query_tasks(_ context.Context, field gr
 				return ec.fieldContext_Task_dueDate(ctx, field)
 			case "category":
 				return ec.fieldContext_Task_category(ctx, field)
+			case "sopLink":
+				return ec.fieldContext_Task_sopLink(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Task_createdAt(ctx, field)
 			case "updatedAt":
@@ -5896,6 +5910,8 @@ func (ec *executionContext) fieldContext_Query_task(ctx context.Context, field g
 				return ec.fieldContext_Task_dueDate(ctx, field)
 			case "category":
 				return ec.fieldContext_Task_category(ctx, field)
+			case "sopLink":
+				return ec.fieldContext_Task_sopLink(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Task_createdAt(ctx, field)
 			case "updatedAt":
@@ -7230,6 +7246,47 @@ func (ec *executionContext) fieldContext_Task_category(_ context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _Task_sopLink(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Task_sopLink(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SopLink, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Task_sopLink(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Task",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Task_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Task_createdAt(ctx, field)
 	if err != nil {
@@ -7251,11 +7308,14 @@ func (ec *executionContext) _Task_createdAt(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Task_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7292,11 +7352,14 @@ func (ec *executionContext) _Task_updatedAt(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Task_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10198,7 +10261,7 @@ func (ec *executionContext) unmarshalInputCreateTaskInput(ctx context.Context, o
 		asMap["priority"] = "medium"
 	}
 
-	fieldsInOrder := [...]string{"title", "description", "status", "priority", "assignedTo", "dueDate", "category"}
+	fieldsInOrder := [...]string{"title", "description", "status", "priority", "assignedTo", "dueDate", "category", "sopLink"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -10254,6 +10317,13 @@ func (ec *executionContext) unmarshalInputCreateTaskInput(ctx context.Context, o
 				return it, err
 			}
 			it.Category = data
+		case "sopLink":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sopLink"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SopLink = data
 		}
 	}
 
@@ -10984,7 +11054,7 @@ func (ec *executionContext) unmarshalInputUpdateTaskInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "title", "description", "status", "priority", "assignedTo", "dueDate", "category"}
+	fieldsInOrder := [...]string{"id", "title", "description", "status", "priority", "assignedTo", "dueDate", "category", "sopLink"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -11047,6 +11117,13 @@ func (ec *executionContext) unmarshalInputUpdateTaskInput(ctx context.Context, o
 				return it, err
 			}
 			it.Category = data
+		case "sopLink":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sopLink"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SopLink = data
 		}
 	}
 
@@ -12037,10 +12114,18 @@ func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._Task_dueDate(ctx, field, obj)
 		case "category":
 			out.Values[i] = ec._Task_category(ctx, field, obj)
+		case "sopLink":
+			out.Values[i] = ec._Task_sopLink(ctx, field, obj)
 		case "createdAt":
 			out.Values[i] = ec._Task_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "updatedAt":
 			out.Values[i] = ec._Task_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

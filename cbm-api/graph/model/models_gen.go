@@ -21,6 +21,7 @@ type CreateTaskInput struct {
 	AssignedTo  *string `json:"assignedTo,omitempty"`
 	DueDate     *string `json:"dueDate,omitempty"`
 	Category    *string `json:"category,omitempty"`
+	SopLink     *string `json:"sopLink,omitempty"`
 }
 
 type CreateUserInput struct {
@@ -182,8 +183,9 @@ type Task struct {
 	AssignedTo  *string `json:"assignedTo,omitempty"`
 	DueDate     *string `json:"dueDate,omitempty"`
 	Category    *string `json:"category,omitempty"`
-	CreatedAt   *string `json:"createdAt,omitempty"`
-	UpdatedAt   *string `json:"updatedAt,omitempty"`
+	SopLink     *string `json:"sopLink,omitempty"`
+	CreatedAt   string  `json:"createdAt"`
+	UpdatedAt   string  `json:"updatedAt"`
 }
 
 type TradeOutcomeReport struct {
@@ -222,6 +224,7 @@ type UpdateTaskInput struct {
 	AssignedTo  *string `json:"assignedTo,omitempty"`
 	DueDate     *string `json:"dueDate,omitempty"`
 	Category    *string `json:"category,omitempty"`
+	SopLink     *string `json:"sopLink,omitempty"`
 }
 
 type User struct {
