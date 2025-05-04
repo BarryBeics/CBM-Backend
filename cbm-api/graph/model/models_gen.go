@@ -13,6 +13,16 @@ type ActivityReport struct {
 	FearGreedIndex int      `json:"FearGreedIndex"`
 }
 
+type CreateTaskInput struct {
+	Title       string  `json:"title"`
+	Description *string `json:"description,omitempty"`
+	Status      *string `json:"status,omitempty"`
+	Priority    *string `json:"priority,omitempty"`
+	AssignedTo  *string `json:"assignedTo,omitempty"`
+	DueDate     *string `json:"dueDate,omitempty"`
+	Category    *string `json:"category,omitempty"`
+}
+
 type CreateUserInput struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
@@ -163,6 +173,19 @@ type StrategyInput struct {
 	CreatedOn            int      `json:"CreatedOn"`
 }
 
+type Task struct {
+	ID          string  `json:"id"`
+	Title       string  `json:"title"`
+	Description *string `json:"description,omitempty"`
+	Status      string  `json:"status"`
+	Priority    *string `json:"priority,omitempty"`
+	AssignedTo  *string `json:"assignedTo,omitempty"`
+	DueDate     *string `json:"dueDate,omitempty"`
+	Category    *string `json:"category,omitempty"`
+	CreatedAt   *string `json:"createdAt,omitempty"`
+	UpdatedAt   *string `json:"updatedAt,omitempty"`
+}
+
 type TradeOutcomeReport struct {
 	ID               string   `json:"_id"`
 	Timestamp        int      `json:"Timestamp"`
@@ -188,6 +211,17 @@ type UpdateCountersInput struct {
 	NetLossCounter     *bool    `json:"NetLossCounter,omitempty"`
 	AccountBalance     float64  `json:"AccountBalance"`
 	FeesTotal          *float64 `json:"FeesTotal,omitempty"`
+}
+
+type UpdateTaskInput struct {
+	ID          string  `json:"id"`
+	Title       *string `json:"title,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Status      *string `json:"status,omitempty"`
+	Priority    *string `json:"priority,omitempty"`
+	AssignedTo  *string `json:"assignedTo,omitempty"`
+	DueDate     *string `json:"dueDate,omitempty"`
+	Category    *string `json:"category,omitempty"`
 }
 
 type User struct {
