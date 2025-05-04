@@ -1,0 +1,47 @@
+type Task {
+  id: ID!
+  title: String!
+  description: String
+  status: String!
+  priority: String
+  assignedTo: String
+  dueDate: String
+  category: String
+  sopLink: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+input CreateTaskInput {
+  title: String!
+  description: String
+  status: String = "todo"
+  priority: String = "medium"
+  assignedTo: String
+  dueDate: String
+  category: String
+  sopLink: String
+}
+
+input UpdateTaskInput {
+  id: ID!
+  title: String
+  description: String
+  status: String
+  priority: String
+  assignedTo: String
+  dueDate: String
+  category: String
+  sopLink: String
+}
+
+extend type Query {
+  tasks: [Task]
+  task(id: ID!): Task
+}
+
+extend type Mutation {
+  createTask(input: CreateTaskInput!): Task
+  updateTask(input: UpdateTaskInput!): Task
+  deleteTask(id: ID!): Boolean
+}
