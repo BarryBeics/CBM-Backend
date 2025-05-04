@@ -1,0 +1,43 @@
+# customers.graphqls
+type User {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  contact: String!
+  address1: String!
+  address2: String!
+  role: String!
+}
+
+
+input CreateUserInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  contact: String!
+  address1: String!
+  address2: String!
+  role: String!
+}
+
+
+extend type Mutation {
+  "Creates a new user"
+  createUser(input: CreateUserInput!): User
+
+  "Deletes a user by email"
+  deleteUser(email: String!): Boolean
+}
+
+
+extend type Query {
+  "Get a user by email"
+  getUserByEmail(email: String!): User
+
+  "Get all users"
+  getAllUsers: [User!]!
+}
+
