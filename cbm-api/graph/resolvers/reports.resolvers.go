@@ -6,62 +6,55 @@ package resolvers
 
 import (
 	"context"
+	"fmt"
 
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/generated"
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
-	"github.com/rs/zerolog/log"
 )
 
-// MutationResolver implementation
+// CreateActivityReport is the resolver for the createActivityReport field.
 func (r *mutationResolver) CreateActivityReport(ctx context.Context, input *model.NewActivityReport) (*model.ActivityReport, error) {
-	return db.SaveActivityReport(input), nil
+	panic(fmt.Errorf("not implemented: CreateActivityReport - createActivityReport"))
 }
 
 // CreateTradeOutcomeReport is the resolver for the createTradeOutcomeReport field.
 func (r *mutationResolver) CreateTradeOutcomeReport(ctx context.Context, input *model.NewTradeOutcomeReport) (*model.TradeOutcomeReport, error) {
-	return db.SaveTradeOutcomeReport(input), nil
+	panic(fmt.Errorf("not implemented: CreateTradeOutcomeReport - createTradeOutcomeReport"))
 }
 
 // DeleteOutcomeReports is the resolver for the deleteOutcomeReports field.
 func (r *mutationResolver) DeleteOutcomeReports(ctx context.Context, timestamp int) (bool, error) {
-	// Assuming db is an instance of your DB type
-	success, err := db.DeleteTradeOutcomeReport(ctx, timestamp)
-	if err != nil {
-		log.Error().Err(err).Msg("Error deleting trade outcome:")
-		return false, err // Return a boolean value, not a pointer to a boolean
-	}
-
-	return success, nil
+	panic(fmt.Errorf("not implemented: DeleteOutcomeReports - deleteOutcomeReports"))
 }
 
 // ActivityReport is the resolver for the ActivityReport field.
 func (r *queryResolver) ActivityReport(ctx context.Context, id string) (*model.ActivityReport, error) {
-	return db.FindActivityReportByID(id), nil
+	panic(fmt.Errorf("not implemented: ActivityReport - ActivityReport"))
 }
 
 // ActivityReports is the resolver for the ActivityReports field.
 func (r *queryResolver) ActivityReports(ctx context.Context) ([]*model.ActivityReport, error) {
-	return db.AllActivityReports(), nil
+	panic(fmt.Errorf("not implemented: ActivityReports - ActivityReports"))
 }
 
 // TradeOutcomeReport is the resolver for the TradeOutcomeReport field.
 func (r *queryResolver) TradeOutcomeReport(ctx context.Context, id string) (*model.TradeOutcomeReport, error) {
-	return db.FindTradeOutcomeReportByID(id), nil
+	panic(fmt.Errorf("not implemented: TradeOutcomeReport - TradeOutcomeReport"))
 }
 
-// TradeOutcomes retrieves trade outcome reports based on the BotName.
+// TradeOutcomes is the resolver for the TradeOutcomes field.
 func (r *queryResolver) TradeOutcomes(ctx context.Context, botName string) ([]*model.TradeOutcomeReport, error) {
-	return db.TradeOutcomeReportsByBotName(ctx, botName)
+	panic(fmt.Errorf("not implemented: TradeOutcomes - TradeOutcomes"))
 }
 
 // TradeOutcomesInFocus is the resolver for the TradeOutcomesInFocus field.
 func (r *queryResolver) TradeOutcomesInFocus(ctx context.Context, botName string, marketStatus string, limit *int) ([]*model.TradeOutcomeReport, error) {
-	return db.TradeOutcomeReportsByBotNameAndMarketStatus(ctx, botName, marketStatus, *limit)
+	panic(fmt.Errorf("not implemented: TradeOutcomesInFocus - TradeOutcomesInFocus"))
 }
 
 // TradeOutcomeReports is the resolver for the TradeOutcomeReports field.
 func (r *queryResolver) TradeOutcomeReports(ctx context.Context) ([]*model.TradeOutcomeReport, error) {
-	return db.AllTradeOutcomeReports(), nil
+	panic(fmt.Errorf("not implemented: TradeOutcomeReports - TradeOutcomeReports"))
 }
 
 // Mutation returns generated.MutationResolver implementation.
@@ -69,6 +62,3 @@ func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResol
 
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
-
-type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
