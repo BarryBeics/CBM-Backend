@@ -103,6 +103,15 @@ func (r *queryResolver) ProjectByID(ctx context.Context, id string) (*model.Proj
 		log.Error().Err(err).Msg("Error fetching project by ID:")
 		return nil, err
 	}
+
+	// Fetch tasks manually
+	tasks, err := db.GetTasksByProjectID(ctx, project.ID)
+	if err != nil {
+		log.Error().Err(err).Msg("Error fetching tasks for project:")
+		return nil, err
+	}
+	project.Tasks = tasks
+
 	return project, nil
 }
 
@@ -113,5 +122,16 @@ func (r *queryResolver) AllProjects(ctx context.Context) ([]*model.Project, erro
 		log.Error().Err(err).Msg("Error fetching projects:")
 		return nil, err
 	}
+
+	// For each project, fetch tasks
+	for _, project := range projects {
+		tasks, err := db.GetTasksByProjectID(ctx, project.ID)
+		if err != nil {
+			log.Error().Err(err).Str("projectID", project.ID).Msg("Error fetching tasks")
+			continue // or handle accordingly
+		}
+		project.Tasks = tasks
+	}
+
 	return projects, nil
 }

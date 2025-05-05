@@ -1777,8 +1777,6 @@ type Project {
   status: String!
   createdAt: String!
   updatedAt: String!
-  
-  # Dynamically resolved list of tasks associated with this project
   tasks: [Task]
 }
 
@@ -1851,6 +1849,7 @@ extend type Query {
   # Get all projects
   allProjects: [Project]
 }
+
 
 # ==========================
 # Mutations
