@@ -84,22 +84,27 @@ input UpdateProjectInput {
   status: String
 }
 
+input ProjectFilterInput {
+  sop: Boolean
+}
+
 # ==========================
 # Queries
 # ==========================
 
 extend type Query {
-  # Get a single task by ID
+  "Get a single task by ID"
   taskById(id: ID!): Task
 
-  # Get all tasks
+  "Get all tasks"
   allTasks: [Task]
 
-  # Get a single project by ID
+  "Get a single project by ID"
   projectById(id: ID!): Project
 
-  # Get all projects
-  allProjects: [Project]
+
+  "Get projects filtered by SOP standard operating proceedure"
+  filterProjects(filter: ProjectFilterInput): [Project!]!
 }
 
 
@@ -108,21 +113,21 @@ extend type Query {
 # ==========================
 
 extend type Mutation {
-  # Create a new task
+  "Create a new task"
   createTask(input: CreateTaskInput!): Task
 
-  # Update an existing task
+  "Update an existing task"
   updateTask(input: UpdateTaskInput!): Task
 
-  # Delete a task by ID
+  "Delete a task by ID"
   deleteTask(id: ID!): Boolean
 
-  # Create a new project
+  "Create a new project"
   createProject(input: CreateProjectInput!): Project
 
-  # Update an existing project
+  "Update an existing project"
   updateProject(input: UpdateProjectInput!): Project
 
-  # Delete a project by ID
+  "Delete a project by ID"
   deleteProject(id: ID!): Boolean
 }

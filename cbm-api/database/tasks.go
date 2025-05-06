@@ -247,20 +247,23 @@ func (db *DB) DeleteProjectByID(ctx context.Context, id string) (bool, error) {
 	return result.DeletedCount > 0, nil
 }
 
-// GetAllProjects retrieves all projects.
-func (db *DB) GetAllProjects(ctx context.Context) ([]*model.Project, error) {
+// GetProjectsBySOP retrieves projects filtered by the SOP boolean field.
+func (db *DB) GetProjectsBySOP(ctx context.Context, sop bool) ([]*model.Project, error) {
 	collection := db.client.Database("go_trading_db").Collection("Projects")
 
-	cursor, err := collection.Find(ctx, bson.D{})
+	// Build the MongoDB filter
+	filter := bson.M{"sop": sop}
+
+	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
-		log.Error().Err(err).Msg("Error retrieving projects:")
+		log.Error().Err(err).Msg("Error retrieving filtered projects:")
 		return nil, err
 	}
 	defer cursor.Close(ctx)
 
 	var projects []*model.Project
 	if err := cursor.All(ctx, &projects); err != nil {
-		log.Error().Err(err).Msg("Error decoding projects:")
+		log.Error().Err(err).Msg("Error decoding filtered projects:")
 		return nil, err
 	}
 

@@ -151,6 +151,10 @@ type Project struct {
 	Tasks       []*Task   `json:"tasks,omitempty"`
 }
 
+type ProjectFilterInput struct {
+	Sop *bool `json:"sop,omitempty"`
+}
+
 type Query struct {
 }
 

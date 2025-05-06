@@ -126,9 +126,9 @@ type ComplexityRoot struct {
 	Query struct {
 		ActivityReport               func(childComplexity int, id string) int
 		ActivityReports              func(childComplexity int) int
-		AllProjects                  func(childComplexity int) int
 		AllTasks                     func(childComplexity int) int
 		AvailableSymbols             func(childComplexity int) int
+		FilterProjects               func(childComplexity int, filter *model.ProjectFilterInput) int
 		GetAllStrategies             func(childComplexity int) int
 		GetAllUsers                  func(childComplexity int) int
 		GetHistoricKlineData         func(childComplexity int, symbol string, limit *int) int
@@ -253,7 +253,7 @@ type QueryResolver interface {
 	TaskByID(ctx context.Context, id string) (*model.Task, error)
 	AllTasks(ctx context.Context) ([]*model.Task, error)
 	ProjectByID(ctx context.Context, id string) (*model.Project, error)
-	AllProjects(ctx context.Context) ([]*model.Project, error)
+	FilterProjects(ctx context.Context, filter *model.ProjectFilterInput) ([]*model.Project, error)
 }
 
 type executableSchema struct {
@@ -765,13 +765,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.ActivityReports(childComplexity), true
 
-	case "Query.allProjects":
-		if e.complexity.Query.AllProjects == nil {
-			break
-		}
-
-		return e.complexity.Query.AllProjects(childComplexity), true
-
 	case "Query.allTasks":
 		if e.complexity.Query.AllTasks == nil {
 			break
@@ -785,6 +778,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.AvailableSymbols(childComplexity), true
+
+	case "Query.filterProjects":
+		if e.complexity.Query.FilterProjects == nil {
+			break
+		}
+
+		args, err := ec.field_Query_filterProjects_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FilterProjects(childComplexity, args["filter"].(*model.ProjectFilterInput)), true
 
 	case "Query.getAllStrategies":
 		if e.complexity.Query.GetAllStrategies == nil {
@@ -1331,6 +1336,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputNewTradeOutcomeReport,
 		ec.unmarshalInputOHLCInput,
 		ec.unmarshalInputPairInput,
+		ec.unmarshalInputProjectFilterInput,
 		ec.unmarshalInputStrategyInput,
 		ec.unmarshalInputUpdateCountersInput,
 		ec.unmarshalInputUpdateProjectInput,
@@ -1832,22 +1838,27 @@ input UpdateProjectInput {
   status: String
 }
 
+input ProjectFilterInput {
+  sop: Boolean
+}
+
 # ==========================
 # Queries
 # ==========================
 
 extend type Query {
-  # Get a single task by ID
+  "Get a single task by ID"
   taskById(id: ID!): Task
 
-  # Get all tasks
+  "Get all tasks"
   allTasks: [Task]
 
-  # Get a single project by ID
+  "Get a single project by ID"
   projectById(id: ID!): Project
 
-  # Get all projects
-  allProjects: [Project]
+
+  "Get projects filtered by SOP standard operating proceedure"
+  filterProjects(filter: ProjectFilterInput): [Project!]!
 }
 
 
@@ -1856,22 +1867,22 @@ extend type Query {
 # ==========================
 
 extend type Mutation {
-  # Create a new task
+  "Create a new task"
   createTask(input: CreateTaskInput!): Task
 
-  # Update an existing task
+  "Update an existing task"
   updateTask(input: UpdateTaskInput!): Task
 
-  # Delete a task by ID
+  "Delete a task by ID"
   deleteTask(id: ID!): Boolean
 
-  # Create a new project
+  "Create a new project"
   createProject(input: CreateProjectInput!): Project
 
-  # Update an existing project
+  "Update an existing project"
   updateProject(input: UpdateProjectInput!): Project
 
-  # Delete a project by ID
+  "Delete a project by ID"
   deleteProject(id: ID!): Boolean
 }
 `, BuiltIn: false},
@@ -2648,6 +2659,34 @@ func (ec *executionContext) field_Query___type_argsName(
 	}
 
 	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_filterProjects_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_filterProjects_argsFilter(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["filter"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_filterProjects_argsFilter(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*model.ProjectFilterInput, error) {
+	if _, ok := rawArgs["filter"]; !ok {
+		var zeroVal *model.ProjectFilterInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
+	if tmp, ok := rawArgs["filter"]; ok {
+		return ec.unmarshalOProjectFilterInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐProjectFilterInput(ctx, tmp)
+	}
+
+	var zeroVal *model.ProjectFilterInput
 	return zeroVal, nil
 }
 
@@ -7094,8 +7133,8 @@ func (ec *executionContext) fieldContext_Query_projectById(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_allProjects(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_allProjects(ctx, field)
+func (ec *executionContext) _Query_filterProjects(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_filterProjects(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -7108,21 +7147,24 @@ func (ec *executionContext) _Query_allProjects(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().AllProjects(rctx)
+		return ec.resolvers.Query().FilterProjects(rctx, fc.Args["filter"].(*model.ProjectFilterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.([]*model.Project)
 	fc.Result = res
-	return ec.marshalOProject2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐProject(ctx, field.Selections, res)
+	return ec.marshalNProject2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐProjectᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_allProjects(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_filterProjects(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -7155,6 +7197,17 @@ func (ec *executionContext) fieldContext_Query_allProjects(_ context.Context, fi
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_filterProjects_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -12201,6 +12254,33 @@ func (ec *executionContext) unmarshalInputPairInput(ctx context.Context, obj any
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputProjectFilterInput(ctx context.Context, obj any) (model.ProjectFilterInput, error) {
+	var it model.ProjectFilterInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"sop"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "sop":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sop"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Sop = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputStrategyInput(ctx context.Context, obj any) (model.StrategyInput, error) {
 	var it model.StrategyInput
 	asMap := map[string]any{}
@@ -13541,16 +13621,19 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "allProjects":
+		case "filterProjects":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_allProjects(ctx, field)
+				res = ec._Query_filterProjects(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -14638,6 +14721,60 @@ func (ec *executionContext) unmarshalNPairInput2ᚖcryptobotmanagerᚗcomᚋcbm�
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNProject2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐProjectᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Project) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNProject2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐProject(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNProject2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐProject(ctx context.Context, sel ast.SelectionSet, v *model.Project) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Project(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNStrategyInput2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐStrategyInput(ctx context.Context, v any) (model.StrategyInput, error) {
 	res, err := ec.unmarshalInputStrategyInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -15203,52 +15340,19 @@ func (ec *executionContext) marshalOPair2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑba
 	return ret
 }
 
-func (ec *executionContext) marshalOProject2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐProject(ctx context.Context, sel ast.SelectionSet, v []*model.Project) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOProject2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐProject(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
 func (ec *executionContext) marshalOProject2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐProject(ctx context.Context, sel ast.SelectionSet, v *model.Project) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Project(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOProjectFilterInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐProjectFilterInput(ctx context.Context, v any) (*model.ProjectFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputProjectFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOStrategy2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐStrategy(ctx context.Context, sel ast.SelectionSet, v []*model.Strategy) graphql.Marshaler {
