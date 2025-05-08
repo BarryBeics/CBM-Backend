@@ -272,6 +272,18 @@ type UpdateTaskInput struct {
 	ProjectID   *string   `json:"projectId,omitempty"`
 }
 
+type UpdateUserInput struct {
+	ID        string  `json:"id"`
+	FirstName *string `json:"firstName,omitempty"`
+	LastName  *string `json:"lastName,omitempty"`
+	Email     *string `json:"email,omitempty"`
+	Password  *string `json:"password,omitempty"`
+	Contact   *string `json:"contact,omitempty"`
+	Address1  *string `json:"address1,omitempty"`
+	Address2  *string `json:"address2,omitempty"`
+	Role      *string `json:"role,omitempty"`
+}
+
 type User struct {
 	ID        string `json:"id"`
 	FirstName string `json:"firstName"`

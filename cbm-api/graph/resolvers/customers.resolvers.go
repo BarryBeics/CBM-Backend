@@ -22,6 +22,17 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 	return user, nil
 }
 
+// UpdateUser is the resolver for the updateUser field.
+func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*model.User, error) {
+	task, err := db.UpdateUser(ctx, input)
+	if err != nil {
+		log.Error().Err(err).Msg("Error updating task:")
+		return nil, err
+	}
+
+	return task, nil
+}
+
 // DeleteUser is the resolver for the deleteUser field.
 func (r *mutationResolver) DeleteUser(ctx context.Context, email string) (*bool, error) {
 	success, err := db.DeleteUserByEmail(ctx, email)

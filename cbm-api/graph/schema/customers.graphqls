@@ -23,10 +23,25 @@ input CreateUserInput {
   role: String!
 }
 
+input UpdateUserInput {
+  id: ID!
+  firstName: String
+  lastName: String
+  email: String
+  password: String     
+  contact: String
+  address1: String
+  address2: String
+  role: String
+}
+
 
 extend type Mutation {
   "Creates a new user"
   createUser(input: CreateUserInput!): User
+
+  "Update an existing user"
+  updateUser(input: UpdateUserInput!): User
 
   "Deletes a user by email"
   deleteUser(email: String!): Boolean

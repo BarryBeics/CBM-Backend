@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"time"
 
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	"github.com/rs/zerolog/log"
@@ -91,4 +92,55 @@ func (db *DB) GetAllUsers(ctx context.Context) ([]*model.User, error) {
 	}
 
 	return users, nil
+}
+
+func (db *DB) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*model.User, error) {
+	collection := db.client.Database("go_trading_db").Collection("Customers")
+
+	filter := bson.M{"id": input.ID}
+	updateFields := bson.M{
+		"updatedAt": time.Now().Format(time.RFC3339),
+	}
+
+	if input.FirstName != nil {
+		updateFields["firstName"] = *input.FirstName
+	}
+	if input.LastName != nil {
+		updateFields["lastName"] = *input.LastName
+	}
+	if input.Email != nil {
+		updateFields["email"] = *input.Email
+	}
+	if input.Password != nil {
+		updateFields["password"] = *input.Password
+	}
+	if input.Contact != nil {
+		updateFields["contact"] = *input.Contact
+	}
+	if input.Address1 != nil {
+		updateFields["address1"] = *input.Address1
+	}
+	if input.Address2 != nil {
+		updateFields["address2"] = *input.Address2
+	}
+	if input.Role != nil {
+		updateFields["role"] = *input.Role
+	}
+
+	update := bson.M{"$set": updateFields}
+
+	_, err := collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		log.Error().Err(err).Msg("Error updating user:")
+		return nil, err
+	}
+
+	var updated model.User
+	err = collection.FindOne(ctx, filter).Decode(&updated)
+	if err != nil {
+		log.Error().Err(err).Msg("Error retrieving updated user:")
+		return nil, err
+	}
+
+	return &updated, nil
 }
