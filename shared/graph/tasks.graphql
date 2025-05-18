@@ -1,0 +1,69 @@
+query GetAllTasks{
+  allTasks {
+    id
+    title
+    description
+    status
+    priority
+    assignedTo
+    dueDate
+    category
+    projectId
+    createdAt
+    updatedAt
+  }
+}
+
+
+
+query GetAllProjects($isSop: Boolean) {
+  filterProjects(filter: { sop: $isSop }) {
+    id
+    title
+    sop
+    description
+    labels
+    assignedTo
+    dueDate
+    status
+    createdAt
+    updatedAt
+    tasks {
+      id
+    }
+  }
+}
+
+
+mutation CreateProject($input: CreateProjectInput!) {
+  createProject(input: $input) {
+    id
+    title
+    sop
+    description
+    labels
+    assignedTo
+    dueDate
+    status
+    createdAt
+    updatedAt
+  }
+}
+
+mutation CreateTask($input: CreateTaskInput!) {
+  createTask(input: $input) {
+    id
+    title
+    description
+    status
+    priority
+    type
+    labels
+    assignedTo
+    dueDate
+    category
+    projectId
+    createdAt
+    updatedAt
+  }
+}
