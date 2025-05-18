@@ -157,6 +157,143 @@ func (v *CreateTradeOutcomeReportResponse) GetCreateTradeOutcomeReport() CreateT
 	return v.CreateTradeOutcomeReport
 }
 
+// CreateUserCreateUser includes the requested fields of the GraphQL type User.
+type CreateUserCreateUser struct {
+	Id        string `json:"id"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+	Role      string `json:"role"`
+}
+
+// GetId returns CreateUserCreateUser.Id, and is useful for accessing the field via an interface.
+func (v *CreateUserCreateUser) GetId() string { return v.Id }
+
+// GetFirstName returns CreateUserCreateUser.FirstName, and is useful for accessing the field via an interface.
+func (v *CreateUserCreateUser) GetFirstName() string { return v.FirstName }
+
+// GetLastName returns CreateUserCreateUser.LastName, and is useful for accessing the field via an interface.
+func (v *CreateUserCreateUser) GetLastName() string { return v.LastName }
+
+// GetEmail returns CreateUserCreateUser.Email, and is useful for accessing the field via an interface.
+func (v *CreateUserCreateUser) GetEmail() string { return v.Email }
+
+// GetRole returns CreateUserCreateUser.Role, and is useful for accessing the field via an interface.
+func (v *CreateUserCreateUser) GetRole() string { return v.Role }
+
+type CreateUserInput struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	Contact   string `json:"contact"`
+	Address1  string `json:"address1"`
+	Address2  string `json:"address2"`
+	Role      string `json:"role"`
+}
+
+// GetFirstName returns CreateUserInput.FirstName, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetFirstName() string { return v.FirstName }
+
+// GetLastName returns CreateUserInput.LastName, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetLastName() string { return v.LastName }
+
+// GetEmail returns CreateUserInput.Email, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetEmail() string { return v.Email }
+
+// GetPassword returns CreateUserInput.Password, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetPassword() string { return v.Password }
+
+// GetContact returns CreateUserInput.Contact, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetContact() string { return v.Contact }
+
+// GetAddress1 returns CreateUserInput.Address1, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetAddress1() string { return v.Address1 }
+
+// GetAddress2 returns CreateUserInput.Address2, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetAddress2() string { return v.Address2 }
+
+// GetRole returns CreateUserInput.Role, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetRole() string { return v.Role }
+
+// CreateUserResponse is returned by CreateUser on success.
+type CreateUserResponse struct {
+	// Creates a new user
+	CreateUser CreateUserCreateUser `json:"createUser"`
+}
+
+// GetCreateUser returns CreateUserResponse.CreateUser, and is useful for accessing the field via an interface.
+func (v *CreateUserResponse) GetCreateUser() CreateUserCreateUser { return v.CreateUser }
+
+// GetAllProjectsFilterProjectsProject includes the requested fields of the GraphQL type Project.
+type GetAllProjectsFilterProjectsProject struct {
+	Id          string                                         `json:"id"`
+	Title       string                                         `json:"title"`
+	Sop         bool                                           `json:"sop"`
+	Description string                                         `json:"description"`
+	Labels      []string                                       `json:"labels"`
+	AssignedTo  string                                         `json:"assignedTo"`
+	DueDate     string                                         `json:"dueDate"`
+	Status      string                                         `json:"status"`
+	CreatedAt   string                                         `json:"createdAt"`
+	UpdatedAt   string                                         `json:"updatedAt"`
+	Tasks       []GetAllProjectsFilterProjectsProjectTasksTask `json:"tasks"`
+}
+
+// GetId returns GetAllProjectsFilterProjectsProject.Id, and is useful for accessing the field via an interface.
+func (v *GetAllProjectsFilterProjectsProject) GetId() string { return v.Id }
+
+// GetTitle returns GetAllProjectsFilterProjectsProject.Title, and is useful for accessing the field via an interface.
+func (v *GetAllProjectsFilterProjectsProject) GetTitle() string { return v.Title }
+
+// GetSop returns GetAllProjectsFilterProjectsProject.Sop, and is useful for accessing the field via an interface.
+func (v *GetAllProjectsFilterProjectsProject) GetSop() bool { return v.Sop }
+
+// GetDescription returns GetAllProjectsFilterProjectsProject.Description, and is useful for accessing the field via an interface.
+func (v *GetAllProjectsFilterProjectsProject) GetDescription() string { return v.Description }
+
+// GetLabels returns GetAllProjectsFilterProjectsProject.Labels, and is useful for accessing the field via an interface.
+func (v *GetAllProjectsFilterProjectsProject) GetLabels() []string { return v.Labels }
+
+// GetAssignedTo returns GetAllProjectsFilterProjectsProject.AssignedTo, and is useful for accessing the field via an interface.
+func (v *GetAllProjectsFilterProjectsProject) GetAssignedTo() string { return v.AssignedTo }
+
+// GetDueDate returns GetAllProjectsFilterProjectsProject.DueDate, and is useful for accessing the field via an interface.
+func (v *GetAllProjectsFilterProjectsProject) GetDueDate() string { return v.DueDate }
+
+// GetStatus returns GetAllProjectsFilterProjectsProject.Status, and is useful for accessing the field via an interface.
+func (v *GetAllProjectsFilterProjectsProject) GetStatus() string { return v.Status }
+
+// GetCreatedAt returns GetAllProjectsFilterProjectsProject.CreatedAt, and is useful for accessing the field via an interface.
+func (v *GetAllProjectsFilterProjectsProject) GetCreatedAt() string { return v.CreatedAt }
+
+// GetUpdatedAt returns GetAllProjectsFilterProjectsProject.UpdatedAt, and is useful for accessing the field via an interface.
+func (v *GetAllProjectsFilterProjectsProject) GetUpdatedAt() string { return v.UpdatedAt }
+
+// GetTasks returns GetAllProjectsFilterProjectsProject.Tasks, and is useful for accessing the field via an interface.
+func (v *GetAllProjectsFilterProjectsProject) GetTasks() []GetAllProjectsFilterProjectsProjectTasksTask {
+	return v.Tasks
+}
+
+// GetAllProjectsFilterProjectsProjectTasksTask includes the requested fields of the GraphQL type Task.
+type GetAllProjectsFilterProjectsProjectTasksTask struct {
+	Id string `json:"id"`
+}
+
+// GetId returns GetAllProjectsFilterProjectsProjectTasksTask.Id, and is useful for accessing the field via an interface.
+func (v *GetAllProjectsFilterProjectsProjectTasksTask) GetId() string { return v.Id }
+
+// GetAllProjectsResponse is returned by GetAllProjects on success.
+type GetAllProjectsResponse struct {
+	// Get projects filtered by SOP standard operating proceedure
+	FilterProjects []GetAllProjectsFilterProjectsProject `json:"filterProjects"`
+}
+
+// GetFilterProjects returns GetAllProjectsResponse.FilterProjects, and is useful for accessing the field via an interface.
+func (v *GetAllProjectsResponse) GetFilterProjects() []GetAllProjectsFilterProjectsProject {
+	return v.FilterProjects
+}
+
 // GetAllStrategiesGetAllStrategiesStrategy includes the requested fields of the GraphQL type Strategy.
 type GetAllStrategiesGetAllStrategiesStrategy struct {
 	BotInstanceName      string  `json:"BotInstanceName"`
@@ -267,6 +404,63 @@ type GetAllStrategiesResponse struct {
 func (v *GetAllStrategiesResponse) GetGetAllStrategies() []GetAllStrategiesGetAllStrategiesStrategy {
 	return v.GetAllStrategies
 }
+
+// GetAllTasksAllTasksTask includes the requested fields of the GraphQL type Task.
+type GetAllTasksAllTasksTask struct {
+	Id          string `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Status      string `json:"status"`
+	Priority    string `json:"priority"`
+	AssignedTo  string `json:"assignedTo"`
+	DueDate     string `json:"dueDate"`
+	Category    string `json:"category"`
+	ProjectId   string `json:"projectId"`
+	CreatedAt   string `json:"createdAt"`
+	UpdatedAt   string `json:"updatedAt"`
+}
+
+// GetId returns GetAllTasksAllTasksTask.Id, and is useful for accessing the field via an interface.
+func (v *GetAllTasksAllTasksTask) GetId() string { return v.Id }
+
+// GetTitle returns GetAllTasksAllTasksTask.Title, and is useful for accessing the field via an interface.
+func (v *GetAllTasksAllTasksTask) GetTitle() string { return v.Title }
+
+// GetDescription returns GetAllTasksAllTasksTask.Description, and is useful for accessing the field via an interface.
+func (v *GetAllTasksAllTasksTask) GetDescription() string { return v.Description }
+
+// GetStatus returns GetAllTasksAllTasksTask.Status, and is useful for accessing the field via an interface.
+func (v *GetAllTasksAllTasksTask) GetStatus() string { return v.Status }
+
+// GetPriority returns GetAllTasksAllTasksTask.Priority, and is useful for accessing the field via an interface.
+func (v *GetAllTasksAllTasksTask) GetPriority() string { return v.Priority }
+
+// GetAssignedTo returns GetAllTasksAllTasksTask.AssignedTo, and is useful for accessing the field via an interface.
+func (v *GetAllTasksAllTasksTask) GetAssignedTo() string { return v.AssignedTo }
+
+// GetDueDate returns GetAllTasksAllTasksTask.DueDate, and is useful for accessing the field via an interface.
+func (v *GetAllTasksAllTasksTask) GetDueDate() string { return v.DueDate }
+
+// GetCategory returns GetAllTasksAllTasksTask.Category, and is useful for accessing the field via an interface.
+func (v *GetAllTasksAllTasksTask) GetCategory() string { return v.Category }
+
+// GetProjectId returns GetAllTasksAllTasksTask.ProjectId, and is useful for accessing the field via an interface.
+func (v *GetAllTasksAllTasksTask) GetProjectId() string { return v.ProjectId }
+
+// GetCreatedAt returns GetAllTasksAllTasksTask.CreatedAt, and is useful for accessing the field via an interface.
+func (v *GetAllTasksAllTasksTask) GetCreatedAt() string { return v.CreatedAt }
+
+// GetUpdatedAt returns GetAllTasksAllTasksTask.UpdatedAt, and is useful for accessing the field via an interface.
+func (v *GetAllTasksAllTasksTask) GetUpdatedAt() string { return v.UpdatedAt }
+
+// GetAllTasksResponse is returned by GetAllTasks on success.
+type GetAllTasksResponse struct {
+	// Get all tasks
+	AllTasks []GetAllTasksAllTasksTask `json:"allTasks"`
+}
+
+// GetAllTasks returns GetAllTasksResponse.AllTasks, and is useful for accessing the field via an interface.
+func (v *GetAllTasksResponse) GetAllTasks() []GetAllTasksAllTasksTask { return v.AllTasks }
 
 // GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices includes the requested fields of the GraphQL type HistoricPrices.
 type GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices struct {
@@ -458,6 +652,22 @@ func (v *__CreateTradeOutcomeReportInput) GetFearGreedIndex() int { return v.Fea
 // GetMarketStatus returns __CreateTradeOutcomeReportInput.MarketStatus, and is useful for accessing the field via an interface.
 func (v *__CreateTradeOutcomeReportInput) GetMarketStatus() string { return v.MarketStatus }
 
+// __CreateUserInput is used internally by genqlient
+type __CreateUserInput struct {
+	Input CreateUserInput `json:"input"`
+}
+
+// GetInput returns __CreateUserInput.Input, and is useful for accessing the field via an interface.
+func (v *__CreateUserInput) GetInput() CreateUserInput { return v.Input }
+
+// __GetAllProjectsInput is used internally by genqlient
+type __GetAllProjectsInput struct {
+	IsSop bool `json:"isSop"`
+}
+
+// GetIsSop returns __GetAllProjectsInput.IsSop, and is useful for accessing the field via an interface.
+func (v *__GetAllProjectsInput) GetIsSop() bool { return v.IsSop }
+
 // __GetHistoricPricesAtTimestampInput is used internally by genqlient
 type __GetHistoricPricesAtTimestampInput struct {
 	Datetime int `json:"datetime"`
@@ -468,9 +678,8 @@ func (v *__GetHistoricPricesAtTimestampInput) GetDatetime() int { return v.Datet
 
 // __GetPriceDataInput is used internally by genqlient
 type __GetPriceDataInput struct {
-	Symbol    string `json:"symbol"`
-	Limit     int    `json:"limit"`
-	Ascending bool   `json:"ascending"`
+	Symbol string `json:"symbol"`
+	Limit  int    `json:"limit"`
 }
 
 // GetSymbol returns __GetPriceDataInput.Symbol, and is useful for accessing the field via an interface.
@@ -478,9 +687,6 @@ func (v *__GetPriceDataInput) GetSymbol() string { return v.Symbol }
 
 // GetLimit returns __GetPriceDataInput.Limit, and is useful for accessing the field via an interface.
 func (v *__GetPriceDataInput) GetLimit() int { return v.Limit }
-
-// GetAscending returns __GetPriceDataInput.Ascending, and is useful for accessing the field via an interface.
-func (v *__GetPriceDataInput) GetAscending() bool { return v.Ascending }
 
 // The mutation executed by CreateActivityReport.
 const CreateActivityReport_Operation = `
@@ -637,6 +843,90 @@ func CreateTradeOutcomeReport(
 	return data_, err_
 }
 
+// The mutation executed by CreateUser.
+const CreateUser_Operation = `
+mutation CreateUser ($input: CreateUserInput!) {
+	createUser(input: $input) {
+		id
+		firstName
+		lastName
+		email
+		role
+	}
+}
+`
+
+func CreateUser(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input CreateUserInput,
+) (data_ *CreateUserResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "CreateUser",
+		Query:  CreateUser_Operation,
+		Variables: &__CreateUserInput{
+			Input: input,
+		},
+	}
+
+	data_ = &CreateUserResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetAllProjects.
+const GetAllProjects_Operation = `
+query GetAllProjects ($isSop: Boolean) {
+	filterProjects(filter: {sop:$isSop}) {
+		id
+		title
+		sop
+		description
+		labels
+		assignedTo
+		dueDate
+		status
+		createdAt
+		updatedAt
+		tasks {
+			id
+		}
+	}
+}
+`
+
+func GetAllProjects(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	isSop bool,
+) (data_ *GetAllProjectsResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetAllProjects",
+		Query:  GetAllProjects_Operation,
+		Variables: &__GetAllProjectsInput{
+			IsSop: isSop,
+		},
+	}
+
+	data_ = &GetAllProjectsResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The query executed by GetAllStrategies.
 const GetAllStrategies_Operation = `
 query GetAllStrategies {
@@ -675,6 +965,46 @@ func GetAllStrategies(
 	}
 
 	data_ = &GetAllStrategiesResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetAllTasks.
+const GetAllTasks_Operation = `
+query GetAllTasks {
+	allTasks {
+		id
+		title
+		description
+		status
+		priority
+		assignedTo
+		dueDate
+		category
+		projectId
+		createdAt
+		updatedAt
+	}
+}
+`
+
+func GetAllTasks(
+	ctx_ context.Context,
+	client_ graphql.Client,
+) (data_ *GetAllTasksResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetAllTasks",
+		Query:  GetAllTasks_Operation,
+	}
+
+	data_ = &GetAllTasksResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -726,8 +1056,8 @@ func GetHistoricPricesAtTimestamp(
 
 // The query executed by GetPriceData.
 const GetPriceData_Operation = `
-query GetPriceData ($symbol: String!, $limit: Int!, $ascending: Boolean!) {
-	getHistoricPrice(symbol: $symbol, limit: $limit, ascending: $ascending) {
+query GetPriceData ($symbol: String!, $limit: Int!) {
+	getHistoricPrice(symbol: $symbol, limit: $limit) {
 		Pair {
 			Symbol
 			Price
@@ -742,15 +1072,13 @@ func GetPriceData(
 	client_ graphql.Client,
 	symbol string,
 	limit int,
-	ascending bool,
 ) (data_ *GetPriceDataResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "GetPriceData",
 		Query:  GetPriceData_Operation,
 		Variables: &__GetPriceDataInput{
-			Symbol:    symbol,
-			Limit:     limit,
-			Ascending: ascending,
+			Symbol: symbol,
+			Limit:  limit,
 		},
 	}
 

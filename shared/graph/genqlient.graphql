@@ -20,8 +20,8 @@ query GetHistoricPricesAtTimestamp(
   }
 }
 
-query GetPriceData($symbol: String!, $limit: Int!, $ascending: Boolean!) {
-  getHistoricPrice(symbol: $symbol, limit: $limit, ascending: $ascending) {
+query GetPriceData($symbol: String!, $limit: Int!) {
+  getHistoricPrice(symbol: $symbol, limit: $limit) {
     Pair {
       Symbol
       Price

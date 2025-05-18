@@ -29,6 +29,40 @@ type ActivityReport {
   FearGreedIndex: Int!
 }
 
+input CreateProjectInput {
+  title: String!
+  sop: Boolean = false
+  description: String
+  labels: [String]
+  assignedTo: String
+  dueDate: String
+  status: String = "active"
+}
+
+input CreateTaskInput {
+  title: String!
+  description: String
+  status: String = "inbox"
+  priority: String = "medium"
+  type: String
+  labels: [String]
+  assignedTo: String
+  dueDate: String
+  category: String
+  projectId: String
+}
+
+input CreateUserInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  contact: String!
+  address1: String!
+  address2: String!
+  role: String!
+}
+
 type HistoricKlineData {
   opentime: Int!
   coins: [OHLC!]!
@@ -37,6 +71,16 @@ type HistoricKlineData {
 type HistoricPrices {
   Pair: [Pair!]
   Timestamp: Int!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type LoginResponse {
+  token: String!
+  user: User!
 }
 
 input MarkAsTestedInput {
@@ -86,6 +130,17 @@ type Mutation {
   markAsTested(input: MarkAsTestedInput!): Boolean
 
   """
+  Creates a new user
+  """
+  createUser(input: CreateUserInput!): User
+
+  """
+  Deletes a user by email
+  """
+  deleteUser(email: String!): Boolean
+  login(input: LoginInput!): LoginResponse!
+
+  """
   Creates an array of Historic Price pairs
   """
   createHistoricPrices(input: NewHistoricPriceInput): [HistoricPrices!]!
@@ -99,6 +154,36 @@ type Mutation {
   Deletes all prices data for the matching given timestamp
   """
   deleteHistoricPrices(Timestamp: Int!): Boolean!
+
+  """
+  Create a new task
+  """
+  createTask(input: CreateTaskInput!): Task
+
+  """
+  Update an existing task
+  """
+  updateTask(input: UpdateTaskInput!): Task
+
+  """
+  Delete a task by ID
+  """
+  deleteTask(id: ID!): Boolean
+
+  """
+  Create a new project
+  """
+  createProject(input: CreateProjectInput!): Project
+
+  """
+  Update an existing project
+  """
+  updateProject(input: UpdateProjectInput!): Project
+
+  """
+  Delete a project by ID
+  """
+  deleteProject(id: ID!): Boolean
 }
 
 input NewActivityReport {
@@ -163,6 +248,24 @@ input PairInput {
   Price: String!
 }
 
+type Project {
+  id: ID!
+  title: String!
+  sop: Boolean!
+  description: String
+  labels: [String]
+  assignedTo: String
+  dueDate: String
+  status: String!
+  createdAt: String!
+  updatedAt: String!
+  tasks: [Task]
+}
+
+input ProjectFilterInput {
+  sop: Boolean
+}
+
 type Query {
   """
   Get activity reports by ID
@@ -209,13 +312,19 @@ type Query {
   getAllStrategies: [Strategy]
 
   """
+  Get a user by email
+  """
+  getUserByEmail(email: String!): User
+
+  """
+  Get all users
+  """
+  getAllUsers: [User!]!
+
+  """
   Fetches price data for a given symbol up to a given limit of records
   """
-  getHistoricPrice(
-    symbol: String!
-    limit: Int
-    ascending: Boolean
-  ): [HistoricPrices!]!
+  getHistoricPrice(symbol: String!, limit: Int): [HistoricPrices!]!
 
   """
   Gets all prices data at a given timestamp
@@ -231,6 +340,31 @@ type Query {
   Returns a count of timestamps in the DB
   """
   getUniqueTimestampCount: Int!
+
+  """
+  This will give you a []string of all available trading symbols in your HistoricPrices collection.
+  """
+  availableSymbols: [String!]!
+
+  """
+  Get a single task by ID
+  """
+  taskById(id: ID!): Task
+
+  """
+  Get all tasks
+  """
+  allTasks: [Task]
+
+  """
+  Get a single project by ID
+  """
+  projectById(id: ID!): Project
+
+  """
+  Get projects filtered by SOP standard operating proceedure
+  """
+  filterProjects(filter: ProjectFilterInput): [Project!]!
 }
 
 type Strategy {
@@ -279,6 +413,22 @@ input StrategyInput {
   CreatedOn: Int!
 }
 
+type Task {
+  id: ID!
+  title: String!
+  description: String
+  status: String!
+  priority: String
+  type: String
+  labels: [String]
+  assignedTo: String
+  dueDate: String
+  category: String
+  projectId: String
+  createdAt: String!
+  updatedAt: String!
+}
+
 type TradeOutcomeReport {
   _id: ID!
   Timestamp: Int!
@@ -304,4 +454,41 @@ input UpdateCountersInput {
   NetLossCounter: Boolean
   AccountBalance: Float!
   FeesTotal: Float
+}
+
+input UpdateProjectInput {
+  id: ID!
+  title: String
+  sop: Boolean
+  description: String
+  labels: [String]
+  assignedTo: String
+  dueDate: String
+  status: String
+}
+
+input UpdateTaskInput {
+  id: ID!
+  title: String
+  description: String
+  status: String
+  priority: String
+  type: String
+  labels: [String]
+  assignedTo: String
+  dueDate: String
+  category: String
+  projectId: String
+}
+
+type User {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  contact: String!
+  address1: String!
+  address2: String!
+  role: String!
 }
