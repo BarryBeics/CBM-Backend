@@ -88,6 +88,198 @@ func (v *CreateHistoricPricesResponse) GetCreateHistoricPrices() []CreateHistori
 	return v.CreateHistoricPrices
 }
 
+// CreateProjectCreateProject includes the requested fields of the GraphQL type Project.
+type CreateProjectCreateProject struct {
+	Id          string   `json:"id"`
+	Title       string   `json:"title"`
+	Sop         bool     `json:"sop"`
+	Description string   `json:"description"`
+	Labels      []string `json:"labels"`
+	AssignedTo  string   `json:"assignedTo"`
+	DueDate     string   `json:"dueDate"`
+	Status      string   `json:"status"`
+	CreatedAt   string   `json:"createdAt"`
+	UpdatedAt   string   `json:"updatedAt"`
+}
+
+// GetId returns CreateProjectCreateProject.Id, and is useful for accessing the field via an interface.
+func (v *CreateProjectCreateProject) GetId() string { return v.Id }
+
+// GetTitle returns CreateProjectCreateProject.Title, and is useful for accessing the field via an interface.
+func (v *CreateProjectCreateProject) GetTitle() string { return v.Title }
+
+// GetSop returns CreateProjectCreateProject.Sop, and is useful for accessing the field via an interface.
+func (v *CreateProjectCreateProject) GetSop() bool { return v.Sop }
+
+// GetDescription returns CreateProjectCreateProject.Description, and is useful for accessing the field via an interface.
+func (v *CreateProjectCreateProject) GetDescription() string { return v.Description }
+
+// GetLabels returns CreateProjectCreateProject.Labels, and is useful for accessing the field via an interface.
+func (v *CreateProjectCreateProject) GetLabels() []string { return v.Labels }
+
+// GetAssignedTo returns CreateProjectCreateProject.AssignedTo, and is useful for accessing the field via an interface.
+func (v *CreateProjectCreateProject) GetAssignedTo() string { return v.AssignedTo }
+
+// GetDueDate returns CreateProjectCreateProject.DueDate, and is useful for accessing the field via an interface.
+func (v *CreateProjectCreateProject) GetDueDate() string { return v.DueDate }
+
+// GetStatus returns CreateProjectCreateProject.Status, and is useful for accessing the field via an interface.
+func (v *CreateProjectCreateProject) GetStatus() string { return v.Status }
+
+// GetCreatedAt returns CreateProjectCreateProject.CreatedAt, and is useful for accessing the field via an interface.
+func (v *CreateProjectCreateProject) GetCreatedAt() string { return v.CreatedAt }
+
+// GetUpdatedAt returns CreateProjectCreateProject.UpdatedAt, and is useful for accessing the field via an interface.
+func (v *CreateProjectCreateProject) GetUpdatedAt() string { return v.UpdatedAt }
+
+type CreateProjectInput struct {
+	Title       string   `json:"title"`
+	Sop         bool     `json:"sop"`
+	Description string   `json:"description"`
+	Labels      []string `json:"labels"`
+	AssignedTo  string   `json:"assignedTo"`
+	DueDate     string   `json:"dueDate"`
+	Status      string   `json:"status"`
+}
+
+// GetTitle returns CreateProjectInput.Title, and is useful for accessing the field via an interface.
+func (v *CreateProjectInput) GetTitle() string { return v.Title }
+
+// GetSop returns CreateProjectInput.Sop, and is useful for accessing the field via an interface.
+func (v *CreateProjectInput) GetSop() bool { return v.Sop }
+
+// GetDescription returns CreateProjectInput.Description, and is useful for accessing the field via an interface.
+func (v *CreateProjectInput) GetDescription() string { return v.Description }
+
+// GetLabels returns CreateProjectInput.Labels, and is useful for accessing the field via an interface.
+func (v *CreateProjectInput) GetLabels() []string { return v.Labels }
+
+// GetAssignedTo returns CreateProjectInput.AssignedTo, and is useful for accessing the field via an interface.
+func (v *CreateProjectInput) GetAssignedTo() string { return v.AssignedTo }
+
+// GetDueDate returns CreateProjectInput.DueDate, and is useful for accessing the field via an interface.
+func (v *CreateProjectInput) GetDueDate() string { return v.DueDate }
+
+// GetStatus returns CreateProjectInput.Status, and is useful for accessing the field via an interface.
+func (v *CreateProjectInput) GetStatus() string { return v.Status }
+
+// CreateProjectResponse is returned by CreateProject on success.
+type CreateProjectResponse struct {
+	// Create a new project
+	CreateProject CreateProjectCreateProject `json:"createProject"`
+}
+
+// GetCreateProject returns CreateProjectResponse.CreateProject, and is useful for accessing the field via an interface.
+func (v *CreateProjectResponse) GetCreateProject() CreateProjectCreateProject { return v.CreateProject }
+
+// CreateTaskCreateTask includes the requested fields of the GraphQL type Task.
+type CreateTaskCreateTask struct {
+	Id          string   `json:"id"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Status      string   `json:"status"`
+	Priority    string   `json:"priority"`
+	Type        string   `json:"type"`
+	Labels      []string `json:"labels"`
+	AssignedTo  string   `json:"assignedTo"`
+	DueDate     string   `json:"dueDate"`
+	Category    string   `json:"category"`
+	ProjectId   string   `json:"projectId"`
+	CreatedAt   string   `json:"createdAt"`
+	UpdatedAt   string   `json:"updatedAt"`
+}
+
+// GetId returns CreateTaskCreateTask.Id, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetId() string { return v.Id }
+
+// GetTitle returns CreateTaskCreateTask.Title, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetTitle() string { return v.Title }
+
+// GetDescription returns CreateTaskCreateTask.Description, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetDescription() string { return v.Description }
+
+// GetStatus returns CreateTaskCreateTask.Status, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetStatus() string { return v.Status }
+
+// GetPriority returns CreateTaskCreateTask.Priority, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetPriority() string { return v.Priority }
+
+// GetType returns CreateTaskCreateTask.Type, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetType() string { return v.Type }
+
+// GetLabels returns CreateTaskCreateTask.Labels, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetLabels() []string { return v.Labels }
+
+// GetAssignedTo returns CreateTaskCreateTask.AssignedTo, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetAssignedTo() string { return v.AssignedTo }
+
+// GetDueDate returns CreateTaskCreateTask.DueDate, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetDueDate() string { return v.DueDate }
+
+// GetCategory returns CreateTaskCreateTask.Category, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetCategory() string { return v.Category }
+
+// GetProjectId returns CreateTaskCreateTask.ProjectId, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetProjectId() string { return v.ProjectId }
+
+// GetCreatedAt returns CreateTaskCreateTask.CreatedAt, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetCreatedAt() string { return v.CreatedAt }
+
+// GetUpdatedAt returns CreateTaskCreateTask.UpdatedAt, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetUpdatedAt() string { return v.UpdatedAt }
+
+type CreateTaskInput struct {
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Status      string   `json:"status"`
+	Priority    string   `json:"priority"`
+	Type        string   `json:"type"`
+	Labels      []string `json:"labels"`
+	AssignedTo  string   `json:"assignedTo"`
+	DueDate     string   `json:"dueDate"`
+	Category    string   `json:"category"`
+	ProjectId   string   `json:"projectId"`
+}
+
+// GetTitle returns CreateTaskInput.Title, and is useful for accessing the field via an interface.
+func (v *CreateTaskInput) GetTitle() string { return v.Title }
+
+// GetDescription returns CreateTaskInput.Description, and is useful for accessing the field via an interface.
+func (v *CreateTaskInput) GetDescription() string { return v.Description }
+
+// GetStatus returns CreateTaskInput.Status, and is useful for accessing the field via an interface.
+func (v *CreateTaskInput) GetStatus() string { return v.Status }
+
+// GetPriority returns CreateTaskInput.Priority, and is useful for accessing the field via an interface.
+func (v *CreateTaskInput) GetPriority() string { return v.Priority }
+
+// GetType returns CreateTaskInput.Type, and is useful for accessing the field via an interface.
+func (v *CreateTaskInput) GetType() string { return v.Type }
+
+// GetLabels returns CreateTaskInput.Labels, and is useful for accessing the field via an interface.
+func (v *CreateTaskInput) GetLabels() []string { return v.Labels }
+
+// GetAssignedTo returns CreateTaskInput.AssignedTo, and is useful for accessing the field via an interface.
+func (v *CreateTaskInput) GetAssignedTo() string { return v.AssignedTo }
+
+// GetDueDate returns CreateTaskInput.DueDate, and is useful for accessing the field via an interface.
+func (v *CreateTaskInput) GetDueDate() string { return v.DueDate }
+
+// GetCategory returns CreateTaskInput.Category, and is useful for accessing the field via an interface.
+func (v *CreateTaskInput) GetCategory() string { return v.Category }
+
+// GetProjectId returns CreateTaskInput.ProjectId, and is useful for accessing the field via an interface.
+func (v *CreateTaskInput) GetProjectId() string { return v.ProjectId }
+
+// CreateTaskResponse is returned by CreateTask on success.
+type CreateTaskResponse struct {
+	// Create a new task
+	CreateTask CreateTaskCreateTask `json:"createTask"`
+}
+
+// GetCreateTask returns CreateTaskResponse.CreateTask, and is useful for accessing the field via an interface.
+func (v *CreateTaskResponse) GetCreateTask() CreateTaskCreateTask { return v.CreateTask }
+
 // CreateTradeOutcomeReportCreateTradeOutcomeReport includes the requested fields of the GraphQL type TradeOutcomeReport.
 type CreateTradeOutcomeReportCreateTradeOutcomeReport struct {
 	Id               string  `json:"_id"`
@@ -604,6 +796,22 @@ type __CreateHistoricPricesInput struct {
 // GetInput returns __CreateHistoricPricesInput.Input, and is useful for accessing the field via an interface.
 func (v *__CreateHistoricPricesInput) GetInput() NewHistoricPriceInput { return v.Input }
 
+// __CreateProjectInput is used internally by genqlient
+type __CreateProjectInput struct {
+	Input CreateProjectInput `json:"input"`
+}
+
+// GetInput returns __CreateProjectInput.Input, and is useful for accessing the field via an interface.
+func (v *__CreateProjectInput) GetInput() CreateProjectInput { return v.Input }
+
+// __CreateTaskInput is used internally by genqlient
+type __CreateTaskInput struct {
+	Input CreateTaskInput `json:"input"`
+}
+
+// GetInput returns __CreateTaskInput.Input, and is useful for accessing the field via an interface.
+func (v *__CreateTaskInput) GetInput() CreateTaskInput { return v.Input }
+
 // __CreateTradeOutcomeReportInput is used internally by genqlient
 type __CreateTradeOutcomeReportInput struct {
 	TimeStamp        int     `json:"timeStamp"`
@@ -767,6 +975,95 @@ func CreateHistoricPrices(
 	}
 
 	data_ = &CreateHistoricPricesResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by CreateProject.
+const CreateProject_Operation = `
+mutation CreateProject ($input: CreateProjectInput!) {
+	createProject(input: $input) {
+		id
+		title
+		sop
+		description
+		labels
+		assignedTo
+		dueDate
+		status
+		createdAt
+		updatedAt
+	}
+}
+`
+
+func CreateProject(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input CreateProjectInput,
+) (data_ *CreateProjectResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "CreateProject",
+		Query:  CreateProject_Operation,
+		Variables: &__CreateProjectInput{
+			Input: input,
+		},
+	}
+
+	data_ = &CreateProjectResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by CreateTask.
+const CreateTask_Operation = `
+mutation CreateTask ($input: CreateTaskInput!) {
+	createTask(input: $input) {
+		id
+		title
+		description
+		status
+		priority
+		type
+		labels
+		assignedTo
+		dueDate
+		category
+		projectId
+		createdAt
+		updatedAt
+	}
+}
+`
+
+func CreateTask(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input CreateTaskInput,
+) (data_ *CreateTaskResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "CreateTask",
+		Query:  CreateTask_Operation,
+		Variables: &__CreateTaskInput{
+			Input: input,
+		},
+	}
+
+	data_ = &CreateTaskResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

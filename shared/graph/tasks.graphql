@@ -33,3 +33,37 @@ query GetAllProjects($isSop: Boolean) {
     }
   }
 }
+
+
+mutation CreateProject($input: CreateProjectInput!) {
+  createProject(input: $input) {
+    id
+    title
+    sop
+    description
+    labels
+    assignedTo
+    dueDate
+    status
+    createdAt
+    updatedAt
+  }
+}
+
+mutation CreateTask($input: CreateTaskInput!) {
+  createTask(input: $input) {
+    id
+    title
+    description
+    status
+    priority
+    type
+    labels
+    assignedTo
+    dueDate
+    category
+    projectId
+    createdAt
+    updatedAt
+  }
+}

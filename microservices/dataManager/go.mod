@@ -1,4 +1,4 @@
-module cryptobotmanager.com/cbm-backend/microservices/export
+module cryptobotmanager.com/cbm-backend/microservices/dataManager
 
 go 1.24.2
 
