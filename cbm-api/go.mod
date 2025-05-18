@@ -6,7 +6,7 @@ replace cryptobotmanager.com/cbm-backend/cbm-api/graph/model => ./graph/model
 
 require (
 	github.com/99designs/gqlgen v0.17.72
-	github.com/Khan/genqlient v0.6.0
+	github.com/Khan/genqlient v0.8.0
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/rs/zerolog v1.34.0
 	github.com/vektah/gqlparser/v2 v2.5.25
@@ -18,6 +18,7 @@ require (
 	github.com/agnivade/levenshtein v1.2.1 // indirect
 	github.com/alexflint/go-arg v1.4.2 // indirect
 	github.com/alexflint/go-scalar v1.0.0 // indirect
+	github.com/bmatcuk/doublestar/v4 v4.6.1 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.6.0 // indirect

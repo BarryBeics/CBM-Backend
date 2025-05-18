@@ -13,15 +13,27 @@ type ActivityReport struct {
 	FearGreedIndex int      `json:"FearGreedIndex"`
 }
 
+type CreateProjectInput struct {
+	Title       string    `json:"title"`
+	Sop         *bool     `json:"sop,omitempty"`
+	Description *string   `json:"description,omitempty"`
+	Labels      []*string `json:"labels,omitempty"`
+	AssignedTo  *string   `json:"assignedTo,omitempty"`
+	DueDate     *string   `json:"dueDate,omitempty"`
+	Status      *string   `json:"status,omitempty"`
+}
+
 type CreateTaskInput struct {
-	Title       string  `json:"title"`
-	Description *string `json:"description,omitempty"`
-	Status      *string `json:"status,omitempty"`
-	Priority    *string `json:"priority,omitempty"`
-	AssignedTo  *string `json:"assignedTo,omitempty"`
-	DueDate     *string `json:"dueDate,omitempty"`
-	Category    *string `json:"category,omitempty"`
-	SopLink     *string `json:"sopLink,omitempty"`
+	Title       string    `json:"title"`
+	Description *string   `json:"description,omitempty"`
+	Status      *string   `json:"status,omitempty"`
+	Priority    *string   `json:"priority,omitempty"`
+	Type        *string   `json:"type,omitempty"`
+	Labels      []*string `json:"labels,omitempty"`
+	AssignedTo  *string   `json:"assignedTo,omitempty"`
+	DueDate     *string   `json:"dueDate,omitempty"`
+	Category    *string   `json:"category,omitempty"`
+	ProjectID   *string   `json:"projectId,omitempty"`
 }
 
 type CreateUserInput struct {
@@ -125,6 +137,24 @@ type PairInput struct {
 	Price  string `json:"Price"`
 }
 
+type Project struct {
+	ID          string    `json:"id"`
+	Title       string    `json:"title"`
+	Sop         bool      `json:"sop"`
+	Description *string   `json:"description,omitempty"`
+	Labels      []*string `json:"labels,omitempty"`
+	AssignedTo  *string   `json:"assignedTo,omitempty"`
+	DueDate     *string   `json:"dueDate,omitempty"`
+	Status      string    `json:"status"`
+	CreatedAt   string    `json:"createdAt"`
+	UpdatedAt   string    `json:"updatedAt"`
+	Tasks       []*Task   `json:"tasks,omitempty"`
+}
+
+type ProjectFilterInput struct {
+	Sop *bool `json:"sop,omitempty"`
+}
+
 type Query struct {
 }
 
@@ -175,17 +205,19 @@ type StrategyInput struct {
 }
 
 type Task struct {
-	ID          string  `json:"id"`
-	Title       string  `json:"title"`
-	Description *string `json:"description,omitempty"`
-	Status      string  `json:"status"`
-	Priority    *string `json:"priority,omitempty"`
-	AssignedTo  *string `json:"assignedTo,omitempty"`
-	DueDate     *string `json:"dueDate,omitempty"`
-	Category    *string `json:"category,omitempty"`
-	SopLink     *string `json:"sopLink,omitempty"`
-	CreatedAt   string  `json:"createdAt"`
-	UpdatedAt   string  `json:"updatedAt"`
+	ID          string    `json:"id"`
+	Title       string    `json:"title"`
+	Description *string   `json:"description,omitempty"`
+	Status      string    `json:"status"`
+	Priority    *string   `json:"priority,omitempty"`
+	Type        *string   `json:"type,omitempty"`
+	Labels      []*string `json:"labels,omitempty"`
+	AssignedTo  *string   `json:"assignedTo,omitempty"`
+	DueDate     *string   `json:"dueDate,omitempty"`
+	Category    *string   `json:"category,omitempty"`
+	ProjectID   *string   `json:"projectId,omitempty"`
+	CreatedAt   string    `json:"createdAt"`
+	UpdatedAt   string    `json:"updatedAt"`
 }
 
 type TradeOutcomeReport struct {
@@ -215,16 +247,41 @@ type UpdateCountersInput struct {
 	FeesTotal          *float64 `json:"FeesTotal,omitempty"`
 }
 
+type UpdateProjectInput struct {
+	ID          string    `json:"id"`
+	Title       *string   `json:"title,omitempty"`
+	Sop         *bool     `json:"sop,omitempty"`
+	Description *string   `json:"description,omitempty"`
+	Labels      []*string `json:"labels,omitempty"`
+	AssignedTo  *string   `json:"assignedTo,omitempty"`
+	DueDate     *string   `json:"dueDate,omitempty"`
+	Status      *string   `json:"status,omitempty"`
+}
+
 type UpdateTaskInput struct {
-	ID          string  `json:"id"`
-	Title       *string `json:"title,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Status      *string `json:"status,omitempty"`
-	Priority    *string `json:"priority,omitempty"`
-	AssignedTo  *string `json:"assignedTo,omitempty"`
-	DueDate     *string `json:"dueDate,omitempty"`
-	Category    *string `json:"category,omitempty"`
-	SopLink     *string `json:"sopLink,omitempty"`
+	ID          string    `json:"id"`
+	Title       *string   `json:"title,omitempty"`
+	Description *string   `json:"description,omitempty"`
+	Status      *string   `json:"status,omitempty"`
+	Priority    *string   `json:"priority,omitempty"`
+	Type        *string   `json:"type,omitempty"`
+	Labels      []*string `json:"labels,omitempty"`
+	AssignedTo  *string   `json:"assignedTo,omitempty"`
+	DueDate     *string   `json:"dueDate,omitempty"`
+	Category    *string   `json:"category,omitempty"`
+	ProjectID   *string   `json:"projectId,omitempty"`
+}
+
+type UpdateUserInput struct {
+	ID        string  `json:"id"`
+	FirstName *string `json:"firstName,omitempty"`
+	LastName  *string `json:"lastName,omitempty"`
+	Email     *string `json:"email,omitempty"`
+	Password  *string `json:"password,omitempty"`
+	Contact   *string `json:"contact,omitempty"`
+	Address1  *string `json:"address1,omitempty"`
+	Address2  *string `json:"address2,omitempty"`
+	Role      *string `json:"role,omitempty"`
 }
 
 type User struct {

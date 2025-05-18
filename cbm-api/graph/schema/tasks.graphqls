@@ -1,0 +1,133 @@
+# ==========================
+# Types
+# ==========================
+
+type Task {
+  id: ID!
+  title: String!
+  description: String
+  status: String!
+  priority: String
+  type: String
+  labels: [String]
+  assignedTo: String
+  dueDate: String
+  category: String
+  projectId: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Project {
+  id: ID!
+  title: String!
+  sop: Boolean!
+  description: String
+  labels: [String]
+  assignedTo: String
+  dueDate: String
+  status: String!
+  createdAt: String!
+  updatedAt: String!
+  tasks: [Task]
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input CreateTaskInput {
+  title: String!
+  description: String
+  status: String = "inbox"
+  priority: String = "medium"
+  type: String
+  labels: [String]
+  assignedTo: String
+  dueDate: String
+  category: String
+  projectId: String
+}
+
+input UpdateTaskInput {
+  id: ID!
+  title: String
+  description: String
+  status: String
+  priority: String
+  type: String
+  labels: [String]
+  assignedTo: String
+  dueDate: String
+  category: String
+  projectId: String
+}
+
+input CreateProjectInput {
+  title: String!
+  sop: Boolean = false
+  description: String
+  labels: [String]
+  assignedTo: String
+  dueDate: String
+  status: String = "active"
+}
+
+input UpdateProjectInput {
+  id: ID!
+  title: String
+  sop: Boolean
+  description: String
+  labels: [String]
+  assignedTo: String
+  dueDate: String
+  status: String
+}
+
+input ProjectFilterInput {
+  sop: Boolean
+}
+
+# ==========================
+# Queries
+# ==========================
+
+extend type Query {
+  "Get a single task by ID"
+  taskById(id: ID!): Task
+
+  "Get all tasks"
+  allTasks: [Task]
+
+  "Get a single project by ID"
+  projectById(id: ID!): Project
+
+
+  "Get projects filtered by SOP standard operating proceedure"
+  filterProjects(filter: ProjectFilterInput): [Project!]!
+}
+
+
+# ==========================
+# Mutations
+# ==========================
+
+extend type Mutation {
+  "Create a new task"
+  createTask(input: CreateTaskInput!): Task
+
+  "Update an existing task"
+  updateTask(input: UpdateTaskInput!): Task
+
+  "Delete a task by ID"
+  deleteTask(id: ID!): Boolean
+
+  "Create a new project"
+  createProject(input: CreateProjectInput!): Project
+
+  "Update an existing project"
+  updateProject(input: UpdateProjectInput!): Project
+
+  "Delete a project by ID"
+  deleteProject(id: ID!): Boolean
+}

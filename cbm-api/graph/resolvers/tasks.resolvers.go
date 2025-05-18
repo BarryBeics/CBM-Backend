@@ -44,8 +44,49 @@ func (r *mutationResolver) DeleteTask(ctx context.Context, id string) (*bool, er
 	return &success, nil
 }
 
-// Tasks is the resolver for the tasks field.
-func (r *queryResolver) Tasks(ctx context.Context) ([]*model.Task, error) {
+// CreateProject is the resolver for the createProject field.
+func (r *mutationResolver) CreateProject(ctx context.Context, input model.CreateProjectInput) (*model.Project, error) {
+	project, err := db.CreateProject(ctx, input)
+	if err != nil {
+		log.Error().Err(err).Msg("Error creating project:")
+		return nil, err
+	}
+	return project, nil
+}
+
+// UpdateProject is the resolver for the updateProject field.
+func (r *mutationResolver) UpdateProject(ctx context.Context, input model.UpdateProjectInput) (*model.Project, error) {
+	project, err := db.UpdateProject(ctx, input)
+	if err != nil {
+		log.Error().Err(err).Msg("Error updating project:")
+		return nil, err
+	}
+	return project, nil
+}
+
+// DeleteProject is the resolver for the deleteProject field.
+func (r *mutationResolver) DeleteProject(ctx context.Context, id string) (*bool, error) {
+	success, err := db.DeleteProjectByID(ctx, id)
+	if err != nil {
+		log.Error().Err(err).Msg("Error deleting project:")
+		return nil, err
+	}
+	return &success, nil
+}
+
+// TaskByID is the resolver for the taskById field.
+func (r *queryResolver) TaskByID(ctx context.Context, id string) (*model.Task, error) {
+	task, err := db.GetTaskByID(ctx, id)
+	if err != nil {
+		log.Error().Err(err).Msg("Error fetching task by ID:")
+		return nil, err
+	}
+
+	return task, nil
+}
+
+// AllTasks is the resolver for the allTasks field.
+func (r *queryResolver) AllTasks(ctx context.Context) ([]*model.Task, error) {
 	tasks, err := db.GetAllTasks(ctx)
 	if err != nil {
 		log.Error().Err(err).Msg("Error fetching tasks:")
@@ -55,13 +96,47 @@ func (r *queryResolver) Tasks(ctx context.Context) ([]*model.Task, error) {
 	return tasks, nil
 }
 
-// Task is the resolver for the task field.
-func (r *queryResolver) Task(ctx context.Context, id string) (*model.Task, error) {
-	task, err := db.GetTaskByID(ctx, id)
+// ProjectByID is the resolver for the projectById field.
+func (r *queryResolver) ProjectByID(ctx context.Context, id string) (*model.Project, error) {
+	project, err := db.GetProjectByID(ctx, id)
 	if err != nil {
-		log.Error().Err(err).Msg("Error fetching task by ID:")
+		log.Error().Err(err).Msg("Error fetching project by ID:")
 		return nil, err
 	}
 
-	return task, nil
+	// Fetch tasks manually
+	tasks, err := db.GetTasksByProjectID(ctx, project.ID)
+	if err != nil {
+		log.Error().Err(err).Msg("Error fetching tasks for project:")
+		return nil, err
+	}
+	project.Tasks = tasks
+
+	return project, nil
+}
+
+// FilterProjects is the resolver for the filterProjects field.
+func (r *queryResolver) FilterProjects(ctx context.Context, filter *model.ProjectFilterInput) ([]*model.Project, error) {
+	var projects []*model.Project
+	var err error
+
+	if filter != nil && filter.Sop != nil {
+		projects, err = db.GetProjectsBySOP(ctx, *filter.Sop)
+	}
+
+	if err != nil {
+		log.Error().Err(err).Msg("Error fetching projects:")
+		return nil, err
+	}
+
+	for _, project := range projects {
+		tasks, err := db.GetTasksByProjectID(ctx, project.ID)
+		if err != nil {
+			log.Error().Err(err).Str("projectID", project.ID).Msg("Error fetching tasks")
+			continue
+		}
+		project.Tasks = tasks
+	}
+
+	return projects, nil
 }
