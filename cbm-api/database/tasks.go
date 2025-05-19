@@ -18,30 +18,30 @@ func (db *DB) CreateTask(ctx context.Context, input model.CreateTaskInput) (*mod
 
 	now := time.Now().Format(time.RFC3339)
 
-	task := &model.Task{
-		ID:          primitive.NewObjectID().Hex(),
-		Title:       input.Title,
-		Description: input.Description,
-		Status:      *input.Status,
-		Priority:    input.Priority,
-		Type:        input.Type,
-		Labels:      input.Labels,
-		AssignedTo:  input.AssignedTo,
-		DueDate:     input.DueDate,
-		Category:    input.Category,
-		ProjectID:   input.ProjectID,
-
-		CreatedAt: now,
-		UpdatedAt: now,
+	task := bson.M{
+		"id":          primitive.NewObjectID().Hex(),
+		"title":       input.Title,
+		"description": input.Description,
+		"status":      *input.Status,
+		"priority":    input.Priority,
+		"type":        input.Type,
+		"labels":      input.Labels,
+		"assignedTo":  input.AssignedTo,
+		"dueDate":     input.DueDate,
+		"category":    input.Category,
+		"projectId":   input.ProjectID, // ensure this stays a string
+		"createdAt":   now,
+		"updatedAt":   now,
 	}
 
+	var updated model.Task
 	_, err := collection.InsertOne(ctx, task)
 	if err != nil {
 		log.Error().Err(err).Msg("Error inserting task into the database:")
 		return nil, err
 	}
 
-	return task, nil
+	return &updated, nil
 }
 
 // UpdateTask updates an existing task in the Tasks collection.
