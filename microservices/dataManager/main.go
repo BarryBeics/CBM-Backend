@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
@@ -44,9 +45,19 @@ type ExportTask struct {
 	UpdatedAt   string `json:"updatedAt"`
 }
 
+var seedDataDir = "/usr/local/share/seeds"
+
+func init() {
+	if custom := os.Getenv("SEED_DATA_DIR"); custom != "" {
+		seedDataDir = custom
+	}
+}
+
 func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+
+	_ = godotenv.Load()
 
 	mode := flag.String("mode", "export", "Mode to run: export, import, or seed-users")
 	flag.Parse()
@@ -196,13 +207,16 @@ func writeJSON(filename string, data interface{}) error {
 }
 
 func readJSON(filename string, out interface{}) error {
-	bytes, err := os.ReadFile(filename)
+	// Prepend default seed data path
+	fullPath := fmt.Sprintf("%s/%s", seedDataDir, filename)
+
+	bytes, err := os.ReadFile(fullPath)
 	if err != nil {
-		log.Error().Err(err).Str("file", filename).Msg("Failed to read file")
+		log.Error().Err(err).Str("file", fullPath).Msg("Failed to read file")
 		return err
 	}
 	if err := json.Unmarshal(bytes, out); err != nil {
-		log.Error().Err(err).Str("file", filename).Msg("Failed to unmarshal JSON")
+		log.Error().Err(err).Str("file", fullPath).Msg("Failed to unmarshal JSON")
 		return err
 	}
 	return nil
