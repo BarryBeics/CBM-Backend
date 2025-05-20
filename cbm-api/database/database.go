@@ -31,7 +31,7 @@ func Connect() *DB {
 		log.Fatal().Err(err).Msg("Failed to create MongoDB client")
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 	defer cancel()
 
 	err = client.Connect(ctx)
@@ -51,7 +51,7 @@ func Connect() *DB {
 
 func (db *DB) ensureIndexes() error {
 	collection := db.client.Database("go_trading_db").Collection("HistoricPrices")
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 	defer cancel()
 
 	indexes := []mongo.IndexModel{
