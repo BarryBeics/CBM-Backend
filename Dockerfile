@@ -7,13 +7,9 @@ COPY . .
 ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 RUN go work sync
 
-# Build backTesting
-WORKDIR /workdir/microservices/backTesting
-RUN go mod tidy && go build -o /usr/local/bin/microservice-binaries/backTesting main.go
+RUN go mod tidy && go build -o /usr/local/bin/microservice-binaries/dataManager microservices/dataManager/main.go
+RUN go build -o /usr/local/bin/microservice-binaries/backTesting microservices/backTesting/main.go
 
-# Build dataManager
-WORKDIR /workdir/microservices/dataManager
-RUN go mod tidy && go build -o /usr/local/bin/microservice-binaries/dataManager main.go
 
 # ---------- Stage 2: Runtime ----------
 FROM debian:12-slim AS nex
@@ -32,7 +28,7 @@ COPY --from=builder /usr/local/bin/microservice-binaries/* /usr/local/bin/micros
 RUN chmod +x /usr/local/bin/microservice-binaries/*
 
 # Optional: copy your crontab definition
-COPY crontab.txt /etc/cron.d/microservices-cron
+COPY microservices/crontab.txt /etc/cron.d/microservices-cron
 RUN chmod 0644 /etc/cron.d/microservices-cron && crontab /etc/cron.d/microservices-cron
 
 # Copy your startup script
