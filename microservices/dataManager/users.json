@@ -1,0 +1,44 @@
+[
+    {
+        "email": "barry@scalpelhound.com",
+        "password": "urwZV6Eqyq1nh2",
+        "firstName": "Barry",
+        "lastName": "Marples",
+        "role": "admin"
+    },
+    {
+        "email": "llinos@scalpelhound.com",
+        "password": "urwZV6Eqyq1nh2",
+        "firstName": "Llinos",
+        "lastName": "Marples",
+        "role": "admin"
+    },
+    {
+        "email": "sophie@scalpelhound.com",
+        "password": "urwZV6Eqyq1nh2",
+        "firstName": "Sopie",
+        "lastName": "Marples",
+        "role": "member"
+    },
+    {
+        "email": "liam@scalpelhound.com",
+        "password": "urwZV6Eqyq1nh2",
+        "firstName": "Liam",
+        "lastName": "Marples",
+        "role": "member"
+    },
+    {
+        "email": "cookie@scalpelhound.com",
+        "password": "urwZV6Eqyq1nh2",
+        "firstName": "Cookie",
+        "lastName": "Marples",
+        "role": "interested"
+    },
+    {
+        "email": "jaco@scalpelhound.com",
+        "password": "urwZV6Eqyq1nh2",
+        "firstName": "Jaco",
+        "lastName": "Marples",
+        "role": "interested"
+    }
+]
