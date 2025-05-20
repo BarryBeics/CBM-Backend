@@ -15,7 +15,7 @@ import (
 func (db *DB) SaveHistoricPrices(input *model.NewHistoricPriceInput) ([]*model.HistoricPrices, error) {
 	log.Debug().Msgf("Inserting prices into DB: %+v", input)
 	collection := db.client.Database("go_trading_db").Collection("HistoricPrices")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	// Iterate over pairs and insert each one into the collection
