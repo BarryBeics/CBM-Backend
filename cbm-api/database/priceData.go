@@ -13,12 +13,15 @@ import (
 )
 
 func (db *DB) SaveHistoricPrices(input *model.NewHistoricPriceInput) ([]*model.HistoricPrices, error) {
-	log.Debug().Msgf("Inserting prices into DB: %+v", input)
+	log.Info().
+		Int("timestamp", input.Timestamp).
+		Int("num_pairs", len(input.Pairs)).
+		Msg("Preparing to insert historic prices")
+
 	collection := db.client.Database("go_trading_db").Collection("HistoricPrices")
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	// Iterate over pairs and insert each one into the collection
 	historicPrices := &model.HistoricPrices{
 		Pair:      make([]*model.Pair, len(input.Pairs)),
 		Timestamp: input.Timestamp,
@@ -31,7 +34,19 @@ func (db *DB) SaveHistoricPrices(input *model.NewHistoricPriceInput) ([]*model.H
 		}
 	}
 
-	_, err := collection.InsertOne(ctx, historicPrices)
+	// 🔍 Log BSON size before insert
+	docBytes, err := bson.Marshal(historicPrices)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to marshal document to BSON")
+	} else {
+		log.Info().
+			Int("bson_size_bytes", len(docBytes)).
+			Msg("BSON document size before insert")
+	}
+
+	log.Info().Msg("Calling InsertOne on HistoricPrices")
+
+	_, err = collection.InsertOne(ctx, historicPrices)
 	if err != nil {
 		log.Error().Err(err).Msg("Error saving historic price:")
 		return nil, err
