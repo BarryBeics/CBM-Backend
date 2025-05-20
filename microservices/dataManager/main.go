@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
+	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	"cryptobotmanager.com/cbm-backend/shared/graph"
 	"github.com/Khan/genqlient/graphql"
 )
@@ -46,7 +48,7 @@ func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
-	mode := flag.String("mode", "export", "Mode to run: export or import")
+	mode := flag.String("mode", "export", "Mode to run: export, import, or seed-users")
 	flag.Parse()
 
 	switch *mode {
@@ -58,8 +60,12 @@ func main() {
 		if err := runImport(); err != nil {
 			log.Error().Err(err).Msg("Import failed")
 		}
+	case "seed-users":
+		if err := seedUsers(); err != nil {
+			log.Error().Err(err).Msg("User seeding failed")
+		}
 	default:
-		log.Warn().Str("mode", *mode).Msg("Unknown mode. Use 'export' or 'import'")
+		log.Warn().Str("mode", *mode).Msg("Unknown mode. Use 'export', 'import', or 'seed-users'")
 	}
 }
 
@@ -200,4 +206,60 @@ func readJSON(filename string, out interface{}) error {
 		return err
 	}
 	return nil
+}
+
+func seedUsers() error {
+	var users []model.CreateUserInput
+	if err := readJSON("users.json", &users); err != nil {
+		return fmt.Errorf("reading users.json: %w", err)
+	}
+
+	client := graphql.NewClient("http://cbm-api:8080/query", http.DefaultClient)
+	ctx := context.Background()
+
+	for _, u := range users {
+		log.Info().Str("email", u.Email).Msg("Checking if user exists...")
+
+		exists, err := userExists(ctx, client, u.Email)
+		if err != nil {
+			log.Error().Str("email", u.Email).Err(err).Msg("Error checking user existence")
+			continue
+		}
+		if exists {
+			log.Info().Str("email", u.Email).Msg("User already exists — skipping")
+			continue
+		}
+
+		input := graph.CreateUserInput{
+			Email:     u.Email,
+			Password:  u.Password,
+			FirstName: u.FirstName,
+			LastName:  u.LastName,
+			Role:      u.Role,
+		}
+
+		_, err = graph.CreateUser(ctx, client, input)
+		if err != nil {
+			log.Error().Str("email", u.Email).Err(err).Msg("Failed to create user")
+		} else {
+			log.Info().Str("email", u.Email).Msg("User created")
+		}
+	}
+
+	log.Info().Int("total", len(users)).Msg("User seeding complete")
+	return nil
+}
+
+func userExists(ctx context.Context, client graphql.Client, email string) (bool, error) {
+	resp, err := graph.GetUserByEmail(ctx, client, email)
+	if err != nil {
+		// If the error is "no documents in result", treat as "user not found"
+		if strings.Contains(err.Error(), "no documents in result") {
+			return false, nil
+		}
+		return false, fmt.Errorf("GraphQL query failed: %w", err)
+	}
+
+	// Use the ID check as a fallback in case it returns an empty struct
+	return resp.GetUserByEmail.Id != "", nil
 }

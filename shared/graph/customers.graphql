@@ -7,3 +7,10 @@ mutation CreateUser($input: CreateUserInput!) {
     role
   }
 }
+
+query GetUserByEmail($email: String!) {
+  getUserByEmail(email: $email) {
+    id
+    email
+  }
+}

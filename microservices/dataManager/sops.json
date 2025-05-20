@@ -1,0 +1,88 @@
+[
+  {
+    "id": "682a429ed7b150159071e93c",
+    "title": "Onboarding",
+    "sop": true,
+    "description": "Taking customer from new to ready",
+    "labels": [
+      "call",
+      "meeting"
+    ],
+    "assignedTo": "barry",
+    "dueDate": "2025-05-31",
+    "status": "interested",
+    "createdAt": "2025-05-18T20:27:10Z",
+    "updatedAt": "2025-05-18T20:27:10Z",
+    "tasks": [
+      {
+        "id": "682a447cd7b150159071e942"
+      },
+      {
+        "id": "682a4629d7b150159071e944"
+      },
+      {
+        "id": "682a467fd7b150159071e946"
+      }
+    ]
+  },
+  {
+    "id": "682b500c90390d9d31438231",
+    "title": "clean office",
+    "sop": true,
+    "description": "",
+    "labels": [],
+    "assignedTo": "barry",
+    "dueDate": "2025-05-21",
+    "status": "todo",
+    "createdAt": "2025-05-19T15:36:44Z",
+    "updatedAt": "2025-05-19T15:36:44Z",
+    "tasks": [
+      {
+        "id": "682b501c90390d9d31438233"
+      }
+    ]
+  },
+  {
+    "id": "682c4b2590390d9d3143824d",
+    "title": "Extract Price Data",
+    "sop": true,
+    "description": "Extract price data that that is being auto collected from Binance from your Digital Ocean VM",
+    "labels": [],
+    "assignedTo": "barry",
+    "dueDate": "",
+    "status": "nextAction",
+    "createdAt": "2025-05-20T09:28:05Z",
+    "updatedAt": "2025-05-20T09:28:05Z",
+    "tasks": [
+      {
+        "id": "682c4bc490390d9d3143824f"
+      },
+      {
+        "id": "682c4c3990390d9d31438251"
+      },
+      {
+        "id": "682c50d590390d9d31438253"
+      },
+      {
+        "id": "682c536e90390d9d31438255"
+      }
+    ]
+  },
+  {
+    "id": "682c5c3790390d9d31438257",
+    "title": "Deploy to Prod",
+    "sop": true,
+    "description": "Get the latest versions deployed using image from docker hub",
+    "labels": [],
+    "assignedTo": "",
+    "dueDate": "",
+    "status": "todo",
+    "createdAt": "2025-05-20T10:40:55Z",
+    "updatedAt": "2025-05-20T10:40:55Z",
+    "tasks": [
+      {
+        "id": "682c5d9890390d9d31438259"
+      }
+    ]
+  }
+]

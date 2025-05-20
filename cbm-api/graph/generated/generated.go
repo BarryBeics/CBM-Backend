@@ -1569,8 +1569,8 @@ input CreateUserInput {
   email: String!
   password: String!
   contact: String!
-  address1: String!
-  address2: String!
+  address1: String
+  address2: String
   role: String!
 }
 
@@ -11961,14 +11961,14 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 			it.Contact = data
 		case "address1":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address1"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Address1 = data
 		case "address2":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address2"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}

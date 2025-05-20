@@ -28,8 +28,8 @@ func (db *DB) CreateUser(ctx context.Context, input model.CreateUserInput) (*mod
 		LastName:  input.LastName,
 		Email:     input.Email,
 		Contact:   input.Contact,
-		Address1:  input.Address1,
-		Address2:  input.Address2,
+		Address1:  *input.Address1,
+		Address2:  *input.Address2,
 		Role:      input.Role,
 		Password:  string(hashedPassword),
 	}
