@@ -18,8 +18,8 @@ input CreateUserInput {
   email: String!
   password: String!
   contact: String!
-  address1: String!
-  address2: String!
+  address1: String
+  address2: String
   role: String!
 }
 

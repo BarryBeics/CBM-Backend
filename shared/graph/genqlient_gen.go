@@ -734,6 +734,29 @@ func (v *GetPriceDataResponse) GetGetHistoricPrice() []GetPriceDataGetHistoricPr
 	return v.GetHistoricPrice
 }
 
+// GetUserByEmailGetUserByEmailUser includes the requested fields of the GraphQL type User.
+type GetUserByEmailGetUserByEmailUser struct {
+	Id    string `json:"id"`
+	Email string `json:"email"`
+}
+
+// GetId returns GetUserByEmailGetUserByEmailUser.Id, and is useful for accessing the field via an interface.
+func (v *GetUserByEmailGetUserByEmailUser) GetId() string { return v.Id }
+
+// GetEmail returns GetUserByEmailGetUserByEmailUser.Email, and is useful for accessing the field via an interface.
+func (v *GetUserByEmailGetUserByEmailUser) GetEmail() string { return v.Email }
+
+// GetUserByEmailResponse is returned by GetUserByEmail on success.
+type GetUserByEmailResponse struct {
+	// Get a user by email
+	GetUserByEmail GetUserByEmailGetUserByEmailUser `json:"getUserByEmail"`
+}
+
+// GetGetUserByEmail returns GetUserByEmailResponse.GetUserByEmail, and is useful for accessing the field via an interface.
+func (v *GetUserByEmailResponse) GetGetUserByEmail() GetUserByEmailGetUserByEmailUser {
+	return v.GetUserByEmail
+}
+
 type NewHistoricPriceInput struct {
 	Pairs     []PairInput `json:"Pairs"`
 	Timestamp int         `json:"Timestamp"`
@@ -895,6 +918,14 @@ func (v *__GetPriceDataInput) GetSymbol() string { return v.Symbol }
 
 // GetLimit returns __GetPriceDataInput.Limit, and is useful for accessing the field via an interface.
 func (v *__GetPriceDataInput) GetLimit() int { return v.Limit }
+
+// __GetUserByEmailInput is used internally by genqlient
+type __GetUserByEmailInput struct {
+	Email string `json:"email"`
+}
+
+// GetEmail returns __GetUserByEmailInput.Email, and is useful for accessing the field via an interface.
+func (v *__GetUserByEmailInput) GetEmail() string { return v.Email }
 
 // The mutation executed by CreateActivityReport.
 const CreateActivityReport_Operation = `
@@ -1380,6 +1411,41 @@ func GetPriceData(
 	}
 
 	data_ = &GetPriceDataResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetUserByEmail.
+const GetUserByEmail_Operation = `
+query GetUserByEmail ($email: String!) {
+	getUserByEmail(email: $email) {
+		id
+		email
+	}
+}
+`
+
+func GetUserByEmail(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	email string,
+) (data_ *GetUserByEmailResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetUserByEmail",
+		Query:  GetUserByEmail_Operation,
+		Variables: &__GetUserByEmailInput{
+			Email: email,
+		},
+	}
+
+	data_ = &GetUserByEmailResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

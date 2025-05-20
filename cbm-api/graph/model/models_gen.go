@@ -37,14 +37,14 @@ type CreateTaskInput struct {
 }
 
 type CreateUserInput struct {
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	Contact   string `json:"contact"`
-	Address1  string `json:"address1"`
-	Address2  string `json:"address2"`
-	Role      string `json:"role"`
+	FirstName string  `json:"firstName"`
+	LastName  string  `json:"lastName"`
+	Email     string  `json:"email"`
+	Password  string  `json:"password"`
+	Contact   string  `json:"contact"`
+	Address1  *string `json:"address1,omitempty"`
+	Address2  *string `json:"address2,omitempty"`
+	Role      string  `json:"role"`
 }
 
 type HistoricKlineData struct {
