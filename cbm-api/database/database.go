@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/rs/zerolog/log"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -15,7 +16,6 @@ type DB struct {
 }
 
 func Connect() *DB {
-
 	uri := "mongodb://fudgebot:cookiebot@database:27017/go_trading_db"
 	log.Info().Str("mongodb_uri", uri).Msg("Connecting to MongoDB")
 
@@ -28,7 +28,7 @@ func Connect() *DB {
 
 	client, err := mongo.NewClient(clientOptions)
 	if err != nil {
-		log.Error().Err(err).Msg("Error client options func:")
+		log.Fatal().Err(err).Msg("Failed to create MongoDB client")
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -36,12 +36,40 @@ func Connect() *DB {
 
 	err = client.Connect(ctx)
 	if err != nil {
-		log.Error().Err(err).Msg("Error ctx func:")
+		log.Fatal().Err(err).Msg("Failed to connect to MongoDB")
 	}
 
-	return &DB{
-		client: client,
+	db := &DB{client: client}
+
+	// 🧠 Ensure indexes are present
+	if err := db.ensureIndexes(); err != nil {
+		log.Error().Err(err).Msg("Failed to create indexes for HistoricPrices")
 	}
+
+	return db
+}
+
+func (db *DB) ensureIndexes() error {
+	collection := db.client.Database("go_trading_db").Collection("HistoricPrices")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	indexes := []mongo.IndexModel{
+		{
+			Keys: bson.D{
+				{Key: "pair.symbol", Value: 1},
+				{Key: "timestamp", Value: -1},
+			},
+			Options: options.Index().SetName("symbol_timestamp_desc"),
+		},
+		{
+			Keys:    bson.D{{Key: "timestamp", Value: -1}},
+			Options: options.Index().SetName("timestamp_desc"),
+		},
+	}
+
+	_, err := collection.Indexes().CreateMany(ctx, indexes)
+	return err
 }
 
 func (db *DB) Close() {
