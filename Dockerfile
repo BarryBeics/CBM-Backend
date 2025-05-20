@@ -10,6 +10,9 @@ RUN go work sync
 RUN go mod tidy && go build -o /usr/local/bin/microservice-binaries/dataManager microservices/dataManager/main.go
 RUN go build -o /usr/local/bin/microservice-binaries/backTesting microservices/backTesting/main.go
 
+# Copy static seed files into the image (for use in runtime)
+COPY microservices/dataManager/*.json /usr/local/share/seeds/
+
 
 # ---------- Stage 2: Runtime ----------
 FROM debian:12-slim AS nex
@@ -23,6 +26,9 @@ RUN apt-get update && apt-get install -y \
 # Create dir for binaries and copy them
 RUN mkdir -p /usr/local/bin/microservice-binaries
 COPY --from=builder /usr/local/bin/microservice-binaries/* /usr/local/bin/microservice-binaries/
+
+# Copy seed JSONs into runtime image
+COPY --from=builder /usr/local/share/seeds/* /usr/local/share/seeds/
 
 # Make all binaries executable
 RUN chmod +x /usr/local/bin/microservice-binaries/*
