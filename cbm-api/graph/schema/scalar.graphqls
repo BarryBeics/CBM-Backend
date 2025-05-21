@@ -1,0 +1,2 @@
+# graph/schema/scalars.graphqls
+scalar DateTime

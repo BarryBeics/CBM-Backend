@@ -22,16 +22,24 @@ func (db *DB) CreateUser(ctx context.Context, input model.CreateUserInput) (*mod
 		return nil, err
 	}
 
+	now := time.Now()
+
 	user := &model.User{
-		ID:        primitive.NewObjectID().Hex(),
-		FirstName: input.FirstName,
-		LastName:  input.LastName,
-		Email:     input.Email,
-		Contact:   input.Contact,
-		Address1:  *input.Address1,
-		Address2:  *input.Address2,
-		Role:      input.Role,
-		Password:  string(hashedPassword),
+		ID:             primitive.NewObjectID().Hex(),
+		FirstName:      input.FirstName,
+		LastName:       input.LastName,
+		Email:          input.Email,
+		Password:       string(hashedPassword),
+		MobileNumber:   input.MobileNumber,
+		Role:           input.Role,
+		InvitedBy:      input.InvitedBy,
+		VerifiedEmail:  false, // default false
+		VerifiedMobile: false, // default false
+		OpenToTrade:    false, // default false
+		JoinedBallot:   false, // default false
+		IsPaidMember:   false, // default false
+		CreatedAt:      now,
+		UpdatedAt:      now,
 	}
 
 	_, err = collection.InsertOne(ctx, user)
@@ -99,7 +107,7 @@ func (db *DB) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*mod
 
 	filter := bson.M{"id": input.ID}
 	updateFields := bson.M{
-		"updatedAt": time.Now().Format(time.RFC3339),
+		"upatedAt": time.Now(), // your schema has a typo 'upatedAt'—you might want to fix it
 	}
 
 	if input.FirstName != nil {
@@ -112,20 +120,49 @@ func (db *DB) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*mod
 		updateFields["email"] = *input.Email
 	}
 	if input.Password != nil {
-		updateFields["password"] = *input.Password
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(*input.Password), bcrypt.DefaultCost)
+		if err != nil {
+			log.Error().Err(err).Msg("Error hashing updated password")
+			return nil, err
+		}
+		updateFields["password"] = string(hashedPassword)
 	}
-	if input.Contact != nil {
-		updateFields["contact"] = *input.Contact
+	if input.MobileNumber != nil {
+		updateFields["mobileNumber"] = *input.MobileNumber
 	}
-	if input.Address1 != nil {
-		updateFields["address1"] = *input.Address1
+	if input.VerifiedEmail != nil {
+		updateFields["verifiedEmail"] = *input.VerifiedEmail
 	}
-	if input.Address2 != nil {
-		updateFields["address2"] = *input.Address2
+	if input.VerifiedMobile != nil {
+		updateFields["verifiedMobile"] = *input.VerifiedMobile
 	}
 	if input.Role != nil {
 		updateFields["role"] = *input.Role
 	}
+	if input.OpenToTrade != nil {
+		updateFields["openToTrade"] = *input.OpenToTrade
+	}
+	if input.BinanceAPI != nil {
+		updateFields["binanceAPI"] = *input.BinanceAPI
+	}
+	if input.PreferredContactMethod != nil {
+		updateFields["preferredContactMethod"] = *input.PreferredContactMethod
+	}
+	if input.Notes != nil {
+		updateFields["notes"] = *input.Notes
+	}
+	if input.InvitedBy != nil {
+		updateFields["invitedBy"] = *input.InvitedBy
+	}
+	if input.JoinedBallot != nil {
+		updateFields["joinedBallot"] = *input.JoinedBallot
+	}
+	if input.IsPaidMember != nil {
+		updateFields["isPaidMember"] = *input.IsPaidMember
+	}
+
+	// This is required, because your schema expects it to be provided explicitly
+	updateFields["isDeleted"] = input.IsDeleted
 
 	update := bson.M{"$set": updateFields}
 

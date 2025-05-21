@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	"github.com/99designs/gqlgen/graphql"
@@ -201,15 +202,25 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		Address1  func(childComplexity int) int
-		Address2  func(childComplexity int) int
-		Contact   func(childComplexity int) int
-		Email     func(childComplexity int) int
-		FirstName func(childComplexity int) int
-		ID        func(childComplexity int) int
-		LastName  func(childComplexity int) int
-		Password  func(childComplexity int) int
-		Role      func(childComplexity int) int
+		BinanceAPI             func(childComplexity int) int
+		CreatedAt              func(childComplexity int) int
+		Email                  func(childComplexity int) int
+		FirstName              func(childComplexity int) int
+		ID                     func(childComplexity int) int
+		InvitedBy              func(childComplexity int) int
+		IsDeleted              func(childComplexity int) int
+		IsPaidMember           func(childComplexity int) int
+		JoinedBallot           func(childComplexity int) int
+		LastName               func(childComplexity int) int
+		MobileNumber           func(childComplexity int) int
+		Notes                  func(childComplexity int) int
+		OpenToTrade            func(childComplexity int) int
+		Password               func(childComplexity int) int
+		PreferredContactMethod func(childComplexity int) int
+		Role                   func(childComplexity int) int
+		UpdatedAt              func(childComplexity int) int
+		VerifiedEmail          func(childComplexity int) int
+		VerifiedMobile         func(childComplexity int) int
 	}
 }
 
@@ -1268,26 +1279,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.TradeOutcomeReport.Volume(childComplexity), true
 
-	case "User.address1":
-		if e.complexity.User.Address1 == nil {
+	case "User.binanceAPI":
+		if e.complexity.User.BinanceAPI == nil {
 			break
 		}
 
-		return e.complexity.User.Address1(childComplexity), true
+		return e.complexity.User.BinanceAPI(childComplexity), true
 
-	case "User.address2":
-		if e.complexity.User.Address2 == nil {
+	case "User.createdAt":
+		if e.complexity.User.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.User.Address2(childComplexity), true
-
-	case "User.contact":
-		if e.complexity.User.Contact == nil {
-			break
-		}
-
-		return e.complexity.User.Contact(childComplexity), true
+		return e.complexity.User.CreatedAt(childComplexity), true
 
 	case "User.email":
 		if e.complexity.User.Email == nil {
@@ -1310,12 +1314,61 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.ID(childComplexity), true
 
+	case "User.invitedBy":
+		if e.complexity.User.InvitedBy == nil {
+			break
+		}
+
+		return e.complexity.User.InvitedBy(childComplexity), true
+
+	case "User.isDeleted":
+		if e.complexity.User.IsDeleted == nil {
+			break
+		}
+
+		return e.complexity.User.IsDeleted(childComplexity), true
+
+	case "User.isPaidMember":
+		if e.complexity.User.IsPaidMember == nil {
+			break
+		}
+
+		return e.complexity.User.IsPaidMember(childComplexity), true
+
+	case "User.joinedBallot":
+		if e.complexity.User.JoinedBallot == nil {
+			break
+		}
+
+		return e.complexity.User.JoinedBallot(childComplexity), true
+
 	case "User.lastName":
 		if e.complexity.User.LastName == nil {
 			break
 		}
 
 		return e.complexity.User.LastName(childComplexity), true
+
+	case "User.mobileNumber":
+		if e.complexity.User.MobileNumber == nil {
+			break
+		}
+
+		return e.complexity.User.MobileNumber(childComplexity), true
+
+	case "User.notes":
+		if e.complexity.User.Notes == nil {
+			break
+		}
+
+		return e.complexity.User.Notes(childComplexity), true
+
+	case "User.openToTrade":
+		if e.complexity.User.OpenToTrade == nil {
+			break
+		}
+
+		return e.complexity.User.OpenToTrade(childComplexity), true
 
 	case "User.password":
 		if e.complexity.User.Password == nil {
@@ -1324,12 +1377,40 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.Password(childComplexity), true
 
+	case "User.preferredContactMethod":
+		if e.complexity.User.PreferredContactMethod == nil {
+			break
+		}
+
+		return e.complexity.User.PreferredContactMethod(childComplexity), true
+
 	case "User.role":
 		if e.complexity.User.Role == nil {
 			break
 		}
 
 		return e.complexity.User.Role(childComplexity), true
+
+	case "User.updatedAt":
+		if e.complexity.User.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.User.UpdatedAt(childComplexity), true
+
+	case "User.verifiedEmail":
+		if e.complexity.User.VerifiedEmail == nil {
+			break
+		}
+
+		return e.complexity.User.VerifiedEmail(childComplexity), true
+
+	case "User.verifiedMobile":
+		if e.complexity.User.VerifiedMobile == nil {
+			break
+		}
+
+		return e.complexity.User.VerifiedMobile(childComplexity), true
 
 	}
 	return 0, false
@@ -1555,11 +1636,27 @@ type User {
   firstName: String!
   lastName: String!
   email: String!
-  password: String!
-  contact: String!
-  address1: String!
-  address2: String!
-  role: String!
+  password: String! # Suggest hashing at rest
+
+  mobileNumber: String
+  verifiedEmail: Boolean!
+  verifiedMobile: Boolean!
+
+  role: String! # guest | interested | member | admin
+  isDeleted: Boolean!
+
+  openToTrade: Boolean!
+  binanceAPI: String
+
+  preferredContactMethod: String # "email" | "whatsapp"
+  notes: String
+
+  invitedBy: String
+  joinedBallot: Boolean!
+  isPaidMember: Boolean!
+
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 
@@ -1568,23 +1665,34 @@ input CreateUserInput {
   lastName: String!
   email: String!
   password: String!
-  contact: String!
-  address1: String
-  address2: String
-  role: String!
+  mobileNumber: String
+  role: String!          # e.g. "interested" or "guest"
+  invitedBy: String
+  preferredContactMethod: String 
+  createdAt: DateTime!
 }
+
 
 input UpdateUserInput {
   id: ID!
   firstName: String
   lastName: String
   email: String
-  password: String     
-  contact: String
-  address1: String
-  address2: String
+  password: String
+  mobileNumber: String
+  verifiedEmail: Boolean
+  verifiedMobile: Boolean
   role: String
+  isDeleted: Boolean!
+  openToTrade: Boolean
+  binanceAPI: String
+  preferredContactMethod: String
+  notes: String
+  invitedBy: String
+  joinedBallot: Boolean
+  isPaidMember: Boolean
 }
+
 
 
 extend type Mutation {
@@ -1607,6 +1715,18 @@ extend type Query {
   getAllUsers: [User!]!
 }
 
+`, BuiltIn: false},
+	{Name: "../schema/enums.graphqls", Input: `enum UserRole {
+  GUEST
+  INTERESTED
+  MEMBER
+  ADMIN
+}
+
+enum ContactMethod {
+  EMAIL
+  WHATSAPP
+}
 `, BuiltIn: false},
 	{Name: "../schema/login.graphqls", Input: `type LoginResponse {
   token: String!
@@ -1781,6 +1901,9 @@ type Query {
 }
 
 
+`, BuiltIn: false},
+	{Name: "../schema/scalar.graphqls", Input: `# graph/schema/scalars.graphqls
+scalar DateTime
 `, BuiltIn: false},
 	{Name: "../schema/tasks.graphqls", Input: `# ==========================
 # Types
@@ -3739,14 +3862,34 @@ func (ec *executionContext) fieldContext_LoginResponse_user(_ context.Context, f
 				return ec.fieldContext_User_email(ctx, field)
 			case "password":
 				return ec.fieldContext_User_password(ctx, field)
-			case "contact":
-				return ec.fieldContext_User_contact(ctx, field)
-			case "address1":
-				return ec.fieldContext_User_address1(ctx, field)
-			case "address2":
-				return ec.fieldContext_User_address2(ctx, field)
+			case "mobileNumber":
+				return ec.fieldContext_User_mobileNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_User_verifiedEmail(ctx, field)
+			case "verifiedMobile":
+				return ec.fieldContext_User_verifiedMobile(ctx, field)
 			case "role":
 				return ec.fieldContext_User_role(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_User_isDeleted(ctx, field)
+			case "openToTrade":
+				return ec.fieldContext_User_openToTrade(ctx, field)
+			case "binanceAPI":
+				return ec.fieldContext_User_binanceAPI(ctx, field)
+			case "preferredContactMethod":
+				return ec.fieldContext_User_preferredContactMethod(ctx, field)
+			case "notes":
+				return ec.fieldContext_User_notes(ctx, field)
+			case "invitedBy":
+				return ec.fieldContext_User_invitedBy(ctx, field)
+			case "joinedBallot":
+				return ec.fieldContext_User_joinedBallot(ctx, field)
+			case "isPaidMember":
+				return ec.fieldContext_User_isPaidMember(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -4353,14 +4496,34 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 				return ec.fieldContext_User_email(ctx, field)
 			case "password":
 				return ec.fieldContext_User_password(ctx, field)
-			case "contact":
-				return ec.fieldContext_User_contact(ctx, field)
-			case "address1":
-				return ec.fieldContext_User_address1(ctx, field)
-			case "address2":
-				return ec.fieldContext_User_address2(ctx, field)
+			case "mobileNumber":
+				return ec.fieldContext_User_mobileNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_User_verifiedEmail(ctx, field)
+			case "verifiedMobile":
+				return ec.fieldContext_User_verifiedMobile(ctx, field)
 			case "role":
 				return ec.fieldContext_User_role(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_User_isDeleted(ctx, field)
+			case "openToTrade":
+				return ec.fieldContext_User_openToTrade(ctx, field)
+			case "binanceAPI":
+				return ec.fieldContext_User_binanceAPI(ctx, field)
+			case "preferredContactMethod":
+				return ec.fieldContext_User_preferredContactMethod(ctx, field)
+			case "notes":
+				return ec.fieldContext_User_notes(ctx, field)
+			case "invitedBy":
+				return ec.fieldContext_User_invitedBy(ctx, field)
+			case "joinedBallot":
+				return ec.fieldContext_User_joinedBallot(ctx, field)
+			case "isPaidMember":
+				return ec.fieldContext_User_isPaidMember(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -4425,14 +4588,34 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 				return ec.fieldContext_User_email(ctx, field)
 			case "password":
 				return ec.fieldContext_User_password(ctx, field)
-			case "contact":
-				return ec.fieldContext_User_contact(ctx, field)
-			case "address1":
-				return ec.fieldContext_User_address1(ctx, field)
-			case "address2":
-				return ec.fieldContext_User_address2(ctx, field)
+			case "mobileNumber":
+				return ec.fieldContext_User_mobileNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_User_verifiedEmail(ctx, field)
+			case "verifiedMobile":
+				return ec.fieldContext_User_verifiedMobile(ctx, field)
 			case "role":
 				return ec.fieldContext_User_role(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_User_isDeleted(ctx, field)
+			case "openToTrade":
+				return ec.fieldContext_User_openToTrade(ctx, field)
+			case "binanceAPI":
+				return ec.fieldContext_User_binanceAPI(ctx, field)
+			case "preferredContactMethod":
+				return ec.fieldContext_User_preferredContactMethod(ctx, field)
+			case "notes":
+				return ec.fieldContext_User_notes(ctx, field)
+			case "invitedBy":
+				return ec.fieldContext_User_invitedBy(ctx, field)
+			case "joinedBallot":
+				return ec.fieldContext_User_joinedBallot(ctx, field)
+			case "isPaidMember":
+				return ec.fieldContext_User_isPaidMember(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -6677,14 +6860,34 @@ func (ec *executionContext) fieldContext_Query_getUserByEmail(ctx context.Contex
 				return ec.fieldContext_User_email(ctx, field)
 			case "password":
 				return ec.fieldContext_User_password(ctx, field)
-			case "contact":
-				return ec.fieldContext_User_contact(ctx, field)
-			case "address1":
-				return ec.fieldContext_User_address1(ctx, field)
-			case "address2":
-				return ec.fieldContext_User_address2(ctx, field)
+			case "mobileNumber":
+				return ec.fieldContext_User_mobileNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_User_verifiedEmail(ctx, field)
+			case "verifiedMobile":
+				return ec.fieldContext_User_verifiedMobile(ctx, field)
 			case "role":
 				return ec.fieldContext_User_role(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_User_isDeleted(ctx, field)
+			case "openToTrade":
+				return ec.fieldContext_User_openToTrade(ctx, field)
+			case "binanceAPI":
+				return ec.fieldContext_User_binanceAPI(ctx, field)
+			case "preferredContactMethod":
+				return ec.fieldContext_User_preferredContactMethod(ctx, field)
+			case "notes":
+				return ec.fieldContext_User_notes(ctx, field)
+			case "invitedBy":
+				return ec.fieldContext_User_invitedBy(ctx, field)
+			case "joinedBallot":
+				return ec.fieldContext_User_joinedBallot(ctx, field)
+			case "isPaidMember":
+				return ec.fieldContext_User_isPaidMember(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -6752,14 +6955,34 @@ func (ec *executionContext) fieldContext_Query_getAllUsers(_ context.Context, fi
 				return ec.fieldContext_User_email(ctx, field)
 			case "password":
 				return ec.fieldContext_User_password(ctx, field)
-			case "contact":
-				return ec.fieldContext_User_contact(ctx, field)
-			case "address1":
-				return ec.fieldContext_User_address1(ctx, field)
-			case "address2":
-				return ec.fieldContext_User_address2(ctx, field)
+			case "mobileNumber":
+				return ec.fieldContext_User_mobileNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_User_verifiedEmail(ctx, field)
+			case "verifiedMobile":
+				return ec.fieldContext_User_verifiedMobile(ctx, field)
 			case "role":
 				return ec.fieldContext_User_role(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_User_isDeleted(ctx, field)
+			case "openToTrade":
+				return ec.fieldContext_User_openToTrade(ctx, field)
+			case "binanceAPI":
+				return ec.fieldContext_User_binanceAPI(ctx, field)
+			case "preferredContactMethod":
+				return ec.fieldContext_User_preferredContactMethod(ctx, field)
+			case "notes":
+				return ec.fieldContext_User_notes(ctx, field)
+			case "invitedBy":
+				return ec.fieldContext_User_invitedBy(ctx, field)
+			case "joinedBallot":
+				return ec.fieldContext_User_joinedBallot(ctx, field)
+			case "isPaidMember":
+				return ec.fieldContext_User_isPaidMember(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -9610,8 +9833,8 @@ func (ec *executionContext) fieldContext_User_password(_ context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _User_contact(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_contact(ctx, field)
+func (ec *executionContext) _User_mobileNumber(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_mobileNumber(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -9624,24 +9847,21 @@ func (ec *executionContext) _User_contact(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Contact, nil
+		return obj.MobileNumber, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_contact(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_mobileNumber(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -9654,8 +9874,8 @@ func (ec *executionContext) fieldContext_User_contact(_ context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _User_address1(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_address1(ctx, field)
+func (ec *executionContext) _User_verifiedEmail(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_verifiedEmail(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -9668,7 +9888,7 @@ func (ec *executionContext) _User_address1(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Address1, nil
+		return obj.VerifiedEmail, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9680,26 +9900,26 @@ func (ec *executionContext) _User_address1(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_address1(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_verifiedEmail(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _User_address2(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_address2(ctx, field)
+func (ec *executionContext) _User_verifiedMobile(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_verifiedMobile(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -9712,7 +9932,7 @@ func (ec *executionContext) _User_address2(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Address2, nil
+		return obj.VerifiedMobile, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9724,19 +9944,19 @@ func (ec *executionContext) _User_address2(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_address2(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_verifiedMobile(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -9781,6 +10001,434 @@ func (ec *executionContext) fieldContext_User_role(_ context.Context, field grap
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_isDeleted(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_isDeleted(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsDeleted, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_isDeleted(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_openToTrade(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_openToTrade(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OpenToTrade, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_openToTrade(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_binanceAPI(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_binanceAPI(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BinanceAPI, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_binanceAPI(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_preferredContactMethod(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_preferredContactMethod(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PreferredContactMethod, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_preferredContactMethod(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_notes(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_notes(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Notes, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_notes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_invitedBy(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_invitedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InvitedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_invitedBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_joinedBallot(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_joinedBallot(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.JoinedBallot, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_joinedBallot(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_isPaidMember(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_isPaidMember(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsPaidMember, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_isPaidMember(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
 		},
 	}
 	return fc, nil
@@ -11917,7 +12565,7 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"firstName", "lastName", "email", "password", "contact", "address1", "address2", "role"}
+	fieldsInOrder := [...]string{"firstName", "lastName", "email", "password", "mobileNumber", "role", "invitedBy", "preferredContactMethod", "createdAt"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -11952,27 +12600,13 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Password = data
-		case "contact":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contact"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Contact = data
-		case "address1":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address1"))
+		case "mobileNumber":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mobileNumber"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Address1 = data
-		case "address2":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address2"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Address2 = data
+			it.MobileNumber = data
 		case "role":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -11980,6 +12614,27 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Role = data
+		case "invitedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("invitedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.InvitedBy = data
+		case "preferredContactMethod":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("preferredContactMethod"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PreferredContactMethod = data
+		case "createdAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAt"))
+			data, err := ec.unmarshalNDateTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAt = data
 		}
 	}
 
@@ -12834,7 +13489,7 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "firstName", "lastName", "email", "password", "contact", "address1", "address2", "role"}
+	fieldsInOrder := [...]string{"id", "firstName", "lastName", "email", "password", "mobileNumber", "verifiedEmail", "verifiedMobile", "role", "isDeleted", "openToTrade", "binanceAPI", "preferredContactMethod", "notes", "invitedBy", "joinedBallot", "isPaidMember"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -12876,27 +13531,27 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Password = data
-		case "contact":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contact"))
+		case "mobileNumber":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mobileNumber"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Contact = data
-		case "address1":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address1"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			it.MobileNumber = data
+		case "verifiedEmail":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verifiedEmail"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Address1 = data
-		case "address2":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address2"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			it.VerifiedEmail = data
+		case "verifiedMobile":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verifiedMobile"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Address2 = data
+			it.VerifiedMobile = data
 		case "role":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -12904,6 +13559,62 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Role = data
+		case "isDeleted":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isDeleted"))
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsDeleted = data
+		case "openToTrade":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("openToTrade"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OpenToTrade = data
+		case "binanceAPI":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("binanceAPI"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.BinanceAPI = data
+		case "preferredContactMethod":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("preferredContactMethod"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PreferredContactMethod = data
+		case "notes":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("notes"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Notes = data
+		case "invitedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("invitedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.InvitedBy = data
+		case "joinedBallot":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("joinedBallot"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.JoinedBallot = data
+		case "isPaidMember":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPaidMember"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsPaidMember = data
 		}
 	}
 
@@ -14191,23 +14902,58 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "contact":
-			out.Values[i] = ec._User_contact(ctx, field, obj)
+		case "mobileNumber":
+			out.Values[i] = ec._User_mobileNumber(ctx, field, obj)
+		case "verifiedEmail":
+			out.Values[i] = ec._User_verifiedEmail(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "address1":
-			out.Values[i] = ec._User_address1(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "address2":
-			out.Values[i] = ec._User_address2(ctx, field, obj)
+		case "verifiedMobile":
+			out.Values[i] = ec._User_verifiedMobile(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "role":
 			out.Values[i] = ec._User_role(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "isDeleted":
+			out.Values[i] = ec._User_isDeleted(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "openToTrade":
+			out.Values[i] = ec._User_openToTrade(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "binanceAPI":
+			out.Values[i] = ec._User_binanceAPI(ctx, field, obj)
+		case "preferredContactMethod":
+			out.Values[i] = ec._User_preferredContactMethod(ctx, field, obj)
+		case "notes":
+			out.Values[i] = ec._User_notes(ctx, field, obj)
+		case "invitedBy":
+			out.Values[i] = ec._User_invitedBy(ctx, field, obj)
+		case "joinedBallot":
+			out.Values[i] = ec._User_joinedBallot(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "isPaidMember":
+			out.Values[i] = ec._User_isPaidMember(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._User_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._User_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -14655,6 +15401,21 @@ func (ec *executionContext) unmarshalNCreateTaskInput2cryptobotmanagerᚗcomᚋc
 func (ec *executionContext) unmarshalNCreateUserInput2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐCreateUserInput(ctx context.Context, v any) (model.CreateUserInput, error) {
 	res, err := ec.unmarshalInputCreateUserInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNDateTime2timeᚐTime(ctx context.Context, v any) (time.Time, error) {
+	res, err := graphql.UnmarshalTime(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNDateTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
+	res := graphql.MarshalTime(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v any) (float64, error) {
