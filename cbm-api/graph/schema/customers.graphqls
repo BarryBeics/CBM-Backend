@@ -4,11 +4,27 @@ type User {
   firstName: String!
   lastName: String!
   email: String!
-  password: String!
-  contact: String!
-  address1: String!
-  address2: String!
-  role: String!
+  password: String! # Suggest hashing at rest
+
+  mobileNumber: String
+  verifiedEmail: Boolean!
+  verifiedMobile: Boolean!
+
+  role: String! # guest | interested | member | admin
+  isDeleted: Boolean!
+
+  openToTrade: Boolean!
+  binanceAPI: String
+
+  preferredContactMethod: String # "email" | "whatsapp"
+  notes: String
+
+  invitedBy: String
+  joinedBallot: Boolean!
+  isPaidMember: Boolean!
+
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 
@@ -17,23 +33,33 @@ input CreateUserInput {
   lastName: String!
   email: String!
   password: String!
-  contact: String!
-  address1: String
-  address2: String
-  role: String!
+  mobileNumber: String
+  role: String!          # e.g. "interested" or "guest"
+  invitedBy: String
+  preferredContactMethod: String 
 }
+
 
 input UpdateUserInput {
   id: ID!
   firstName: String
   lastName: String
   email: String
-  password: String     
-  contact: String
-  address1: String
-  address2: String
+  password: String
+  mobileNumber: String
+  verifiedEmail: Boolean
+  verifiedMobile: Boolean
   role: String
+  isDeleted: Boolean!
+  openToTrade: Boolean
+  binanceAPI: String
+  preferredContactMethod: String
+  notes: String
+  invitedBy: String
+  joinedBallot: Boolean
+  isPaidMember: Boolean
 }
+
 
 
 extend type Mutation {

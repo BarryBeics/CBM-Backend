@@ -2,6 +2,14 @@
 
 package model
 
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"strconv"
+	"time"
+)
+
 type ActivityReport struct {
 	ID             string   `json:"_id"`
 	Timestamp      int      `json:"Timestamp"`
@@ -37,14 +45,15 @@ type CreateTaskInput struct {
 }
 
 type CreateUserInput struct {
-	FirstName string  `json:"firstName"`
-	LastName  string  `json:"lastName"`
-	Email     string  `json:"email"`
-	Password  string  `json:"password"`
-	Contact   string  `json:"contact"`
-	Address1  *string `json:"address1,omitempty"`
-	Address2  *string `json:"address2,omitempty"`
-	Role      string  `json:"role"`
+	FirstName              string    `json:"firstName"`
+	LastName               string    `json:"lastName"`
+	Email                  string    `json:"email"`
+	Password               string    `json:"password"`
+	MobileNumber           *string   `json:"mobileNumber,omitempty"`
+	Role                   string    `json:"role"`
+	InvitedBy              *string   `json:"invitedBy,omitempty"`
+	PreferredContactMethod *string   `json:"preferredContactMethod,omitempty"`
+	CreatedAt              time.Time `json:"createdAt"`
 }
 
 type HistoricKlineData struct {
@@ -273,25 +282,157 @@ type UpdateTaskInput struct {
 }
 
 type UpdateUserInput struct {
-	ID        string  `json:"id"`
-	FirstName *string `json:"firstName,omitempty"`
-	LastName  *string `json:"lastName,omitempty"`
-	Email     *string `json:"email,omitempty"`
-	Password  *string `json:"password,omitempty"`
-	Contact   *string `json:"contact,omitempty"`
-	Address1  *string `json:"address1,omitempty"`
-	Address2  *string `json:"address2,omitempty"`
-	Role      *string `json:"role,omitempty"`
+	ID                     string  `json:"id"`
+	FirstName              *string `json:"firstName,omitempty"`
+	LastName               *string `json:"lastName,omitempty"`
+	Email                  *string `json:"email,omitempty"`
+	Password               *string `json:"password,omitempty"`
+	MobileNumber           *string `json:"mobileNumber,omitempty"`
+	VerifiedEmail          *bool   `json:"verifiedEmail,omitempty"`
+	VerifiedMobile         *bool   `json:"verifiedMobile,omitempty"`
+	Role                   *string `json:"role,omitempty"`
+	IsDeleted              bool    `json:"isDeleted"`
+	OpenToTrade            *bool   `json:"openToTrade,omitempty"`
+	BinanceAPI             *string `json:"binanceAPI,omitempty"`
+	PreferredContactMethod *string `json:"preferredContactMethod,omitempty"`
+	Notes                  *string `json:"notes,omitempty"`
+	InvitedBy              *string `json:"invitedBy,omitempty"`
+	JoinedBallot           *bool   `json:"joinedBallot,omitempty"`
+	IsPaidMember           *bool   `json:"isPaidMember,omitempty"`
 }
 
 type User struct {
-	ID        string `json:"id"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	Contact   string `json:"contact"`
-	Address1  string `json:"address1"`
-	Address2  string `json:"address2"`
-	Role      string `json:"role"`
+	ID                     string    `json:"id"`
+	FirstName              string    `json:"firstName"`
+	LastName               string    `json:"lastName"`
+	Email                  string    `json:"email"`
+	Password               string    `json:"password"`
+	MobileNumber           *string   `json:"mobileNumber,omitempty"`
+	VerifiedEmail          bool      `json:"verifiedEmail"`
+	VerifiedMobile         bool      `json:"verifiedMobile"`
+	Role                   string    `json:"role"`
+	IsDeleted              bool      `json:"isDeleted"`
+	OpenToTrade            bool      `json:"openToTrade"`
+	BinanceAPI             *string   `json:"binanceAPI,omitempty"`
+	PreferredContactMethod *string   `json:"preferredContactMethod,omitempty"`
+	Notes                  *string   `json:"notes,omitempty"`
+	InvitedBy              *string   `json:"invitedBy,omitempty"`
+	JoinedBallot           bool      `json:"joinedBallot"`
+	IsPaidMember           bool      `json:"isPaidMember"`
+	CreatedAt              time.Time `json:"createdAt"`
+	UpdatedAt              time.Time `json:"updatedAt"`
+}
+
+type ContactMethod string
+
+const (
+	ContactMethodEmail    ContactMethod = "EMAIL"
+	ContactMethodWhatsapp ContactMethod = "WHATSAPP"
+)
+
+var AllContactMethod = []ContactMethod{
+	ContactMethodEmail,
+	ContactMethodWhatsapp,
+}
+
+func (e ContactMethod) IsValid() bool {
+	switch e {
+	case ContactMethodEmail, ContactMethodWhatsapp:
+		return true
+	}
+	return false
+}
+
+func (e ContactMethod) String() string {
+	return string(e)
+}
+
+func (e *ContactMethod) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ContactMethod(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ContactMethod", str)
+	}
+	return nil
+}
+
+func (e ContactMethod) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *ContactMethod) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ContactMethod) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type UserRole string
+
+const (
+	UserRoleGuest      UserRole = "GUEST"
+	UserRoleInterested UserRole = "INTERESTED"
+	UserRoleMember     UserRole = "MEMBER"
+	UserRoleAdmin      UserRole = "ADMIN"
+)
+
+var AllUserRole = []UserRole{
+	UserRoleGuest,
+	UserRoleInterested,
+	UserRoleMember,
+	UserRoleAdmin,
+}
+
+func (e UserRole) IsValid() bool {
+	switch e {
+	case UserRoleGuest, UserRoleInterested, UserRoleMember, UserRoleAdmin:
+		return true
+	}
+	return false
+}
+
+func (e UserRole) String() string {
+	return string(e)
+}
+
+func (e *UserRole) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = UserRole(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid UserRole", str)
+	}
+	return nil
+}
+
+func (e UserRole) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *UserRole) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e UserRole) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }

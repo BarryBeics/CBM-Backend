@@ -1,0 +1,11 @@
+enum UserRole {
+  GUEST
+  INTERESTED
+  MEMBER
+  ADMIN
+}
+
+enum ContactMethod {
+  EMAIL
+  WHATSAPP
+}
