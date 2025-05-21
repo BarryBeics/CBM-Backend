@@ -15,14 +15,6 @@ import (
 
 func letTrade(ctx context.Context, client graphql.Client, market []model.Pair, datetime int) error {
 
-	log.Info().Int("Pairs from Binance", len(market)).Msg("SAVE")
-	err := SavePriceData(ctx, client, market, datetime)
-	if err != nil {
-		log.Error().Err(err).Int("timestamp", datetime).Msg("Failed to save snapshot")
-	} else {
-		log.Debug().Int("timestamp", datetime).Msg("Replayed snapshot")
-	}
-
 	cfg := shared.GetDefaultCfg()
 
 	// Report on the market activity
