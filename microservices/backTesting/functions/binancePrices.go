@@ -46,32 +46,56 @@ func FetchPricesFromBinanceAPI() (market []model.Pair, err error) {
 
 // SavePriceData writes market price data using GraphQL mutation
 func SavePriceData(ctx context.Context, client graphql.Client, market []model.Pair, datetime int) error {
-	// Create an array of PairInput from PriceData
 	var pairsInput []graph.PairInput
 	for _, price := range market {
-		pairInput := graph.PairInput{
+		pairsInput = append(pairsInput, graph.PairInput{
 			Symbol: price.Symbol,
 			Price:  price.Price,
+		})
+	}
+
+	chunks := chunkPairs(pairsInput, 250) // or 500 depending on how large each payload is
+	for i, chunk := range chunks {
+		log.Info().Int("chunk", i+1).Int("size", len(chunk)).Msg("Saving price chunk...")
+		if err := saveChunkWithRetry(ctx, client, chunk, datetime, 3); err != nil {
+			log.Error().Err(err).Int("chunk", i+1).Msg("Failed to save chunk after retries")
+			return err // Or continue if partial failure is acceptable
 		}
-
-		pairsInput = append(pairsInput, pairInput)
-
-	}
-
-	// Create NewHistoricPriceInput
-	input := graph.NewHistoricPriceInput{
-		Pairs:     pairsInput,
-		Timestamp: datetime,
-	}
-
-	// Call the GraphQL mutation
-	_, err := graph.CreateHistoricPrices(ctx, client, input)
-	if err != nil {
-		log.Printf("Error creating historic prices: %v", err)
-		return err
 	}
 
 	return nil
+}
+
+func chunkPairs(pairs []graph.PairInput, size int) [][]graph.PairInput {
+	var chunks [][]graph.PairInput
+	for size < len(pairs) {
+		pairs, chunks = pairs[size:], append(chunks, pairs[0:size:size])
+	}
+	return append(chunks, pairs)
+}
+
+func saveChunkWithRetry(ctx context.Context, client graphql.Client, pairs []graph.PairInput, timestamp int, retries int) error {
+	var err error
+	for attempt := 1; attempt <= retries; attempt++ {
+		input := graph.NewHistoricPriceInput{
+			Pairs:     pairs,
+			Timestamp: timestamp,
+		}
+
+		_, err = graph.CreateHistoricPrices(ctx, client, input)
+		if err == nil {
+			return nil
+		}
+
+		log.Warn().
+			Err(err).
+			Int("attempt", attempt).
+			Int("chunk_size", len(pairs)).
+			Msg("Failed to write price chunk, will retry...")
+
+		time.Sleep(time.Duration(attempt*2) * time.Second) // backoff
+	}
+	return err
 }
 
 // SavePriceDataAsJSON saves Binance price data to a JSON file, appending data in 5-minute intervals
