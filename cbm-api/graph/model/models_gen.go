@@ -32,28 +32,28 @@ type CreateProjectInput struct {
 }
 
 type CreateTaskInput struct {
-	Title       string    `json:"title"`
-	Description *string   `json:"description,omitempty"`
-	Status      *string   `json:"status,omitempty"`
-	Priority    *string   `json:"priority,omitempty"`
-	Type        *string   `json:"type,omitempty"`
-	Labels      []*string `json:"labels,omitempty"`
-	AssignedTo  *string   `json:"assignedTo,omitempty"`
-	DueDate     *string   `json:"dueDate,omitempty"`
-	Category    *string   `json:"category,omitempty"`
-	ProjectID   *string   `json:"projectId,omitempty"`
+	Title          string    `json:"title"`
+	Description    *string   `json:"description,omitempty"`
+	Status         *string   `json:"status,omitempty"`
+	Labels         []*string `json:"labels,omitempty"`
+	AssignedTo     *string   `json:"assignedTo,omitempty"`
+	DueDate        *string   `json:"dueDate,omitempty"`
+	DeferDate      *string   `json:"deferDate,omitempty"`
+	Department     *string   `json:"department,omitempty"`
+	ProjectID      *string   `json:"projectId,omitempty"`
+	IsWaitingFor   *bool     `json:"isWaitingFor,omitempty"`
+	IsSomedayMaybe *bool     `json:"isSomedayMaybe,omitempty"`
 }
 
 type CreateUserInput struct {
-	FirstName              string    `json:"firstName"`
-	LastName               string    `json:"lastName"`
-	Email                  string    `json:"email"`
-	Password               string    `json:"password"`
-	MobileNumber           *string   `json:"mobileNumber,omitempty"`
-	Role                   string    `json:"role"`
-	InvitedBy              *string   `json:"invitedBy,omitempty"`
-	PreferredContactMethod *string   `json:"preferredContactMethod,omitempty"`
-	CreatedAt              time.Time `json:"createdAt"`
+	FirstName              string  `json:"firstName"`
+	LastName               string  `json:"lastName"`
+	Email                  string  `json:"email"`
+	Password               string  `json:"password"`
+	MobileNumber           *string `json:"mobileNumber,omitempty"`
+	Role                   string  `json:"role"`
+	InvitedBy              *string `json:"invitedBy,omitempty"`
+	PreferredContactMethod *string `json:"preferredContactMethod,omitempty"`
 }
 
 type HistoricKlineData struct {
@@ -214,19 +214,20 @@ type StrategyInput struct {
 }
 
 type Task struct {
-	ID          string    `json:"id"`
-	Title       string    `json:"title"`
-	Description *string   `json:"description,omitempty"`
-	Status      string    `json:"status"`
-	Priority    *string   `json:"priority,omitempty"`
-	Type        *string   `json:"type,omitempty"`
-	Labels      []*string `json:"labels,omitempty"`
-	AssignedTo  *string   `json:"assignedTo,omitempty"`
-	DueDate     *string   `json:"dueDate,omitempty"`
-	Category    *string   `json:"category,omitempty"`
-	ProjectID   *string   `json:"projectId,omitempty"`
-	CreatedAt   string    `json:"createdAt"`
-	UpdatedAt   string    `json:"updatedAt"`
+	ID             string    `json:"id"`
+	Title          string    `json:"title"`
+	Description    *string   `json:"description,omitempty"`
+	Status         string    `json:"status"`
+	Labels         []*string `json:"labels,omitempty"`
+	AssignedTo     *string   `json:"assignedTo,omitempty"`
+	DueDate        *string   `json:"dueDate,omitempty"`
+	DeferDate      *string   `json:"deferDate,omitempty"`
+	Department     *string   `json:"department,omitempty"`
+	ProjectID      *string   `json:"projectId,omitempty"`
+	IsWaitingFor   *bool     `json:"isWaitingFor,omitempty"`
+	IsSomedayMaybe *bool     `json:"isSomedayMaybe,omitempty"`
+	CreatedAt      string    `json:"createdAt"`
+	UpdatedAt      string    `json:"updatedAt"`
 }
 
 type TradeOutcomeReport struct {
@@ -268,17 +269,18 @@ type UpdateProjectInput struct {
 }
 
 type UpdateTaskInput struct {
-	ID          string    `json:"id"`
-	Title       *string   `json:"title,omitempty"`
-	Description *string   `json:"description,omitempty"`
-	Status      *string   `json:"status,omitempty"`
-	Priority    *string   `json:"priority,omitempty"`
-	Type        *string   `json:"type,omitempty"`
-	Labels      []*string `json:"labels,omitempty"`
-	AssignedTo  *string   `json:"assignedTo,omitempty"`
-	DueDate     *string   `json:"dueDate,omitempty"`
-	Category    *string   `json:"category,omitempty"`
-	ProjectID   *string   `json:"projectId,omitempty"`
+	ID             string    `json:"id"`
+	Title          *string   `json:"title,omitempty"`
+	Description    *string   `json:"description,omitempty"`
+	Status         *string   `json:"status,omitempty"`
+	Labels         []*string `json:"labels,omitempty"`
+	AssignedTo     *string   `json:"assignedTo,omitempty"`
+	DueDate        *string   `json:"dueDate,omitempty"`
+	DeferDate      *string   `json:"deferDate,omitempty"`
+	Department     *string   `json:"department,omitempty"`
+	ProjectID      *string   `json:"projectId,omitempty"`
+	IsWaitingFor   *bool     `json:"isWaitingFor,omitempty"`
+	IsSomedayMaybe *bool     `json:"isSomedayMaybe,omitempty"`
 }
 
 type UpdateUserInput struct {

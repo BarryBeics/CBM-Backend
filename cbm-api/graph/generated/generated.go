@@ -171,19 +171,20 @@ type ComplexityRoot struct {
 	}
 
 	Task struct {
-		AssignedTo  func(childComplexity int) int
-		Category    func(childComplexity int) int
-		CreatedAt   func(childComplexity int) int
-		Description func(childComplexity int) int
-		DueDate     func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Labels      func(childComplexity int) int
-		Priority    func(childComplexity int) int
-		ProjectID   func(childComplexity int) int
-		Status      func(childComplexity int) int
-		Title       func(childComplexity int) int
-		Type        func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
+		AssignedTo     func(childComplexity int) int
+		CreatedAt      func(childComplexity int) int
+		DeferDate      func(childComplexity int) int
+		Department     func(childComplexity int) int
+		Description    func(childComplexity int) int
+		DueDate        func(childComplexity int) int
+		ID             func(childComplexity int) int
+		IsSomedayMaybe func(childComplexity int) int
+		IsWaitingFor   func(childComplexity int) int
+		Labels         func(childComplexity int) int
+		ProjectID      func(childComplexity int) int
+		Status         func(childComplexity int) int
+		Title          func(childComplexity int) int
+		UpdatedAt      func(childComplexity int) int
 	}
 
 	TradeOutcomeReport struct {
@@ -1111,19 +1112,26 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Task.AssignedTo(childComplexity), true
 
-	case "Task.category":
-		if e.complexity.Task.Category == nil {
-			break
-		}
-
-		return e.complexity.Task.Category(childComplexity), true
-
 	case "Task.createdAt":
 		if e.complexity.Task.CreatedAt == nil {
 			break
 		}
 
 		return e.complexity.Task.CreatedAt(childComplexity), true
+
+	case "Task.deferDate":
+		if e.complexity.Task.DeferDate == nil {
+			break
+		}
+
+		return e.complexity.Task.DeferDate(childComplexity), true
+
+	case "Task.department":
+		if e.complexity.Task.Department == nil {
+			break
+		}
+
+		return e.complexity.Task.Department(childComplexity), true
 
 	case "Task.description":
 		if e.complexity.Task.Description == nil {
@@ -1146,19 +1154,26 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Task.ID(childComplexity), true
 
+	case "Task.isSomedayMaybe":
+		if e.complexity.Task.IsSomedayMaybe == nil {
+			break
+		}
+
+		return e.complexity.Task.IsSomedayMaybe(childComplexity), true
+
+	case "Task.isWaitingFor":
+		if e.complexity.Task.IsWaitingFor == nil {
+			break
+		}
+
+		return e.complexity.Task.IsWaitingFor(childComplexity), true
+
 	case "Task.labels":
 		if e.complexity.Task.Labels == nil {
 			break
 		}
 
 		return e.complexity.Task.Labels(childComplexity), true
-
-	case "Task.priority":
-		if e.complexity.Task.Priority == nil {
-			break
-		}
-
-		return e.complexity.Task.Priority(childComplexity), true
 
 	case "Task.projectId":
 		if e.complexity.Task.ProjectID == nil {
@@ -1180,13 +1195,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Task.Title(childComplexity), true
-
-	case "Task.type":
-		if e.complexity.Task.Type == nil {
-			break
-		}
-
-		return e.complexity.Task.Type(childComplexity), true
 
 	case "Task.updatedAt":
 		if e.complexity.Task.UpdatedAt == nil {
@@ -1669,7 +1677,6 @@ input CreateUserInput {
   role: String!          # e.g. "interested" or "guest"
   invitedBy: String
   preferredContactMethod: String 
-  createdAt: DateTime!
 }
 
 
@@ -1913,27 +1920,28 @@ type Task {
   id: ID!
   title: String!
   description: String
-  status: String!
-  priority: String
-  type: String
-  labels: [String]
+  status: String!            # inbox, nextAction, scheduled, etc.
+  labels: [String]           # use these for meeting, call, design, etc.
   assignedTo: String
   dueDate: String
-  category: String
+  deferDate: String          # optional, for delayed tasks
+  department: String         # e.g. sales, marketing, programming
   projectId: String
+  isWaitingFor: Boolean
+  isSomedayMaybe: Boolean
   createdAt: String!
   updatedAt: String!
 }
 
 type Project {
   id: ID!
-  title: String!
-  sop: Boolean!
+  title: String!           # Now includes structured naming (e.g. "Q2-2025 | Marketing | New Launch")
+  sop: Boolean!            # For standard operating procedure templates — good addition
   description: String
-  labels: [String]
+  labels: [String]         # Used for filtering/grouping (e.g. ["Q2", "marketing"])
   assignedTo: String
   dueDate: String
-  status: String!
+  status: String!          # "active", "completed", "archived"
   createdAt: String!
   updatedAt: String!
   tasks: [Task]
@@ -1947,13 +1955,14 @@ input CreateTaskInput {
   title: String!
   description: String
   status: String = "inbox"
-  priority: String = "medium"
-  type: String
   labels: [String]
   assignedTo: String
   dueDate: String
-  category: String
+  deferDate: String
+  department: String
   projectId: String
+  isWaitingFor: Boolean = false
+  isSomedayMaybe: Boolean = false
 }
 
 input UpdateTaskInput {
@@ -1961,14 +1970,16 @@ input UpdateTaskInput {
   title: String
   description: String
   status: String
-  priority: String
-  type: String
   labels: [String]
   assignedTo: String
   dueDate: String
-  category: String
+  deferDate: String
+  department: String
   projectId: String
+  isWaitingFor: Boolean
+  isSomedayMaybe: Boolean
 }
+
 
 input CreateProjectInput {
   title: String!
@@ -4968,20 +4979,22 @@ func (ec *executionContext) fieldContext_Mutation_createTask(ctx context.Context
 				return ec.fieldContext_Task_description(ctx, field)
 			case "status":
 				return ec.fieldContext_Task_status(ctx, field)
-			case "priority":
-				return ec.fieldContext_Task_priority(ctx, field)
-			case "type":
-				return ec.fieldContext_Task_type(ctx, field)
 			case "labels":
 				return ec.fieldContext_Task_labels(ctx, field)
 			case "assignedTo":
 				return ec.fieldContext_Task_assignedTo(ctx, field)
 			case "dueDate":
 				return ec.fieldContext_Task_dueDate(ctx, field)
-			case "category":
-				return ec.fieldContext_Task_category(ctx, field)
+			case "deferDate":
+				return ec.fieldContext_Task_deferDate(ctx, field)
+			case "department":
+				return ec.fieldContext_Task_department(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Task_projectId(ctx, field)
+			case "isWaitingFor":
+				return ec.fieldContext_Task_isWaitingFor(ctx, field)
+			case "isSomedayMaybe":
+				return ec.fieldContext_Task_isSomedayMaybe(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Task_createdAt(ctx, field)
 			case "updatedAt":
@@ -5048,20 +5061,22 @@ func (ec *executionContext) fieldContext_Mutation_updateTask(ctx context.Context
 				return ec.fieldContext_Task_description(ctx, field)
 			case "status":
 				return ec.fieldContext_Task_status(ctx, field)
-			case "priority":
-				return ec.fieldContext_Task_priority(ctx, field)
-			case "type":
-				return ec.fieldContext_Task_type(ctx, field)
 			case "labels":
 				return ec.fieldContext_Task_labels(ctx, field)
 			case "assignedTo":
 				return ec.fieldContext_Task_assignedTo(ctx, field)
 			case "dueDate":
 				return ec.fieldContext_Task_dueDate(ctx, field)
-			case "category":
-				return ec.fieldContext_Task_category(ctx, field)
+			case "deferDate":
+				return ec.fieldContext_Task_deferDate(ctx, field)
+			case "department":
+				return ec.fieldContext_Task_department(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Task_projectId(ctx, field)
+			case "isWaitingFor":
+				return ec.fieldContext_Task_isWaitingFor(ctx, field)
+			case "isSomedayMaybe":
+				return ec.fieldContext_Task_isSomedayMaybe(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Task_createdAt(ctx, field)
 			case "updatedAt":
@@ -6164,20 +6179,22 @@ func (ec *executionContext) fieldContext_Project_tasks(_ context.Context, field 
 				return ec.fieldContext_Task_description(ctx, field)
 			case "status":
 				return ec.fieldContext_Task_status(ctx, field)
-			case "priority":
-				return ec.fieldContext_Task_priority(ctx, field)
-			case "type":
-				return ec.fieldContext_Task_type(ctx, field)
 			case "labels":
 				return ec.fieldContext_Task_labels(ctx, field)
 			case "assignedTo":
 				return ec.fieldContext_Task_assignedTo(ctx, field)
 			case "dueDate":
 				return ec.fieldContext_Task_dueDate(ctx, field)
-			case "category":
-				return ec.fieldContext_Task_category(ctx, field)
+			case "deferDate":
+				return ec.fieldContext_Task_deferDate(ctx, field)
+			case "department":
+				return ec.fieldContext_Task_department(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Task_projectId(ctx, field)
+			case "isWaitingFor":
+				return ec.fieldContext_Task_isWaitingFor(ctx, field)
+			case "isSomedayMaybe":
+				return ec.fieldContext_Task_isSomedayMaybe(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Task_createdAt(ctx, field)
 			case "updatedAt":
@@ -7305,20 +7322,22 @@ func (ec *executionContext) fieldContext_Query_taskById(ctx context.Context, fie
 				return ec.fieldContext_Task_description(ctx, field)
 			case "status":
 				return ec.fieldContext_Task_status(ctx, field)
-			case "priority":
-				return ec.fieldContext_Task_priority(ctx, field)
-			case "type":
-				return ec.fieldContext_Task_type(ctx, field)
 			case "labels":
 				return ec.fieldContext_Task_labels(ctx, field)
 			case "assignedTo":
 				return ec.fieldContext_Task_assignedTo(ctx, field)
 			case "dueDate":
 				return ec.fieldContext_Task_dueDate(ctx, field)
-			case "category":
-				return ec.fieldContext_Task_category(ctx, field)
+			case "deferDate":
+				return ec.fieldContext_Task_deferDate(ctx, field)
+			case "department":
+				return ec.fieldContext_Task_department(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Task_projectId(ctx, field)
+			case "isWaitingFor":
+				return ec.fieldContext_Task_isWaitingFor(ctx, field)
+			case "isSomedayMaybe":
+				return ec.fieldContext_Task_isSomedayMaybe(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Task_createdAt(ctx, field)
 			case "updatedAt":
@@ -7385,20 +7404,22 @@ func (ec *executionContext) fieldContext_Query_allTasks(_ context.Context, field
 				return ec.fieldContext_Task_description(ctx, field)
 			case "status":
 				return ec.fieldContext_Task_status(ctx, field)
-			case "priority":
-				return ec.fieldContext_Task_priority(ctx, field)
-			case "type":
-				return ec.fieldContext_Task_type(ctx, field)
 			case "labels":
 				return ec.fieldContext_Task_labels(ctx, field)
 			case "assignedTo":
 				return ec.fieldContext_Task_assignedTo(ctx, field)
 			case "dueDate":
 				return ec.fieldContext_Task_dueDate(ctx, field)
-			case "category":
-				return ec.fieldContext_Task_category(ctx, field)
+			case "deferDate":
+				return ec.fieldContext_Task_deferDate(ctx, field)
+			case "department":
+				return ec.fieldContext_Task_department(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Task_projectId(ctx, field)
+			case "isWaitingFor":
+				return ec.fieldContext_Task_isWaitingFor(ctx, field)
+			case "isSomedayMaybe":
+				return ec.fieldContext_Task_isSomedayMaybe(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Task_createdAt(ctx, field)
 			case "updatedAt":
@@ -8713,88 +8734,6 @@ func (ec *executionContext) fieldContext_Task_status(_ context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _Task_priority(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Task_priority(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Priority, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Task_priority(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Task",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Task_type(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Task_type(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Type, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Task_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Task",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Task_labels(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Task_labels(ctx, field)
 	if err != nil {
@@ -8918,8 +8857,8 @@ func (ec *executionContext) fieldContext_Task_dueDate(_ context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _Task_category(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Task_category(ctx, field)
+func (ec *executionContext) _Task_deferDate(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Task_deferDate(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -8932,7 +8871,7 @@ func (ec *executionContext) _Task_category(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Category, nil
+		return obj.DeferDate, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8946,7 +8885,48 @@ func (ec *executionContext) _Task_category(ctx context.Context, field graphql.Co
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Task_category(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Task_deferDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Task",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Task_department(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Task_department(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Department, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Task_department(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Task",
 		Field:      field,
@@ -8995,6 +8975,88 @@ func (ec *executionContext) fieldContext_Task_projectId(_ context.Context, field
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Task_isWaitingFor(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Task_isWaitingFor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsWaitingFor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Task_isWaitingFor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Task",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Task_isSomedayMaybe(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Task_isSomedayMaybe(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsSomedayMaybe, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Task_isSomedayMaybe(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Task",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -12471,11 +12533,14 @@ func (ec *executionContext) unmarshalInputCreateTaskInput(ctx context.Context, o
 	if _, present := asMap["status"]; !present {
 		asMap["status"] = "inbox"
 	}
-	if _, present := asMap["priority"]; !present {
-		asMap["priority"] = "medium"
+	if _, present := asMap["isWaitingFor"]; !present {
+		asMap["isWaitingFor"] = false
+	}
+	if _, present := asMap["isSomedayMaybe"]; !present {
+		asMap["isSomedayMaybe"] = false
 	}
 
-	fieldsInOrder := [...]string{"title", "description", "status", "priority", "type", "labels", "assignedTo", "dueDate", "category", "projectId"}
+	fieldsInOrder := [...]string{"title", "description", "status", "labels", "assignedTo", "dueDate", "deferDate", "department", "projectId", "isWaitingFor", "isSomedayMaybe"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -12503,20 +12568,6 @@ func (ec *executionContext) unmarshalInputCreateTaskInput(ctx context.Context, o
 				return it, err
 			}
 			it.Status = data
-		case "priority":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("priority"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Priority = data
-		case "type":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Type = data
 		case "labels":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("labels"))
 			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
@@ -12538,13 +12589,20 @@ func (ec *executionContext) unmarshalInputCreateTaskInput(ctx context.Context, o
 				return it, err
 			}
 			it.DueDate = data
-		case "category":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
+		case "deferDate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deferDate"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Category = data
+			it.DeferDate = data
+		case "department":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("department"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Department = data
 		case "projectId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectId"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -12552,6 +12610,20 @@ func (ec *executionContext) unmarshalInputCreateTaskInput(ctx context.Context, o
 				return it, err
 			}
 			it.ProjectID = data
+		case "isWaitingFor":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isWaitingFor"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsWaitingFor = data
+		case "isSomedayMaybe":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isSomedayMaybe"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsSomedayMaybe = data
 		}
 	}
 
@@ -12565,7 +12637,7 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"firstName", "lastName", "email", "password", "mobileNumber", "role", "invitedBy", "preferredContactMethod", "createdAt"}
+	fieldsInOrder := [...]string{"firstName", "lastName", "email", "password", "mobileNumber", "role", "invitedBy", "preferredContactMethod"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -12628,13 +12700,6 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.PreferredContactMethod = data
-		case "createdAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAt"))
-			data, err := ec.unmarshalNDateTime2timeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedAt = data
 		}
 	}
 
@@ -13392,7 +13457,7 @@ func (ec *executionContext) unmarshalInputUpdateTaskInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "title", "description", "status", "priority", "type", "labels", "assignedTo", "dueDate", "category", "projectId"}
+	fieldsInOrder := [...]string{"id", "title", "description", "status", "labels", "assignedTo", "dueDate", "deferDate", "department", "projectId", "isWaitingFor", "isSomedayMaybe"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -13427,20 +13492,6 @@ func (ec *executionContext) unmarshalInputUpdateTaskInput(ctx context.Context, o
 				return it, err
 			}
 			it.Status = data
-		case "priority":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("priority"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Priority = data
-		case "type":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Type = data
 		case "labels":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("labels"))
 			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
@@ -13462,13 +13513,20 @@ func (ec *executionContext) unmarshalInputUpdateTaskInput(ctx context.Context, o
 				return it, err
 			}
 			it.DueDate = data
-		case "category":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
+		case "deferDate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deferDate"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Category = data
+			it.DeferDate = data
+		case "department":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("department"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Department = data
 		case "projectId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectId"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -13476,6 +13534,20 @@ func (ec *executionContext) unmarshalInputUpdateTaskInput(ctx context.Context, o
 				return it, err
 			}
 			it.ProjectID = data
+		case "isWaitingFor":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isWaitingFor"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsWaitingFor = data
+		case "isSomedayMaybe":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isSomedayMaybe"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsSomedayMaybe = data
 		}
 	}
 
@@ -14728,20 +14800,22 @@ func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "priority":
-			out.Values[i] = ec._Task_priority(ctx, field, obj)
-		case "type":
-			out.Values[i] = ec._Task_type(ctx, field, obj)
 		case "labels":
 			out.Values[i] = ec._Task_labels(ctx, field, obj)
 		case "assignedTo":
 			out.Values[i] = ec._Task_assignedTo(ctx, field, obj)
 		case "dueDate":
 			out.Values[i] = ec._Task_dueDate(ctx, field, obj)
-		case "category":
-			out.Values[i] = ec._Task_category(ctx, field, obj)
+		case "deferDate":
+			out.Values[i] = ec._Task_deferDate(ctx, field, obj)
+		case "department":
+			out.Values[i] = ec._Task_department(ctx, field, obj)
 		case "projectId":
 			out.Values[i] = ec._Task_projectId(ctx, field, obj)
+		case "isWaitingFor":
+			out.Values[i] = ec._Task_isWaitingFor(ctx, field, obj)
+		case "isSomedayMaybe":
+			out.Values[i] = ec._Task_isSomedayMaybe(ctx, field, obj)
 		case "createdAt":
 			out.Values[i] = ec._Task_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

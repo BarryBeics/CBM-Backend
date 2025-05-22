@@ -6,27 +6,28 @@ type Task {
   id: ID!
   title: String!
   description: String
-  status: String!
-  priority: String
-  type: String
-  labels: [String]
+  status: String!            # inbox, nextAction, scheduled, etc.
+  labels: [String]           # use these for meeting, call, design, etc.
   assignedTo: String
   dueDate: String
-  category: String
+  deferDate: String          # optional, for delayed tasks
+  department: String         # e.g. sales, marketing, programming
   projectId: String
+  isWaitingFor: Boolean
+  isSomedayMaybe: Boolean
   createdAt: String!
   updatedAt: String!
 }
 
 type Project {
   id: ID!
-  title: String!
-  sop: Boolean!
+  title: String!           # Now includes structured naming (e.g. "Q2-2025 | Marketing | New Launch")
+  sop: Boolean!            # For standard operating procedure templates — good addition
   description: String
-  labels: [String]
+  labels: [String]         # Used for filtering/grouping (e.g. ["Q2", "marketing"])
   assignedTo: String
   dueDate: String
-  status: String!
+  status: String!          # "active", "completed", "archived"
   createdAt: String!
   updatedAt: String!
   tasks: [Task]
@@ -40,13 +41,14 @@ input CreateTaskInput {
   title: String!
   description: String
   status: String = "inbox"
-  priority: String = "medium"
-  type: String
   labels: [String]
   assignedTo: String
   dueDate: String
-  category: String
+  deferDate: String
+  department: String
   projectId: String
+  isWaitingFor: Boolean = false
+  isSomedayMaybe: Boolean = false
 }
 
 input UpdateTaskInput {
@@ -54,14 +56,16 @@ input UpdateTaskInput {
   title: String
   description: String
   status: String
-  priority: String
-  type: String
   labels: [String]
   assignedTo: String
   dueDate: String
-  category: String
+  deferDate: String
+  department: String
   projectId: String
+  isWaitingFor: Boolean
+  isSomedayMaybe: Boolean
 }
+
 
 input CreateProjectInput {
   title: String!

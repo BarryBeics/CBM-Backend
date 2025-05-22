@@ -19,19 +19,20 @@ func (db *DB) CreateTask(ctx context.Context, input model.CreateTaskInput) (*mod
 	now := time.Now().Format(time.RFC3339)
 
 	task := bson.M{
-		"id":          primitive.NewObjectID().Hex(),
-		"title":       input.Title,
-		"description": input.Description,
-		"status":      *input.Status,
-		"priority":    input.Priority,
-		"type":        input.Type,
-		"labels":      input.Labels,
-		"assignedTo":  input.AssignedTo,
-		"dueDate":     input.DueDate,
-		"category":    input.Category,
-		"projectId":   input.ProjectID, // ensure this stays a string
-		"createdAt":   now,
-		"updatedAt":   now,
+		"id":             primitive.NewObjectID().Hex(),
+		"title":          input.Title,
+		"description":    input.Description,
+		"status":         *input.Status,
+		"labels":         input.Labels,
+		"assignedTo":     input.AssignedTo,
+		"dueDate":        input.DueDate,
+		"deferDate":      input.DeferDate,
+		"department":     input.Department,
+		"projectId":      input.ProjectID, // ensure this stays a string
+		"isWaitingFor":   input.IsWaitingFor,
+		"isSomedayMaybe": input.IsSomedayMaybe,
+		"createdAt":      now,
+		"updatedAt":      now,
 	}
 
 	var updated model.Task
@@ -63,12 +64,6 @@ func (db *DB) UpdateTask(ctx context.Context, input model.UpdateTaskInput) (*mod
 	if input.Status != nil {
 		updateFields["status"] = input.Status
 	}
-	if input.Priority != nil {
-		updateFields["priority"] = input.Priority
-	}
-	if input.Type != nil {
-		updateFields["type"] = input.Type
-	}
 	if input.Labels != nil {
 		updateFields["labels"] = input.Labels
 	}
@@ -78,11 +73,20 @@ func (db *DB) UpdateTask(ctx context.Context, input model.UpdateTaskInput) (*mod
 	if input.DueDate != nil {
 		updateFields["dueDate"] = input.DueDate
 	}
-	if input.Category != nil {
-		updateFields["category"] = input.Category
+	if input.DeferDate != nil {
+		updateFields["deferDate"] = input.DeferDate
+	}
+	if input.Department != nil {
+		updateFields["department"] = input.Department
 	}
 	if input.ProjectID != nil {
 		updateFields["projectId"] = input.ProjectID
+	}
+	if input.IsWaitingFor != nil {
+		updateFields["isWaitingFor"] = input.IsWaitingFor
+	}
+	if input.IsSomedayMaybe != nil {
+		updateFields["isSomedayMaybe"] = input.IsSomedayMaybe
 	}
 
 	update := bson.M{"$set": updateFields}
