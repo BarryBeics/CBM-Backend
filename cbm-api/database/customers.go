@@ -82,6 +82,28 @@ func (db *DB) GetUserByEmail(ctx context.Context, email string) (*model.User, er
 	return &user, nil
 }
 
+// GetUserByRole retrieves a group of users by their role.
+func (db *DB) GetUserByRole(ctx context.Context, role string) ([]*model.User, error) {
+	collection := db.client.Database("go_trading_db").Collection("Customers")
+
+	filter := bson.D{{"role", role}}
+
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		log.Error().Err(err).Msg("Error querying users by role:")
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var users []*model.User
+	if err := cursor.All(ctx, &users); err != nil {
+		log.Error().Err(err).Msg("Error decoding users by role:")
+		return nil, err
+	}
+
+	return users, nil
+}
+
 // GetAllUsers fetches all users from the Customers collection.
 func (db *DB) GetAllUsers(ctx context.Context) ([]*model.User, error) {
 	collection := db.client.Database("go_trading_db").Collection("Customers")

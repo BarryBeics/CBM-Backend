@@ -65,3 +65,14 @@ func (r *queryResolver) GetAllUsers(ctx context.Context) ([]*model.User, error) 
 
 	return users, nil
 }
+
+// GetUsersByRole is the resolver for the getUsersByRole field.
+func (r *queryResolver) GetUsersByRole(ctx context.Context, role string) ([]*model.User, error) {
+	users, err := db.GetUserByRole(ctx, role)
+	if err != nil {
+		log.Error().Err(err).Msg("Error fetching user by email:")
+		return nil, err
+	}
+
+	return users, nil
+}
