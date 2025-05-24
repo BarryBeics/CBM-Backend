@@ -75,10 +75,9 @@ extend type Mutation {
 
 
 extend type Query {
-  "Get a user by email"
   getUserByEmail(email: String!): User
-
-  "Get all users"
   getAllUsers: [User!]!
+  getUsersByRole(role: String!): [User!]!
 }
+
 
