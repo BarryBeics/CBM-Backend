@@ -51,6 +51,8 @@ func (r *mutationResolver) DeleteHistoricPrices(ctx context.Context, timestamp i
 
 // GetHistoricPrice is the resolver for the getHistoricPrice field.
 func (r *queryResolver) GetHistoricPrice(ctx context.Context, symbol string, limit *int) ([]*model.HistoricPrices, error) {
+	log.Info().Str("symbol", symbol).Int("limit", *limit).Msg("GetHistoricPrice called")
+
 	l := 0
 	if limit != nil {
 		l = *limit
