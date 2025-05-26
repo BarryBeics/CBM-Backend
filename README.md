@@ -2,6 +2,9 @@ docker build -f cbm-api/Dockerfile -t cbm-api .
 
 docker build --no-cache -f cbm-api/Dockerfile -t cbm-api .
 
+Mongo shell login
+docker exec -it 06f849d40a8c mongosh --username fudgebot --password cookiebot --authenticationDatabase admin
+
  How to regenerate the GraphQL resolvers
 Since your gqlgen.yml is already correctly set up inside cbm-api/,
 you just need to run gqlgen.
