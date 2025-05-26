@@ -61,8 +61,9 @@ type HistoricKlineData struct {
 }
 
 type HistoricPrices struct {
-	Pair      []*Pair `json:"Pair,omitempty"`
-	Timestamp int     `json:"Timestamp"`
+	Pair      []*Pair   `json:"Pair,omitempty"`
+	Timestamp int       `json:"Timestamp"`
+	CreatedAt time.Time `json:"CreatedAt"`
 }
 
 type LoginInput struct {

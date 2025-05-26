@@ -64,6 +64,7 @@ type ComplexityRoot struct {
 	}
 
 	HistoricPrices struct {
+		CreatedAt func(childComplexity int) int
 		Pair      func(childComplexity int) int
 		Timestamp func(childComplexity int) int
 	}
@@ -359,6 +360,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.HistoricKlineData.Opentime(childComplexity), true
+
+	case "HistoricPrices.CreatedAt":
+		if e.complexity.HistoricPrices.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.HistoricPrices.CreatedAt(childComplexity), true
 
 	case "HistoricPrices.Pair":
 		if e.complexity.HistoricPrices.Pair == nil {
@@ -1767,6 +1775,7 @@ extend type Mutation {
   type HistoricPrices {
 	Pair: [Pair!]
 	Timestamp: Int!
+	CreatedAt: DateTime!
   }
   
   input NewHistoricPriceInput {
@@ -3810,6 +3819,50 @@ func (ec *executionContext) fieldContext_HistoricPrices_Timestamp(_ context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _HistoricPrices_CreatedAt(ctx context.Context, field graphql.CollectedField, obj *model.HistoricPrices) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_HistoricPrices_CreatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_HistoricPrices_CreatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "HistoricPrices",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _LoginResponse_token(ctx context.Context, field graphql.CollectedField, obj *model.LoginResponse) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_LoginResponse_token(ctx, field)
 	if err != nil {
@@ -4831,6 +4884,8 @@ func (ec *executionContext) fieldContext_Mutation_createHistoricPrices(ctx conte
 				return ec.fieldContext_HistoricPrices_Pair(ctx, field)
 			case "Timestamp":
 				return ec.fieldContext_HistoricPrices_Timestamp(ctx, field)
+			case "CreatedAt":
+				return ec.fieldContext_HistoricPrices_CreatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type HistoricPrices", field.Name)
 		},
@@ -7169,6 +7224,8 @@ func (ec *executionContext) fieldContext_Query_getHistoricPrice(ctx context.Cont
 				return ec.fieldContext_HistoricPrices_Pair(ctx, field)
 			case "Timestamp":
 				return ec.fieldContext_HistoricPrices_Timestamp(ctx, field)
+			case "CreatedAt":
+				return ec.fieldContext_HistoricPrices_CreatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type HistoricPrices", field.Name)
 		},
@@ -7230,6 +7287,8 @@ func (ec *executionContext) fieldContext_Query_getHistoricPricesAtTimestamp(ctx 
 				return ec.fieldContext_HistoricPrices_Pair(ctx, field)
 			case "Timestamp":
 				return ec.fieldContext_HistoricPrices_Timestamp(ctx, field)
+			case "CreatedAt":
+				return ec.fieldContext_HistoricPrices_CreatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type HistoricPrices", field.Name)
 		},
@@ -13879,6 +13938,11 @@ func (ec *executionContext) _HistoricPrices(ctx context.Context, sel ast.Selecti
 			out.Values[i] = ec._HistoricPrices_Pair(ctx, field, obj)
 		case "Timestamp":
 			out.Values[i] = ec._HistoricPrices_Timestamp(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "CreatedAt":
+			out.Values[i] = ec._HistoricPrices_CreatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

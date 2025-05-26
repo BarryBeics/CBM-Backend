@@ -25,6 +25,7 @@ func (db *DB) SaveHistoricPrices(input *model.NewHistoricPriceInput) ([]*model.H
 	historicPrices := &model.HistoricPrices{
 		Pair:      make([]*model.Pair, len(input.Pairs)),
 		Timestamp: input.Timestamp,
+		CreatedAt: time.Now().UTC(),
 	}
 
 	for i, pairInput := range input.Pairs {
