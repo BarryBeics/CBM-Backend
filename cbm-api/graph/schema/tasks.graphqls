@@ -13,8 +13,7 @@ type Task {
   deferDate: String          # optional, for delayed tasks
   department: String         # e.g. sales, marketing, programming
   projectId: String
-  isWaitingFor: Boolean
-  isSomedayMaybe: Boolean
+  duration: Int              # track how long a task took
   createdAt: String!
   updatedAt: String!
 }
@@ -47,8 +46,7 @@ input CreateTaskInput {
   deferDate: String
   department: String
   projectId: String
-  isWaitingFor: Boolean = false
-  isSomedayMaybe: Boolean = false
+  duration: Int
 }
 
 input UpdateTaskInput {
@@ -62,8 +60,7 @@ input UpdateTaskInput {
   deferDate: String
   department: String
   projectId: String
-  isWaitingFor: Boolean
-  isSomedayMaybe: Boolean
+  duration: Int
 }
 
 

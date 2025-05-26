@@ -19,20 +19,19 @@ func (db *DB) CreateTask(ctx context.Context, input model.CreateTaskInput) (*mod
 	now := time.Now().Format(time.RFC3339)
 
 	task := bson.M{
-		"id":             primitive.NewObjectID().Hex(),
-		"title":          input.Title,
-		"description":    input.Description,
-		"status":         *input.Status,
-		"labels":         input.Labels,
-		"assignedTo":     input.AssignedTo,
-		"dueDate":        input.DueDate,
-		"deferDate":      input.DeferDate,
-		"department":     input.Department,
-		"projectId":      input.ProjectID, // ensure this stays a string
-		"isWaitingFor":   input.IsWaitingFor,
-		"isSomedayMaybe": input.IsSomedayMaybe,
-		"createdAt":      now,
-		"updatedAt":      now,
+		"id":          primitive.NewObjectID().Hex(),
+		"title":       input.Title,
+		"description": input.Description,
+		"status":      *input.Status,
+		"labels":      input.Labels,
+		"assignedTo":  input.AssignedTo,
+		"dueDate":     input.DueDate,
+		"deferDate":   input.DeferDate,
+		"department":  input.Department,
+		"projectId":   input.ProjectID, // ensure this stays a string
+		"duration":    input.Duration,
+		"createdAt":   now,
+		"updatedAt":   now,
 	}
 
 	var updated model.Task
@@ -82,11 +81,8 @@ func (db *DB) UpdateTask(ctx context.Context, input model.UpdateTaskInput) (*mod
 	if input.ProjectID != nil {
 		updateFields["projectId"] = input.ProjectID
 	}
-	if input.IsWaitingFor != nil {
-		updateFields["isWaitingFor"] = input.IsWaitingFor
-	}
-	if input.IsSomedayMaybe != nil {
-		updateFields["isSomedayMaybe"] = input.IsSomedayMaybe
+	if input.Duration != nil {
+		updateFields["duration"] = input.Duration
 	}
 
 	update := bson.M{"$set": updateFields}

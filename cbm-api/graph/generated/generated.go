@@ -172,20 +172,19 @@ type ComplexityRoot struct {
 	}
 
 	Task struct {
-		AssignedTo     func(childComplexity int) int
-		CreatedAt      func(childComplexity int) int
-		DeferDate      func(childComplexity int) int
-		Department     func(childComplexity int) int
-		Description    func(childComplexity int) int
-		DueDate        func(childComplexity int) int
-		ID             func(childComplexity int) int
-		IsSomedayMaybe func(childComplexity int) int
-		IsWaitingFor   func(childComplexity int) int
-		Labels         func(childComplexity int) int
-		ProjectID      func(childComplexity int) int
-		Status         func(childComplexity int) int
-		Title          func(childComplexity int) int
-		UpdatedAt      func(childComplexity int) int
+		AssignedTo  func(childComplexity int) int
+		CreatedAt   func(childComplexity int) int
+		DeferDate   func(childComplexity int) int
+		Department  func(childComplexity int) int
+		Description func(childComplexity int) int
+		DueDate     func(childComplexity int) int
+		Duration    func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Labels      func(childComplexity int) int
+		ProjectID   func(childComplexity int) int
+		Status      func(childComplexity int) int
+		Title       func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
 	}
 
 	TradeOutcomeReport struct {
@@ -1161,26 +1160,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Task.DueDate(childComplexity), true
 
+	case "Task.duration":
+		if e.complexity.Task.Duration == nil {
+			break
+		}
+
+		return e.complexity.Task.Duration(childComplexity), true
+
 	case "Task.id":
 		if e.complexity.Task.ID == nil {
 			break
 		}
 
 		return e.complexity.Task.ID(childComplexity), true
-
-	case "Task.isSomedayMaybe":
-		if e.complexity.Task.IsSomedayMaybe == nil {
-			break
-		}
-
-		return e.complexity.Task.IsSomedayMaybe(childComplexity), true
-
-	case "Task.isWaitingFor":
-		if e.complexity.Task.IsWaitingFor == nil {
-			break
-		}
-
-		return e.complexity.Task.IsWaitingFor(childComplexity), true
 
 	case "Task.labels":
 		if e.complexity.Task.Labels == nil {
@@ -1940,8 +1932,7 @@ type Task {
   deferDate: String          # optional, for delayed tasks
   department: String         # e.g. sales, marketing, programming
   projectId: String
-  isWaitingFor: Boolean
-  isSomedayMaybe: Boolean
+  duration: Int              # track how long a task took
   createdAt: String!
   updatedAt: String!
 }
@@ -1974,8 +1965,7 @@ input CreateTaskInput {
   deferDate: String
   department: String
   projectId: String
-  isWaitingFor: Boolean = false
-  isSomedayMaybe: Boolean = false
+  duration: Int
 }
 
 input UpdateTaskInput {
@@ -1989,8 +1979,7 @@ input UpdateTaskInput {
   deferDate: String
   department: String
   projectId: String
-  isWaitingFor: Boolean
-  isSomedayMaybe: Boolean
+  duration: Int
 }
 
 
@@ -5032,10 +5021,8 @@ func (ec *executionContext) fieldContext_Mutation_createTask(ctx context.Context
 				return ec.fieldContext_Task_department(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Task_projectId(ctx, field)
-			case "isWaitingFor":
-				return ec.fieldContext_Task_isWaitingFor(ctx, field)
-			case "isSomedayMaybe":
-				return ec.fieldContext_Task_isSomedayMaybe(ctx, field)
+			case "duration":
+				return ec.fieldContext_Task_duration(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Task_createdAt(ctx, field)
 			case "updatedAt":
@@ -5114,10 +5101,8 @@ func (ec *executionContext) fieldContext_Mutation_updateTask(ctx context.Context
 				return ec.fieldContext_Task_department(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Task_projectId(ctx, field)
-			case "isWaitingFor":
-				return ec.fieldContext_Task_isWaitingFor(ctx, field)
-			case "isSomedayMaybe":
-				return ec.fieldContext_Task_isSomedayMaybe(ctx, field)
+			case "duration":
+				return ec.fieldContext_Task_duration(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Task_createdAt(ctx, field)
 			case "updatedAt":
@@ -6232,10 +6217,8 @@ func (ec *executionContext) fieldContext_Project_tasks(_ context.Context, field 
 				return ec.fieldContext_Task_department(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Task_projectId(ctx, field)
-			case "isWaitingFor":
-				return ec.fieldContext_Task_isWaitingFor(ctx, field)
-			case "isSomedayMaybe":
-				return ec.fieldContext_Task_isSomedayMaybe(ctx, field)
+			case "duration":
+				return ec.fieldContext_Task_duration(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Task_createdAt(ctx, field)
 			case "updatedAt":
@@ -7470,10 +7453,8 @@ func (ec *executionContext) fieldContext_Query_taskById(ctx context.Context, fie
 				return ec.fieldContext_Task_department(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Task_projectId(ctx, field)
-			case "isWaitingFor":
-				return ec.fieldContext_Task_isWaitingFor(ctx, field)
-			case "isSomedayMaybe":
-				return ec.fieldContext_Task_isSomedayMaybe(ctx, field)
+			case "duration":
+				return ec.fieldContext_Task_duration(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Task_createdAt(ctx, field)
 			case "updatedAt":
@@ -7552,10 +7533,8 @@ func (ec *executionContext) fieldContext_Query_allTasks(_ context.Context, field
 				return ec.fieldContext_Task_department(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Task_projectId(ctx, field)
-			case "isWaitingFor":
-				return ec.fieldContext_Task_isWaitingFor(ctx, field)
-			case "isSomedayMaybe":
-				return ec.fieldContext_Task_isSomedayMaybe(ctx, field)
+			case "duration":
+				return ec.fieldContext_Task_duration(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Task_createdAt(ctx, field)
 			case "updatedAt":
@@ -9116,8 +9095,8 @@ func (ec *executionContext) fieldContext_Task_projectId(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Task_isWaitingFor(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Task_isWaitingFor(ctx, field)
+func (ec *executionContext) _Task_duration(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Task_duration(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -9130,7 +9109,7 @@ func (ec *executionContext) _Task_isWaitingFor(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.IsWaitingFor, nil
+		return obj.Duration, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9139,60 +9118,19 @@ func (ec *executionContext) _Task_isWaitingFor(ctx context.Context, field graphq
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*bool)
+	res := resTmp.(*int)
 	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Task_isWaitingFor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Task_duration(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Task",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Task_isSomedayMaybe(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Task_isSomedayMaybe(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsSomedayMaybe, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Task_isSomedayMaybe(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Task",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -12669,14 +12607,8 @@ func (ec *executionContext) unmarshalInputCreateTaskInput(ctx context.Context, o
 	if _, present := asMap["status"]; !present {
 		asMap["status"] = "inbox"
 	}
-	if _, present := asMap["isWaitingFor"]; !present {
-		asMap["isWaitingFor"] = false
-	}
-	if _, present := asMap["isSomedayMaybe"]; !present {
-		asMap["isSomedayMaybe"] = false
-	}
 
-	fieldsInOrder := [...]string{"title", "description", "status", "labels", "assignedTo", "dueDate", "deferDate", "department", "projectId", "isWaitingFor", "isSomedayMaybe"}
+	fieldsInOrder := [...]string{"title", "description", "status", "labels", "assignedTo", "dueDate", "deferDate", "department", "projectId", "duration"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -12746,20 +12678,13 @@ func (ec *executionContext) unmarshalInputCreateTaskInput(ctx context.Context, o
 				return it, err
 			}
 			it.ProjectID = data
-		case "isWaitingFor":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isWaitingFor"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+		case "duration":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("duration"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IsWaitingFor = data
-		case "isSomedayMaybe":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isSomedayMaybe"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsSomedayMaybe = data
+			it.Duration = data
 		}
 	}
 
@@ -13593,7 +13518,7 @@ func (ec *executionContext) unmarshalInputUpdateTaskInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "title", "description", "status", "labels", "assignedTo", "dueDate", "deferDate", "department", "projectId", "isWaitingFor", "isSomedayMaybe"}
+	fieldsInOrder := [...]string{"id", "title", "description", "status", "labels", "assignedTo", "dueDate", "deferDate", "department", "projectId", "duration"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -13670,20 +13595,13 @@ func (ec *executionContext) unmarshalInputUpdateTaskInput(ctx context.Context, o
 				return it, err
 			}
 			it.ProjectID = data
-		case "isWaitingFor":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isWaitingFor"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+		case "duration":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("duration"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IsWaitingFor = data
-		case "isSomedayMaybe":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isSomedayMaybe"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsSomedayMaybe = data
+			it.Duration = data
 		}
 	}
 
@@ -14970,10 +14888,8 @@ func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._Task_department(ctx, field, obj)
 		case "projectId":
 			out.Values[i] = ec._Task_projectId(ctx, field, obj)
-		case "isWaitingFor":
-			out.Values[i] = ec._Task_isWaitingFor(ctx, field, obj)
-		case "isSomedayMaybe":
-			out.Values[i] = ec._Task_isSomedayMaybe(ctx, field, obj)
+		case "duration":
+			out.Values[i] = ec._Task_duration(ctx, field, obj)
 		case "createdAt":
 			out.Values[i] = ec._Task_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
