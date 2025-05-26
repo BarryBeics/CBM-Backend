@@ -11,6 +11,7 @@ type Pair {
   type HistoricPrices {
 	Pair: [Pair!]
 	Timestamp: Int!
+	CreatedAt: DateTime!
   }
   
   input NewHistoricPriceInput {
