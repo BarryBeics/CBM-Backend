@@ -1,40 +1,46 @@
-networks:
-  gotrading:
-    name: gotrading
-    driver: bridge
+version: '3'
 
 services:
-  # nats:
-  #   image: ${NATS_IMAGE}
-  #   ports:
-  #     - 4222:4222
-  #     - 6222:6222
-  #     - 8222:8222
-  #   volumes:
-  #     - nats-data:/data
-  #   command: -m 8222 -js
-  #   healthcheck:
-  #     test: wget --spider http://127.0.0.1:8222 || exit 1
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #     start_period: 2s
-  #   networks:
-  #     - gotrading
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - gotrading
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs
+      - ./vhost.d:/etc/nginx/vhost.d
+      - ./html:/usr/share/nginx/html
+    restart: always
 
-  # nats-cli:
-  #   image: natsio/nats-box:latest
-  #   depends_on:
-  #     - nats
-  #   entrypoint: ["/bin/sh", "-c", "while true; do sleep 3600; done"]
-  #   environment:
-  #     - NATS_URL=nats://nats:4222
-  #   networks:
-  #     - gotrading
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: nginx-letsencrypt
+    environment:
+      - NGINX_PROXY_CONTAINER=nginx-proxy
+      - DEFAULT_EMAIL=barry@scalpelhound.com
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./certs:/etc/nginx/certs
+      - ./vhost.d:/etc/nginx/vhost.d
+      - ./html:/usr/share/nginx/html
+    depends_on:
+      - nginx-proxy
+    networks:
+      - gotrading
+    restart: always
+
+
+
 
   database:
     image: ${MONGODB_IMAGE}
+    container_name: database
     restart: always
+    mem_limit: 512m
     ports:
       - "27017:27017"
     env_file: .env
@@ -42,14 +48,9 @@ services:
       - gotrading
     volumes:
       - database-data:/data/db
-    healthcheck:
-      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   cbm-api:
-    image: ${CBM_API_IMAGE}
+    image: ${RESOLVERS_IMAGE}
     ports:
       - "8080:8080"
     env_file: 
@@ -69,14 +70,26 @@ services:
     networks:
       - gotrading
 
-  # frontend:
-  #   image: ${FRONTEND_IMAGE}
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - gotrading
-  #   ports:
-  #     - "80:80"
+
+  frontend:
+    image: ${FRONTEND_IMAGE}
+    env_file:
+      - .env
+    networks:
+      - gotrading
+    environment:
+      - VIRTUAL_HOST=scalpelhound.com
+      - LETSENCRYPT_HOST=scalpelhound.com
+      - LETSENCRYPT_EMAIL=barry@scalpelhound.com
+    expose:
+      - "80"
+    restart: always
+
+
+networks:
+  gotrading:
+    name: gotrading
+    driver: bridge
 
 
 volumes:
