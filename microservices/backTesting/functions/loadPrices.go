@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
-	"time"
 
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	"cryptobotmanager.com/cbm-backend/shared"
@@ -63,12 +62,12 @@ func CSVPrices(backend string) error {
 				continue
 			}
 
-			if err := SavePriceData(ctx, client, market, int(snapshot.Timestamp)); err != nil {
+			if err := shared.SavePriceData(ctx, client, market, int(snapshot.Timestamp)); err != nil {
 				log.Error().Err(err).Int("timestamp", snapshot.Timestamp).Msg("Save PriceData")
 			}
 
 			// Start trading
-			err := letTrade(ctx, client, market, int(snapshot.Timestamp))
+			err := LetsTrade(ctx, client, market, int(snapshot.Timestamp))
 			if err != nil {
 				log.Error().Err(err).Int("timestamp", snapshot.Timestamp).Msg("lets trade")
 			}
@@ -77,32 +76,32 @@ func CSVPrices(backend string) error {
 	return nil
 }
 
-func BinancePrices(backend string) error {
-	// make live API calls to Binance
-	// Get the nearest whole 5 minutes & print the current time
-	now := time.Now().Unix()
-	roundedEpoch := shared.RoundTimeToFiveMinuteInterval(now)
-	log.Info().Int64("Executing task at:", now).Int("Rounded time", roundedEpoch).Msg("Time")
+// func BinancePrices(backend string) error {
+// 	// make live API calls to Binance
+// 	// Get the nearest whole 5 minutes & print the current time
+// 	now := time.Now().Unix()
+// 	roundedEpoch := shared.RoundTimeToFiveMinuteInterval(now)
+// 	log.Info().Int64("Executing task at:", now).Int("Rounded time", roundedEpoch).Msg("Time")
 
-	// Create Client & Context
-	client := graphql.NewClient(backend, &http.Client{})
-	ctx := context.Background()
-	var market []model.Pair
-	var err error
+// 	// Create Client & Context
+// 	client := graphql.NewClient(backend, &http.Client{})
+// 	ctx := context.Background()
+// 	var market []model.Pair
+// 	var err error
 
-	market, err = FetchPricesFromBinanceAPI()
-	if err != nil {
-		log.Error().Err(err).Msgf("Failed to get price data from Binance!")
-	}
+// 	market, err = binance.FetchPricesFromBinanceAPI()
+// 	if err != nil {
+// 		log.Error().Err(err).Msgf("Failed to get price data from Binance!")
+// 	}
 
-	err = SavePriceDataAsJSON(market, int64(roundedEpoch))
-	if err != nil {
-		log.Error().Err(err).Msgf("Failed to save price data to JSON!")
-	}
+// 	err = shared.SavePriceDataAsJSON(market, int64(roundedEpoch))
+// 	if err != nil {
+// 		log.Error().Err(err).Msgf("Failed to save price data to JSON!")
+// 	}
 
-	if err := SavePriceData(ctx, client, market, roundedEpoch); err != nil {
-		log.Error().Err(err).Int("timestamp", roundedEpoch).Msg("Save PriceData")
-	}
+// 	if err := shared.SavePriceData(ctx, client, market, roundedEpoch); err != nil {
+// 		log.Error().Err(err).Int("timestamp", roundedEpoch).Msg("Save PriceData")
+// 	}
 
-	return letTrade(ctx, client, market, roundedEpoch)
-}
+// 	return letTrade(ctx, client, market, roundedEpoch)
+// }

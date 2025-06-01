@@ -13,7 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func letTrade(ctx context.Context, client graphql.Client, market []model.Pair, datetime int) error {
+func LetsTrade(ctx context.Context, client graphql.Client, market []model.Pair, datetime int) error {
 
 	cfg := shared.GetDefaultCfg()
 

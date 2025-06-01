@@ -41,17 +41,46 @@ func main() {
 	fmt.Println("SYSTEM_MODE is:", os.Getenv("SYSTEM_MODE"))
 
 	// Setup GraphQL backend client
-	if os.Getenv("SYSTEM_MODE") == "local" {
-		err := functions.CSVPrices(backend)
-		if err != nil {
-			sharedlog.Error().Err(err).Msg("Failed to load JSON data")
-		}
-
-	} else {
-		err := functions.BinancePrices(backend)
-		if err != nil {
-			sharedlog.Error().Err(err).Msgf("Failed to get price data from Binance!")
-		}
+	// if os.Getenv("SYSTEM_MODE") == "local" {
+	err = functions.CSVPrices(backend)
+	if err != nil {
+		sharedlog.Error().Err(err).Msg("Failed to load JSON data")
 	}
 
+	// } else {
+	// 	err := functions.BinancePrices(backend)
+	// 	if err != nil {
+	// 		sharedlog.Error().Err(err).Msgf("Failed to get price data from Binance!")
+	// 	}
+	// }
+
 }
+
+// func BinancePrices(backend string) error {
+// 	// make live API calls to Binance
+// 	// Get the nearest whole 5 minutes & print the current time
+// 	now := time.Now().Unix()
+// 	roundedEpoch := shared.RoundTimeToFiveMinuteInterval(now)
+// 	log.Info().Int64("Executing task at:", now).Int("Rounded time", roundedEpoch).Msg("Time")
+
+// 	// Create Client & Context
+// 	client := graphql.NewClient(backend, &http.Client{})
+// 	ctx := context.Background()
+// 	var market []model.Pair
+// 	var err error
+
+// 	market, err = binance.FetchPricesFromBinanceAPI()
+// 	if err != nil {
+// 		log.Error().Err(err).Msgf("Failed to get price data from Binance!")
+// 	}
+
+// 	err = shared.SavePriceDataAsJSON(market, int64(roundedEpoch))
+// 	if err != nil {
+// 		log.Error().Err(err).Msgf("Failed to save price data to JSON!")
+// 	}
+
+// 	if err := shared.SavePriceData(ctx, client, market, roundedEpoch); err != nil {
+// 		log.Error().Err(err).Int("timestamp", roundedEpoch).Msg("Save PriceData")
+// 	}
+// 	return nil
+// }
