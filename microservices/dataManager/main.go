@@ -172,13 +172,10 @@ func runImport() error {
 			Title:       task.Title,
 			Description: task.Description,
 			Status:      task.Status,
-			Priority:    task.Priority,
 			Labels:      []string{},
 			AssignedTo:  task.AssignedTo,
 			DueDate:     task.DueDate,
-			Category:    task.Category,
 			ProjectId:   task.ProjectID,
-			Type:        "general",
 		}
 
 		_, err := graph.CreateTask(ctx, client, input)
