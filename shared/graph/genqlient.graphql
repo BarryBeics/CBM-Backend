@@ -7,6 +7,27 @@ mutation CreateHistoricPrices($input: NewHistoricPriceInput!) {
   }
 }
 
+mutation CreateHistoricTickerStats($input: NewHistoricTickerStatsInput!) {
+  createHistoricTickerStats(input: $input) {
+    Timestamp
+    Stats {
+      Symbol
+      PriceChange
+      PriceChangePct
+      QuoteVolume
+      Volume
+      TradeCount
+      HighPrice
+      LowPrice
+      LastPrice
+    }
+    CreatedAt
+  }
+}
+
+
+
+
 query GetHistoricPricesAtTimestamp(
   $datetime: Int!
   ){

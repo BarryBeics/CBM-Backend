@@ -29,6 +29,11 @@ type ActivityReport {
   FearGreedIndex: Int!
 }
 
+enum ContactMethod {
+  EMAIL
+  WHATSAPP
+}
+
 input CreateProjectInput {
   title: String!
   sop: Boolean = false
@@ -43,13 +48,13 @@ input CreateTaskInput {
   title: String!
   description: String
   status: String = "inbox"
-  priority: String = "medium"
-  type: String
   labels: [String]
   assignedTo: String
   dueDate: String
-  category: String
+  deferDate: String
+  department: String
   projectId: String
+  duration: Int
 }
 
 input CreateUserInput {
@@ -57,11 +62,13 @@ input CreateUserInput {
   lastName: String!
   email: String!
   password: String!
-  contact: String!
-  address1: String!
-  address2: String!
+  mobileNumber: String
   role: String!
+  invitedBy: String
+  preferredContactMethod: String
 }
+
+scalar DateTime
 
 type HistoricKlineData {
   opentime: Int!
@@ -71,6 +78,13 @@ type HistoricKlineData {
 type HistoricPrices {
   Pair: [Pair!]
   Timestamp: Int!
+  CreatedAt: DateTime!
+}
+
+type HistoricTickerStats {
+  Timestamp: Int!
+  Stats: [TickerStats!]!
+  CreatedAt: DateTime!
 }
 
 input LoginInput {
@@ -135,6 +149,11 @@ type Mutation {
   createUser(input: CreateUserInput!): User
 
   """
+  Update an existing user
+  """
+  updateUser(input: UpdateUserInput!): User
+
+  """
   Deletes a user by email
   """
   deleteUser(email: String!): Boolean
@@ -154,6 +173,18 @@ type Mutation {
   Deletes all prices data for the matching given timestamp
   """
   deleteHistoricPrices(Timestamp: Int!): Boolean!
+
+  """
+  Creates an array of 24h Ticker Stats at a given timestamp
+  """
+  createHistoricTickerStats(
+    input: NewHistoricTickerStatsInput!
+  ): [HistoricTickerStats!]!
+
+  """
+  Deletes all Ticker Stats at a specific timestamp
+  """
+  deleteHistoricTickerStats(Timestamp: Int!): Boolean!
 
   """
   Create a new task
@@ -204,6 +235,11 @@ input NewHistoricKlineDataInput {
 input NewHistoricPriceInput {
   Pairs: [PairInput!]!
   Timestamp: Int!
+}
+
+input NewHistoricTickerStatsInput {
+  Timestamp: Int!
+  Stats: [TickerStatsInput!]!
 }
 
 input NewTradeOutcomeReport {
@@ -310,16 +346,9 @@ type Query {
   Get all strategies
   """
   getAllStrategies: [Strategy]
-
-  """
-  Get a user by email
-  """
   getUserByEmail(email: String!): User
-
-  """
-  Get all users
-  """
   getAllUsers: [User!]!
+  getUsersByRole(role: String!): [User!]!
 
   """
   Fetches price data for a given symbol up to a given limit of records
@@ -345,6 +374,26 @@ type Query {
   This will give you a []string of all available trading symbols in your HistoricPrices collection.
   """
   availableSymbols: [String!]!
+
+  """
+  Gets all 24h Ticker Stats at a specific timestamp
+  """
+  getHistoricTickerStatsAtTimestamp(Timestamp: Int!): [HistoricTickerStats!]!
+
+  """
+  Fetches TickerStats history for a given symbol (e.g., to chart volatility or volume)
+  """
+  getTickerStatsBySymbol(symbol: String!, limit: Int): [TickerStats!]!
+
+  """
+  Returns a list of available symbols from TickerStats data
+  """
+  availableTickerSymbols: [String!]!
+
+  """
+  Returns a count of stored timestamps (like snapshots)
+  """
+  getTickerStatsSnapshotCount: Int!
 
   """
   Get a single task by ID
@@ -418,15 +467,39 @@ type Task {
   title: String!
   description: String
   status: String!
-  priority: String
-  type: String
   labels: [String]
   assignedTo: String
   dueDate: String
-  category: String
+  deferDate: String
+  department: String
   projectId: String
+  duration: Int
   createdAt: String!
   updatedAt: String!
+}
+
+type TickerStats {
+  Symbol: String!
+  PriceChange: String!
+  PriceChangePct: String!
+  QuoteVolume: String!
+  Volume: String!
+  TradeCount: Int!
+  HighPrice: String!
+  LowPrice: String!
+  LastPrice: String!
+}
+
+input TickerStatsInput {
+  Symbol: String!
+  PriceChange: String!
+  PriceChangePct: String!
+  QuoteVolume: String!
+  Volume: String!
+  TradeCount: Int!
+  HighPrice: String!
+  LowPrice: String!
+  LastPrice: String!
 }
 
 type TradeOutcomeReport {
@@ -472,13 +545,33 @@ input UpdateTaskInput {
   title: String
   description: String
   status: String
-  priority: String
-  type: String
   labels: [String]
   assignedTo: String
   dueDate: String
-  category: String
+  deferDate: String
+  department: String
   projectId: String
+  duration: Int
+}
+
+input UpdateUserInput {
+  id: ID!
+  firstName: String
+  lastName: String
+  email: String
+  password: String
+  mobileNumber: String
+  verifiedEmail: Boolean
+  verifiedMobile: Boolean
+  role: String
+  isDeleted: Boolean!
+  openToTrade: Boolean
+  binanceAPI: String
+  preferredContactMethod: String
+  notes: String
+  invitedBy: String
+  joinedBallot: Boolean
+  isPaidMember: Boolean
 }
 
 type User {
@@ -487,8 +580,25 @@ type User {
   lastName: String!
   email: String!
   password: String!
-  contact: String!
-  address1: String!
-  address2: String!
+  mobileNumber: String
+  verifiedEmail: Boolean!
+  verifiedMobile: Boolean!
   role: String!
+  isDeleted: Boolean!
+  openToTrade: Boolean!
+  binanceAPI: String
+  preferredContactMethod: String
+  notes: String
+  invitedBy: String
+  joinedBallot: Boolean!
+  isPaidMember: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum UserRole {
+  GUEST
+  INTERESTED
+  MEMBER
+  ADMIN
 }

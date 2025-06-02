@@ -1,1 +1,2 @@
 */5 * * * * echo "Cron job started at $(date)" >> /var/log/priceData.log; /usr/local/bin/microservice-binaries/fetchPrices >> /var/log/priceData.log 2>&1
+58  * * * * echo "Cron job started at $(date)" >> /var/log/priceData.log; /usr/local/bin/microservice-binaries/fetchTradeVolume >> /var/log/priceData.log 2>&1

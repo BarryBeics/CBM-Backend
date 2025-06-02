@@ -57,6 +57,53 @@ func (db *DB) SaveHistoricPrices(input *model.NewHistoricPriceInput) ([]*model.H
 	return insertedHistoricPrices, nil
 }
 
+// SaveHistoricTickerStats saves historic ticker stats to the database.
+func (db *DB) SaveHistoricTickerStats(input model.NewHistoricTickerStatsInput) ([]*model.HistoricTickerStats, error) {
+	log.Info().
+		Int("timestamp", input.Timestamp).
+		Int("num_stats", len(input.Stats)).
+		Msg("Preparing to insert historic ticker stats")
+
+	collection := db.client.Database("go_trading_db").Collection("HistoricTickerStats")
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	var historicTickerStats []*model.HistoricTickerStats
+	for _, statInput := range input.Stats {
+		historicTickerStats = append(historicTickerStats, &model.HistoricTickerStats{
+			Timestamp: input.Timestamp,
+			Stats: []*model.TickerStats{{
+				Symbol:         statInput.Symbol,
+				PriceChange:    statInput.PriceChange,
+				PriceChangePct: statInput.PriceChangePct,
+				QuoteVolume:    statInput.QuoteVolume,
+				Volume:         statInput.Volume,
+				TradeCount:     statInput.TradeCount,
+				HighPrice:      statInput.HighPrice,
+				LowPrice:       statInput.LowPrice,
+				LastPrice:      statInput.LastPrice,
+			}},
+			CreatedAt: time.Now().UTC(),
+		})
+	}
+
+	// Convert to []interface{} for MongoDB
+	docs := make([]interface{}, len(historicTickerStats))
+	for i, doc := range historicTickerStats {
+		docs[i] = doc
+	}
+
+	log.Info().Msg("Calling InsertMany on HistoricTickerStats")
+
+	_, err := collection.InsertMany(ctx, docs)
+	if err != nil {
+		log.Error().Err(err).Msg("Error saving historic ticker stats:")
+		return nil, err
+	}
+
+	return historicTickerStats, nil
+}
+
 // HistoricPricesBySymbol fetches historic prices based on the given symbol and limit.
 func (db *DB) HistoricPricesBySymbol(symbol string, limit int) ([]*model.HistoricPrices, error) {
 	collection := db.client.Database("go_trading_db").Collection("HistoricPrices")
@@ -97,6 +144,32 @@ func (db *DB) HistoricPricesBySymbol(symbol string, limit int) ([]*model.Histori
 
 	return filteredResults, nil
 
+}
+
+func (db *DB) TickerStatsBySymbol(symbol string, limit int) ([]model.TickerStats, error) {
+	collection := db.client.Database("go_trading_db").Collection("TickerStats")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	findOptions := options.Find()
+	if limit > 0 {
+		findOptions.SetLimit(int64(limit))
+	}
+
+	cursor, err := collection.Find(ctx, bson.M{"symbol": symbol}, findOptions)
+	if err != nil {
+		log.Error().Err(err).Msg("Error fetching ticker stats by symbol")
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var tickerStats []model.TickerStats
+	if err := cursor.All(ctx, &tickerStats); err != nil {
+		log.Error().Err(err).Msg("Error decoding ticker stats")
+		return nil, err
+	}
+
+	return tickerStats, nil
 }
 
 func (db *DB) AllHistoricPrices(limit int, ascending bool) ([]model.HistoricPrices, error) {
@@ -164,6 +237,39 @@ func (db *DB) HistoricPricesAtTimestamp(timestamp int) ([]model.HistoricPrices, 
 	return historicPrices, nil
 }
 
+func (db *DB) HistoricTickerStatsAtTimestamp(timestamp int) ([]model.HistoricTickerStats, error) {
+	log.Info().Msgf("Querying historic ticker stats at Timestamp: %d", timestamp)
+	collection := db.client.Database("go_trading_db").Collection("HistoricTickerStats")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Filter by timestamp
+	filter := bson.M{"timestamp": timestamp}
+
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		log.Error().Err(err).Msg("Error fetching historic ticker stats at timestamp")
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var historicTickerStats []model.HistoricTickerStats
+
+	// Iterate over the results
+	for cursor.Next(ctx) {
+		var result model.HistoricTickerStats
+		if err := cursor.Decode(&result); err != nil {
+			log.Error().Err(err).Msg("Error decoding historic ticker stats at timestamp")
+			return nil, err
+		}
+
+		// Append the result to the list
+		historicTickerStats = append(historicTickerStats, result)
+	}
+
+	return historicTickerStats, nil
+}
+
 // GetUniqueTimestampCount fetches the count of unique timestamps.
 func (db *DB) GetUniqueTimestampCount(ctx context.Context) (int, error) {
 	collection := db.client.Database("go_trading_db").Collection("HistoricPrices")
@@ -221,6 +327,24 @@ func (db *DB) DeleteHistoricPricesByTimestamp(ctx context.Context, timestamp int
 	}
 
 	log.Info().Msgf("Deleted %d historic prices with timestamp %s", result.DeletedCount, timestamp)
+
+	return nil
+}
+
+func (db *DB) DeleteHistoricTickerStatsByTimestamp(ctx context.Context, timestamp int) error {
+	collection := db.client.Database("go_trading_db").Collection("HistoricTickerStats")
+
+	// Define a filter to match documents with the specified symbol
+	filter := bson.D{{"timestamp", timestamp}}
+
+	// Perform the delete operation
+	result, err := collection.DeleteMany(ctx, filter)
+	if err != nil {
+		log.Error().Err(err).Msgf("Error deleting historic ticker stats with timestamp %s", timestamp)
+		return err
+	}
+
+	log.Info().Msgf("Deleted %d historic ticker stats with timestamp %s", result.DeletedCount, timestamp)
 
 	return nil
 }

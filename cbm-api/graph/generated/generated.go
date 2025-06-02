@@ -69,33 +69,41 @@ type ComplexityRoot struct {
 		Timestamp func(childComplexity int) int
 	}
 
+	HistoricTickerStats struct {
+		CreatedAt func(childComplexity int) int
+		Stats     func(childComplexity int) int
+		Timestamp func(childComplexity int) int
+	}
+
 	LoginResponse struct {
 		Token func(childComplexity int) int
 		User  func(childComplexity int) int
 	}
 
 	Mutation struct {
-		CreateActivityReport     func(childComplexity int, input *model.NewActivityReport) int
-		CreateHistoricKline      func(childComplexity int, input *model.NewHistoricKlineDataInput) int
-		CreateHistoricPrices     func(childComplexity int, input *model.NewHistoricPriceInput) int
-		CreateProject            func(childComplexity int, input model.CreateProjectInput) int
-		CreateStrategy           func(childComplexity int, input model.StrategyInput) int
-		CreateTask               func(childComplexity int, input model.CreateTaskInput) int
-		CreateTradeOutcomeReport func(childComplexity int, input *model.NewTradeOutcomeReport) int
-		CreateUser               func(childComplexity int, input model.CreateUserInput) int
-		DeleteHistoricPrices     func(childComplexity int, timestamp int) int
-		DeleteOutcomeReports     func(childComplexity int, timestamp int) int
-		DeleteProject            func(childComplexity int, id string) int
-		DeleteStrategy           func(childComplexity int, botInstanceName string) int
-		DeleteTask               func(childComplexity int, id string) int
-		DeleteUser               func(childComplexity int, email string) int
-		Login                    func(childComplexity int, input model.LoginInput) int
-		MarkAsTested             func(childComplexity int, input model.MarkAsTestedInput) int
-		UpdateCounters           func(childComplexity int, input model.UpdateCountersInput) int
-		UpdateProject            func(childComplexity int, input model.UpdateProjectInput) int
-		UpdateStrategy           func(childComplexity int, botInstanceName string, input model.StrategyInput) int
-		UpdateTask               func(childComplexity int, input model.UpdateTaskInput) int
-		UpdateUser               func(childComplexity int, input model.UpdateUserInput) int
+		CreateActivityReport      func(childComplexity int, input *model.NewActivityReport) int
+		CreateHistoricKline       func(childComplexity int, input *model.NewHistoricKlineDataInput) int
+		CreateHistoricPrices      func(childComplexity int, input *model.NewHistoricPriceInput) int
+		CreateHistoricTickerStats func(childComplexity int, input model.NewHistoricTickerStatsInput) int
+		CreateProject             func(childComplexity int, input model.CreateProjectInput) int
+		CreateStrategy            func(childComplexity int, input model.StrategyInput) int
+		CreateTask                func(childComplexity int, input model.CreateTaskInput) int
+		CreateTradeOutcomeReport  func(childComplexity int, input *model.NewTradeOutcomeReport) int
+		CreateUser                func(childComplexity int, input model.CreateUserInput) int
+		DeleteHistoricPrices      func(childComplexity int, timestamp int) int
+		DeleteHistoricTickerStats func(childComplexity int, timestamp int) int
+		DeleteOutcomeReports      func(childComplexity int, timestamp int) int
+		DeleteProject             func(childComplexity int, id string) int
+		DeleteStrategy            func(childComplexity int, botInstanceName string) int
+		DeleteTask                func(childComplexity int, id string) int
+		DeleteUser                func(childComplexity int, email string) int
+		Login                     func(childComplexity int, input model.LoginInput) int
+		MarkAsTested              func(childComplexity int, input model.MarkAsTestedInput) int
+		UpdateCounters            func(childComplexity int, input model.UpdateCountersInput) int
+		UpdateProject             func(childComplexity int, input model.UpdateProjectInput) int
+		UpdateStrategy            func(childComplexity int, botInstanceName string, input model.StrategyInput) int
+		UpdateTask                func(childComplexity int, input model.UpdateTaskInput) int
+		UpdateUser                func(childComplexity int, input model.UpdateUserInput) int
 	}
 
 	OHLC struct {
@@ -127,26 +135,30 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		ActivityReport               func(childComplexity int, id string) int
-		ActivityReports              func(childComplexity int) int
-		AllTasks                     func(childComplexity int) int
-		AvailableSymbols             func(childComplexity int) int
-		FilterProjects               func(childComplexity int, filter *model.ProjectFilterInput) int
-		GetAllStrategies             func(childComplexity int) int
-		GetAllUsers                  func(childComplexity int) int
-		GetHistoricKlineData         func(childComplexity int, symbol string, limit *int) int
-		GetHistoricPrice             func(childComplexity int, symbol string, limit *int) int
-		GetHistoricPricesAtTimestamp func(childComplexity int, timestamp int) int
-		GetStrategyByName            func(childComplexity int, botInstanceName string) int
-		GetUniqueTimestampCount      func(childComplexity int) int
-		GetUserByEmail               func(childComplexity int, email string) int
-		GetUsersByRole               func(childComplexity int, role string) int
-		ProjectByID                  func(childComplexity int, id string) int
-		TaskByID                     func(childComplexity int, id string) int
-		TradeOutcomeReport           func(childComplexity int, id string) int
-		TradeOutcomeReports          func(childComplexity int) int
-		TradeOutcomes                func(childComplexity int, botName string) int
-		TradeOutcomesInFocus         func(childComplexity int, botName string, marketStatus string, limit *int) int
+		ActivityReport                    func(childComplexity int, id string) int
+		ActivityReports                   func(childComplexity int) int
+		AllTasks                          func(childComplexity int) int
+		AvailableSymbols                  func(childComplexity int) int
+		AvailableTickerSymbols            func(childComplexity int) int
+		FilterProjects                    func(childComplexity int, filter *model.ProjectFilterInput) int
+		GetAllStrategies                  func(childComplexity int) int
+		GetAllUsers                       func(childComplexity int) int
+		GetHistoricKlineData              func(childComplexity int, symbol string, limit *int) int
+		GetHistoricPrice                  func(childComplexity int, symbol string, limit *int) int
+		GetHistoricPricesAtTimestamp      func(childComplexity int, timestamp int) int
+		GetHistoricTickerStatsAtTimestamp func(childComplexity int, timestamp int) int
+		GetStrategyByName                 func(childComplexity int, botInstanceName string) int
+		GetTickerStatsBySymbol            func(childComplexity int, symbol string, limit *int) int
+		GetTickerStatsSnapshotCount       func(childComplexity int) int
+		GetUniqueTimestampCount           func(childComplexity int) int
+		GetUserByEmail                    func(childComplexity int, email string) int
+		GetUsersByRole                    func(childComplexity int, role string) int
+		ProjectByID                       func(childComplexity int, id string) int
+		TaskByID                          func(childComplexity int, id string) int
+		TradeOutcomeReport                func(childComplexity int, id string) int
+		TradeOutcomeReports               func(childComplexity int) int
+		TradeOutcomes                     func(childComplexity int, botName string) int
+		TradeOutcomesInFocus              func(childComplexity int, botName string, marketStatus string, limit *int) int
 	}
 
 	Strategy struct {
@@ -186,6 +198,18 @@ type ComplexityRoot struct {
 		Status      func(childComplexity int) int
 		Title       func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
+	}
+
+	TickerStats struct {
+		HighPrice      func(childComplexity int) int
+		LastPrice      func(childComplexity int) int
+		LowPrice       func(childComplexity int) int
+		PriceChange    func(childComplexity int) int
+		PriceChangePct func(childComplexity int) int
+		QuoteVolume    func(childComplexity int) int
+		Symbol         func(childComplexity int) int
+		TradeCount     func(childComplexity int) int
+		Volume         func(childComplexity int) int
 	}
 
 	TradeOutcomeReport struct {
@@ -242,6 +266,8 @@ type MutationResolver interface {
 	CreateHistoricPrices(ctx context.Context, input *model.NewHistoricPriceInput) ([]*model.HistoricPrices, error)
 	CreateHistoricKline(ctx context.Context, input *model.NewHistoricKlineDataInput) ([]*model.HistoricKlineData, error)
 	DeleteHistoricPrices(ctx context.Context, timestamp int) (bool, error)
+	CreateHistoricTickerStats(ctx context.Context, input model.NewHistoricTickerStatsInput) ([]*model.HistoricTickerStats, error)
+	DeleteHistoricTickerStats(ctx context.Context, timestamp int) (bool, error)
 	CreateTask(ctx context.Context, input model.CreateTaskInput) (*model.Task, error)
 	UpdateTask(ctx context.Context, input model.UpdateTaskInput) (*model.Task, error)
 	DeleteTask(ctx context.Context, id string) (*bool, error)
@@ -266,6 +292,10 @@ type QueryResolver interface {
 	GetHistoricKlineData(ctx context.Context, symbol string, limit *int) ([]*model.HistoricKlineData, error)
 	GetUniqueTimestampCount(ctx context.Context) (int, error)
 	AvailableSymbols(ctx context.Context) ([]string, error)
+	GetHistoricTickerStatsAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricTickerStats, error)
+	GetTickerStatsBySymbol(ctx context.Context, symbol string, limit *int) ([]*model.TickerStats, error)
+	AvailableTickerSymbols(ctx context.Context) ([]string, error)
+	GetTickerStatsSnapshotCount(ctx context.Context) (int, error)
 	TaskByID(ctx context.Context, id string) (*model.Task, error)
 	AllTasks(ctx context.Context) ([]*model.Task, error)
 	ProjectByID(ctx context.Context, id string) (*model.Project, error)
@@ -382,6 +412,27 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.HistoricPrices.Timestamp(childComplexity), true
 
+	case "HistoricTickerStats.CreatedAt":
+		if e.complexity.HistoricTickerStats.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.HistoricTickerStats.CreatedAt(childComplexity), true
+
+	case "HistoricTickerStats.Stats":
+		if e.complexity.HistoricTickerStats.Stats == nil {
+			break
+		}
+
+		return e.complexity.HistoricTickerStats.Stats(childComplexity), true
+
+	case "HistoricTickerStats.Timestamp":
+		if e.complexity.HistoricTickerStats.Timestamp == nil {
+			break
+		}
+
+		return e.complexity.HistoricTickerStats.Timestamp(childComplexity), true
+
 	case "LoginResponse.token":
 		if e.complexity.LoginResponse.Token == nil {
 			break
@@ -431,6 +482,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.CreateHistoricPrices(childComplexity, args["input"].(*model.NewHistoricPriceInput)), true
+
+	case "Mutation.createHistoricTickerStats":
+		if e.complexity.Mutation.CreateHistoricTickerStats == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createHistoricTickerStats_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateHistoricTickerStats(childComplexity, args["input"].(model.NewHistoricTickerStatsInput)), true
 
 	case "Mutation.createProject":
 		if e.complexity.Mutation.CreateProject == nil {
@@ -503,6 +566,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.DeleteHistoricPrices(childComplexity, args["Timestamp"].(int)), true
+
+	case "Mutation.deleteHistoricTickerStats":
+		if e.complexity.Mutation.DeleteHistoricTickerStats == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteHistoricTickerStats_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteHistoricTickerStats(childComplexity, args["Timestamp"].(int)), true
 
 	case "Mutation.deleteOutcomeReports":
 		if e.complexity.Mutation.DeleteOutcomeReports == nil {
@@ -814,6 +889,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.AvailableSymbols(childComplexity), true
 
+	case "Query.availableTickerSymbols":
+		if e.complexity.Query.AvailableTickerSymbols == nil {
+			break
+		}
+
+		return e.complexity.Query.AvailableTickerSymbols(childComplexity), true
+
 	case "Query.filterProjects":
 		if e.complexity.Query.FilterProjects == nil {
 			break
@@ -876,6 +958,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.GetHistoricPricesAtTimestamp(childComplexity, args["Timestamp"].(int)), true
 
+	case "Query.getHistoricTickerStatsAtTimestamp":
+		if e.complexity.Query.GetHistoricTickerStatsAtTimestamp == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getHistoricTickerStatsAtTimestamp_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetHistoricTickerStatsAtTimestamp(childComplexity, args["Timestamp"].(int)), true
+
 	case "Query.getStrategyByName":
 		if e.complexity.Query.GetStrategyByName == nil {
 			break
@@ -887,6 +981,25 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.GetStrategyByName(childComplexity, args["BotInstanceName"].(string)), true
+
+	case "Query.getTickerStatsBySymbol":
+		if e.complexity.Query.GetTickerStatsBySymbol == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getTickerStatsBySymbol_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetTickerStatsBySymbol(childComplexity, args["symbol"].(string), args["limit"].(*int)), true
+
+	case "Query.getTickerStatsSnapshotCount":
+		if e.complexity.Query.GetTickerStatsSnapshotCount == nil {
+			break
+		}
+
+		return e.complexity.Query.GetTickerStatsSnapshotCount(childComplexity), true
 
 	case "Query.getUniqueTimestampCount":
 		if e.complexity.Query.GetUniqueTimestampCount == nil {
@@ -1217,6 +1330,69 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Task.UpdatedAt(childComplexity), true
 
+	case "TickerStats.HighPrice":
+		if e.complexity.TickerStats.HighPrice == nil {
+			break
+		}
+
+		return e.complexity.TickerStats.HighPrice(childComplexity), true
+
+	case "TickerStats.LastPrice":
+		if e.complexity.TickerStats.LastPrice == nil {
+			break
+		}
+
+		return e.complexity.TickerStats.LastPrice(childComplexity), true
+
+	case "TickerStats.LowPrice":
+		if e.complexity.TickerStats.LowPrice == nil {
+			break
+		}
+
+		return e.complexity.TickerStats.LowPrice(childComplexity), true
+
+	case "TickerStats.PriceChange":
+		if e.complexity.TickerStats.PriceChange == nil {
+			break
+		}
+
+		return e.complexity.TickerStats.PriceChange(childComplexity), true
+
+	case "TickerStats.PriceChangePct":
+		if e.complexity.TickerStats.PriceChangePct == nil {
+			break
+		}
+
+		return e.complexity.TickerStats.PriceChangePct(childComplexity), true
+
+	case "TickerStats.QuoteVolume":
+		if e.complexity.TickerStats.QuoteVolume == nil {
+			break
+		}
+
+		return e.complexity.TickerStats.QuoteVolume(childComplexity), true
+
+	case "TickerStats.Symbol":
+		if e.complexity.TickerStats.Symbol == nil {
+			break
+		}
+
+		return e.complexity.TickerStats.Symbol(childComplexity), true
+
+	case "TickerStats.TradeCount":
+		if e.complexity.TickerStats.TradeCount == nil {
+			break
+		}
+
+		return e.complexity.TickerStats.TradeCount(childComplexity), true
+
+	case "TickerStats.Volume":
+		if e.complexity.TickerStats.Volume == nil {
+			break
+		}
+
+		return e.complexity.TickerStats.Volume(childComplexity), true
+
 	case "TradeOutcomeReport.Balance":
 		if e.complexity.TradeOutcomeReport.Balance == nil {
 			break
@@ -1450,11 +1626,13 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputNewActivityReport,
 		ec.unmarshalInputNewHistoricKlineDataInput,
 		ec.unmarshalInputNewHistoricPriceInput,
+		ec.unmarshalInputNewHistoricTickerStatsInput,
 		ec.unmarshalInputNewTradeOutcomeReport,
 		ec.unmarshalInputOHLCInput,
 		ec.unmarshalInputPairInput,
 		ec.unmarshalInputProjectFilterInput,
 		ec.unmarshalInputStrategyInput,
+		ec.unmarshalInputTickerStatsInput,
 		ec.unmarshalInputUpdateCountersInput,
 		ec.unmarshalInputUpdateProjectInput,
 		ec.unmarshalInputUpdateTaskInput,
@@ -1800,6 +1978,43 @@ extend type Mutation {
 	  TradeVolume: String! 
 	  Symbol:      String! 
   }
+
+  type TickerStats {
+	Symbol:          String!
+	PriceChange:     String!
+	PriceChangePct:  String!
+	QuoteVolume:     String!
+	Volume:          String!
+	TradeCount:      Int!
+	HighPrice:       String!
+	LowPrice:        String!
+	LastPrice:       String!
+}
+
+input TickerStatsInput {
+  Symbol: String!
+  PriceChange: String!
+  PriceChangePct: String!
+  QuoteVolume: String!
+  Volume: String!
+  TradeCount: Int!
+  HighPrice: String!
+  LowPrice: String!
+  LastPrice: String!
+}
+
+type HistoricTickerStats {
+  Timestamp: Int!
+  Stats: [TickerStats!]!
+  CreatedAt: DateTime!
+}
+
+input NewHistoricTickerStatsInput {
+  Timestamp: Int!
+  Stats: [TickerStatsInput!]!
+}
+
+
   
   type HistoricKlineData {
   opentime: Int!
@@ -1821,6 +2036,12 @@ extend type Mutation {
   
 	"Deletes all prices data for the matching given timestamp"
 	deleteHistoricPrices(Timestamp: Int!): Boolean!
+
+	"Creates an array of 24h Ticker Stats at a given timestamp"
+	createHistoricTickerStats(input: NewHistoricTickerStatsInput!): [HistoricTickerStats!]!
+
+	"Deletes all Ticker Stats at a specific timestamp"
+	deleteHistoricTickerStats(Timestamp: Int!): Boolean!
   }
   
   extend type Query {
@@ -1838,6 +2059,18 @@ extend type Mutation {
 
     "This will give you a []string of all available trading symbols in your HistoricPrices collection."
 	availableSymbols: [String!]!
+
+	"Gets all 24h Ticker Stats at a specific timestamp"
+	getHistoricTickerStatsAtTimestamp(Timestamp: Int!): [HistoricTickerStats!]!
+
+	"Fetches TickerStats history for a given symbol (e.g., to chart volatility or volume)"
+	getTickerStatsBySymbol(symbol: String!, limit: Int): [TickerStats!]!
+
+	"Returns a list of available symbols from TickerStats data"
+	availableTickerSymbols: [String!]!
+
+	"Returns a count of stored timestamps (like snapshots)"
+	getTickerStatsSnapshotCount: Int!
   }`, BuiltIn: false},
 	{Name: "../schema/reports.graphqls", Input: `type ActivityReport {
   _id: ID!
@@ -2152,6 +2385,34 @@ func (ec *executionContext) field_Mutation_createHistoricPrices_argsInput(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_createHistoricTickerStats_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_createHistoricTickerStats_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_createHistoricTickerStats_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.NewHistoricTickerStatsInput, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal model.NewHistoricTickerStatsInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNNewHistoricTickerStatsInput2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐNewHistoricTickerStatsInput(ctx, tmp)
+	}
+
+	var zeroVal model.NewHistoricTickerStatsInput
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_createProject_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -2303,6 +2564,34 @@ func (ec *executionContext) field_Mutation_deleteHistoricPrices_args(ctx context
 	return args, nil
 }
 func (ec *executionContext) field_Mutation_deleteHistoricPrices_argsTimestamp(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int, error) {
+	if _, ok := rawArgs["Timestamp"]; !ok {
+		var zeroVal int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("Timestamp"))
+	if tmp, ok := rawArgs["Timestamp"]; ok {
+		return ec.unmarshalNInt2int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteHistoricTickerStats_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_deleteHistoricTickerStats_argsTimestamp(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["Timestamp"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_deleteHistoricTickerStats_argsTimestamp(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (int, error) {
@@ -3023,6 +3312,34 @@ func (ec *executionContext) field_Query_getHistoricPricesAtTimestamp_argsTimesta
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Query_getHistoricTickerStatsAtTimestamp_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_getHistoricTickerStatsAtTimestamp_argsTimestamp(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["Timestamp"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_getHistoricTickerStatsAtTimestamp_argsTimestamp(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int, error) {
+	if _, ok := rawArgs["Timestamp"]; !ok {
+		var zeroVal int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("Timestamp"))
+	if tmp, ok := rawArgs["Timestamp"]; ok {
+		return ec.unmarshalNInt2int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Query_getStrategyByName_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -3048,6 +3365,57 @@ func (ec *executionContext) field_Query_getStrategyByName_argsBotInstanceName(
 	}
 
 	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getTickerStatsBySymbol_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_getTickerStatsBySymbol_argsSymbol(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["symbol"] = arg0
+	arg1, err := ec.field_Query_getTickerStatsBySymbol_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Query_getTickerStatsBySymbol_argsSymbol(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	if _, ok := rawArgs["symbol"]; !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("symbol"))
+	if tmp, ok := rawArgs["symbol"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getTickerStatsBySymbol_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	if _, ok := rawArgs["limit"]; !ok {
+		var zeroVal *int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
 	return zeroVal, nil
 }
 
@@ -3853,6 +4221,158 @@ func (ec *executionContext) _HistoricPrices_CreatedAt(ctx context.Context, field
 func (ec *executionContext) fieldContext_HistoricPrices_CreatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "HistoricPrices",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _HistoricTickerStats_Timestamp(ctx context.Context, field graphql.CollectedField, obj *model.HistoricTickerStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_HistoricTickerStats_Timestamp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Timestamp, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_HistoricTickerStats_Timestamp(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "HistoricTickerStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _HistoricTickerStats_Stats(ctx context.Context, field graphql.CollectedField, obj *model.HistoricTickerStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_HistoricTickerStats_Stats(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Stats, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.TickerStats)
+	fc.Result = res
+	return ec.marshalNTickerStats2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐTickerStatsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_HistoricTickerStats_Stats(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "HistoricTickerStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Symbol":
+				return ec.fieldContext_TickerStats_Symbol(ctx, field)
+			case "PriceChange":
+				return ec.fieldContext_TickerStats_PriceChange(ctx, field)
+			case "PriceChangePct":
+				return ec.fieldContext_TickerStats_PriceChangePct(ctx, field)
+			case "QuoteVolume":
+				return ec.fieldContext_TickerStats_QuoteVolume(ctx, field)
+			case "Volume":
+				return ec.fieldContext_TickerStats_Volume(ctx, field)
+			case "TradeCount":
+				return ec.fieldContext_TickerStats_TradeCount(ctx, field)
+			case "HighPrice":
+				return ec.fieldContext_TickerStats_HighPrice(ctx, field)
+			case "LowPrice":
+				return ec.fieldContext_TickerStats_LowPrice(ctx, field)
+			case "LastPrice":
+				return ec.fieldContext_TickerStats_LastPrice(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TickerStats", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _HistoricTickerStats_CreatedAt(ctx context.Context, field graphql.CollectedField, obj *model.HistoricTickerStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_HistoricTickerStats_CreatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_HistoricTickerStats_CreatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "HistoricTickerStats",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -5014,6 +5534,124 @@ func (ec *executionContext) fieldContext_Mutation_deleteHistoricPrices(ctx conte
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteHistoricPrices_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createHistoricTickerStats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createHistoricTickerStats(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateHistoricTickerStats(rctx, fc.Args["input"].(model.NewHistoricTickerStatsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.HistoricTickerStats)
+	fc.Result = res
+	return ec.marshalNHistoricTickerStats2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐHistoricTickerStatsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createHistoricTickerStats(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Timestamp":
+				return ec.fieldContext_HistoricTickerStats_Timestamp(ctx, field)
+			case "Stats":
+				return ec.fieldContext_HistoricTickerStats_Stats(ctx, field)
+			case "CreatedAt":
+				return ec.fieldContext_HistoricTickerStats_CreatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type HistoricTickerStats", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createHistoricTickerStats_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteHistoricTickerStats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteHistoricTickerStats(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteHistoricTickerStats(rctx, fc.Args["Timestamp"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteHistoricTickerStats(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteHistoricTickerStats_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -7456,6 +8094,232 @@ func (ec *executionContext) fieldContext_Query_availableSymbols(_ context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_getHistoricTickerStatsAtTimestamp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getHistoricTickerStatsAtTimestamp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetHistoricTickerStatsAtTimestamp(rctx, fc.Args["Timestamp"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.HistoricTickerStats)
+	fc.Result = res
+	return ec.marshalNHistoricTickerStats2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐHistoricTickerStatsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getHistoricTickerStatsAtTimestamp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Timestamp":
+				return ec.fieldContext_HistoricTickerStats_Timestamp(ctx, field)
+			case "Stats":
+				return ec.fieldContext_HistoricTickerStats_Stats(ctx, field)
+			case "CreatedAt":
+				return ec.fieldContext_HistoricTickerStats_CreatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type HistoricTickerStats", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getHistoricTickerStatsAtTimestamp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getTickerStatsBySymbol(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getTickerStatsBySymbol(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetTickerStatsBySymbol(rctx, fc.Args["symbol"].(string), fc.Args["limit"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.TickerStats)
+	fc.Result = res
+	return ec.marshalNTickerStats2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐTickerStatsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getTickerStatsBySymbol(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Symbol":
+				return ec.fieldContext_TickerStats_Symbol(ctx, field)
+			case "PriceChange":
+				return ec.fieldContext_TickerStats_PriceChange(ctx, field)
+			case "PriceChangePct":
+				return ec.fieldContext_TickerStats_PriceChangePct(ctx, field)
+			case "QuoteVolume":
+				return ec.fieldContext_TickerStats_QuoteVolume(ctx, field)
+			case "Volume":
+				return ec.fieldContext_TickerStats_Volume(ctx, field)
+			case "TradeCount":
+				return ec.fieldContext_TickerStats_TradeCount(ctx, field)
+			case "HighPrice":
+				return ec.fieldContext_TickerStats_HighPrice(ctx, field)
+			case "LowPrice":
+				return ec.fieldContext_TickerStats_LowPrice(ctx, field)
+			case "LastPrice":
+				return ec.fieldContext_TickerStats_LastPrice(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TickerStats", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getTickerStatsBySymbol_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_availableTickerSymbols(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_availableTickerSymbols(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().AvailableTickerSymbols(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_availableTickerSymbols(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getTickerStatsSnapshotCount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getTickerStatsSnapshotCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetTickerStatsSnapshotCount(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getTickerStatsSnapshotCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_taskById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_taskById(ctx, field)
 	if err != nil {
@@ -9273,6 +10137,402 @@ func (ec *executionContext) _Task_updatedAt(ctx context.Context, field graphql.C
 func (ec *executionContext) fieldContext_Task_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Task",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TickerStats_Symbol(ctx context.Context, field graphql.CollectedField, obj *model.TickerStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TickerStats_Symbol(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Symbol, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TickerStats_Symbol(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TickerStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TickerStats_PriceChange(ctx context.Context, field graphql.CollectedField, obj *model.TickerStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TickerStats_PriceChange(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PriceChange, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TickerStats_PriceChange(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TickerStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TickerStats_PriceChangePct(ctx context.Context, field graphql.CollectedField, obj *model.TickerStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TickerStats_PriceChangePct(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PriceChangePct, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TickerStats_PriceChangePct(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TickerStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TickerStats_QuoteVolume(ctx context.Context, field graphql.CollectedField, obj *model.TickerStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TickerStats_QuoteVolume(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.QuoteVolume, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TickerStats_QuoteVolume(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TickerStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TickerStats_Volume(ctx context.Context, field graphql.CollectedField, obj *model.TickerStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TickerStats_Volume(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Volume, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TickerStats_Volume(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TickerStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TickerStats_TradeCount(ctx context.Context, field graphql.CollectedField, obj *model.TickerStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TickerStats_TradeCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TradeCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TickerStats_TradeCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TickerStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TickerStats_HighPrice(ctx context.Context, field graphql.CollectedField, obj *model.TickerStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TickerStats_HighPrice(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HighPrice, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TickerStats_HighPrice(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TickerStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TickerStats_LowPrice(ctx context.Context, field graphql.CollectedField, obj *model.TickerStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TickerStats_LowPrice(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LowPrice, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TickerStats_LowPrice(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TickerStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TickerStats_LastPrice(ctx context.Context, field graphql.CollectedField, obj *model.TickerStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TickerStats_LastPrice(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastPrice, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TickerStats_LastPrice(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TickerStats",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -13031,6 +14291,40 @@ func (ec *executionContext) unmarshalInputNewHistoricPriceInput(ctx context.Cont
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputNewHistoricTickerStatsInput(ctx context.Context, obj any) (model.NewHistoricTickerStatsInput, error) {
+	var it model.NewHistoricTickerStatsInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"Timestamp", "Stats"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "Timestamp":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Timestamp"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Timestamp = data
+		case "Stats":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Stats"))
+			data, err := ec.unmarshalNTickerStatsInput2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐTickerStatsInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Stats = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewTradeOutcomeReport(ctx context.Context, obj any) (model.NewTradeOutcomeReport, error) {
 	var it model.NewTradeOutcomeReport
 	asMap := map[string]any{}
@@ -13405,6 +14699,89 @@ func (ec *executionContext) unmarshalInputStrategyInput(ctx context.Context, obj
 				return it, err
 			}
 			it.CreatedOn = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputTickerStatsInput(ctx context.Context, obj any) (model.TickerStatsInput, error) {
+	var it model.TickerStatsInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"Symbol", "PriceChange", "PriceChangePct", "QuoteVolume", "Volume", "TradeCount", "HighPrice", "LowPrice", "LastPrice"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "Symbol":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Symbol"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Symbol = data
+		case "PriceChange":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("PriceChange"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PriceChange = data
+		case "PriceChangePct":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("PriceChangePct"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PriceChangePct = data
+		case "QuoteVolume":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("QuoteVolume"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.QuoteVolume = data
+		case "Volume":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Volume"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Volume = data
+		case "TradeCount":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("TradeCount"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TradeCount = data
+		case "HighPrice":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("HighPrice"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HighPrice = data
+		case "LowPrice":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("LowPrice"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LowPrice = data
+		case "LastPrice":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("LastPrice"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LastPrice = data
 		}
 	}
 
@@ -13969,6 +15346,55 @@ func (ec *executionContext) _HistoricPrices(ctx context.Context, sel ast.Selecti
 	return out
 }
 
+var historicTickerStatsImplementors = []string{"HistoricTickerStats"}
+
+func (ec *executionContext) _HistoricTickerStats(ctx context.Context, sel ast.SelectionSet, obj *model.HistoricTickerStats) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, historicTickerStatsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("HistoricTickerStats")
+		case "Timestamp":
+			out.Values[i] = ec._HistoricTickerStats_Timestamp(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "Stats":
+			out.Values[i] = ec._HistoricTickerStats_Stats(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "CreatedAt":
+			out.Values[i] = ec._HistoricTickerStats_CreatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var loginResponseImplementors = []string{"LoginResponse"}
 
 func (ec *executionContext) _LoginResponse(ctx context.Context, sel ast.SelectionSet, obj *model.LoginResponse) graphql.Marshaler {
@@ -14109,6 +15535,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deleteHistoricPrices":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteHistoricPrices(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createHistoricTickerStats":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createHistoricTickerStats(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteHistoricTickerStats":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteHistoricTickerStats(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -14704,6 +16144,94 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getHistoricTickerStatsAtTimestamp":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getHistoricTickerStatsAtTimestamp(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getTickerStatsBySymbol":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getTickerStatsBySymbol(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "availableTickerSymbols":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_availableTickerSymbols(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getTickerStatsSnapshotCount":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getTickerStatsSnapshotCount(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "taskById":
 			field := field
 
@@ -14961,6 +16489,85 @@ func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "updatedAt":
 			out.Values[i] = ec._Task_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var tickerStatsImplementors = []string{"TickerStats"}
+
+func (ec *executionContext) _TickerStats(ctx context.Context, sel ast.SelectionSet, obj *model.TickerStats) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tickerStatsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TickerStats")
+		case "Symbol":
+			out.Values[i] = ec._TickerStats_Symbol(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "PriceChange":
+			out.Values[i] = ec._TickerStats_PriceChange(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "PriceChangePct":
+			out.Values[i] = ec._TickerStats_PriceChangePct(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "QuoteVolume":
+			out.Values[i] = ec._TickerStats_QuoteVolume(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "Volume":
+			out.Values[i] = ec._TickerStats_Volume(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "TradeCount":
+			out.Values[i] = ec._TickerStats_TradeCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "HighPrice":
+			out.Values[i] = ec._TickerStats_HighPrice(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "LowPrice":
+			out.Values[i] = ec._TickerStats_LowPrice(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "LastPrice":
+			out.Values[i] = ec._TickerStats_LastPrice(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -15753,6 +17360,60 @@ func (ec *executionContext) marshalNHistoricPrices2ᚖcryptobotmanagerᚗcomᚋc
 	return ec._HistoricPrices(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNHistoricTickerStats2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐHistoricTickerStatsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.HistoricTickerStats) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNHistoricTickerStats2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐHistoricTickerStats(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNHistoricTickerStats2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐHistoricTickerStats(ctx context.Context, sel ast.SelectionSet, v *model.HistoricTickerStats) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._HistoricTickerStats(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v any) (string, error) {
 	res, err := graphql.UnmarshalID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -15804,6 +17465,11 @@ func (ec *executionContext) marshalNLoginResponse2ᚖcryptobotmanagerᚗcomᚋcb
 
 func (ec *executionContext) unmarshalNMarkAsTestedInput2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐMarkAsTestedInput(ctx context.Context, v any) (model.MarkAsTestedInput, error) {
 	res, err := ec.unmarshalInputMarkAsTestedInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNNewHistoricTickerStatsInput2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐNewHistoricTickerStatsInput(ctx context.Context, v any) (model.NewHistoricTickerStatsInput, error) {
+	res, err := ec.unmarshalInputNewHistoricTickerStatsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -16013,6 +17679,80 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	}
 
 	return ret
+}
+
+func (ec *executionContext) marshalNTickerStats2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐTickerStatsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.TickerStats) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTickerStats2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐTickerStats(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNTickerStats2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐTickerStats(ctx context.Context, sel ast.SelectionSet, v *model.TickerStats) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._TickerStats(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNTickerStatsInput2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐTickerStatsInputᚄ(ctx context.Context, v any) ([]*model.TickerStatsInput, error) {
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]*model.TickerStatsInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNTickerStatsInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐTickerStatsInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNTickerStatsInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐTickerStatsInput(ctx context.Context, v any) (*model.TickerStatsInput, error) {
+	res, err := ec.unmarshalInputTickerStatsInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNTradeOutcomeReport2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐTradeOutcomeReport(ctx context.Context, sel ast.SelectionSet, v model.TradeOutcomeReport) graphql.Marshaler {

@@ -88,6 +88,95 @@ func (v *CreateHistoricPricesResponse) GetCreateHistoricPrices() []CreateHistori
 	return v.CreateHistoricPrices
 }
 
+// CreateHistoricTickerStatsCreateHistoricTickerStats includes the requested fields of the GraphQL type HistoricTickerStats.
+type CreateHistoricTickerStatsCreateHistoricTickerStats struct {
+	Timestamp int                                                                  `json:"Timestamp"`
+	Stats     []CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats `json:"Stats"`
+	CreatedAt string                                                               `json:"CreatedAt"`
+}
+
+// GetTimestamp returns CreateHistoricTickerStatsCreateHistoricTickerStats.Timestamp, and is useful for accessing the field via an interface.
+func (v *CreateHistoricTickerStatsCreateHistoricTickerStats) GetTimestamp() int { return v.Timestamp }
+
+// GetStats returns CreateHistoricTickerStatsCreateHistoricTickerStats.Stats, and is useful for accessing the field via an interface.
+func (v *CreateHistoricTickerStatsCreateHistoricTickerStats) GetStats() []CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats {
+	return v.Stats
+}
+
+// GetCreatedAt returns CreateHistoricTickerStatsCreateHistoricTickerStats.CreatedAt, and is useful for accessing the field via an interface.
+func (v *CreateHistoricTickerStatsCreateHistoricTickerStats) GetCreatedAt() string {
+	return v.CreatedAt
+}
+
+// CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats includes the requested fields of the GraphQL type TickerStats.
+type CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats struct {
+	Symbol         string `json:"Symbol"`
+	PriceChange    string `json:"PriceChange"`
+	PriceChangePct string `json:"PriceChangePct"`
+	QuoteVolume    string `json:"QuoteVolume"`
+	Volume         string `json:"Volume"`
+	TradeCount     int    `json:"TradeCount"`
+	HighPrice      string `json:"HighPrice"`
+	LowPrice       string `json:"LowPrice"`
+	LastPrice      string `json:"LastPrice"`
+}
+
+// GetSymbol returns CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats.Symbol, and is useful for accessing the field via an interface.
+func (v *CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats) GetSymbol() string {
+	return v.Symbol
+}
+
+// GetPriceChange returns CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats.PriceChange, and is useful for accessing the field via an interface.
+func (v *CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats) GetPriceChange() string {
+	return v.PriceChange
+}
+
+// GetPriceChangePct returns CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats.PriceChangePct, and is useful for accessing the field via an interface.
+func (v *CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats) GetPriceChangePct() string {
+	return v.PriceChangePct
+}
+
+// GetQuoteVolume returns CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats.QuoteVolume, and is useful for accessing the field via an interface.
+func (v *CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats) GetQuoteVolume() string {
+	return v.QuoteVolume
+}
+
+// GetVolume returns CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats.Volume, and is useful for accessing the field via an interface.
+func (v *CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats) GetVolume() string {
+	return v.Volume
+}
+
+// GetTradeCount returns CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats.TradeCount, and is useful for accessing the field via an interface.
+func (v *CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats) GetTradeCount() int {
+	return v.TradeCount
+}
+
+// GetHighPrice returns CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats.HighPrice, and is useful for accessing the field via an interface.
+func (v *CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats) GetHighPrice() string {
+	return v.HighPrice
+}
+
+// GetLowPrice returns CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats.LowPrice, and is useful for accessing the field via an interface.
+func (v *CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats) GetLowPrice() string {
+	return v.LowPrice
+}
+
+// GetLastPrice returns CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats.LastPrice, and is useful for accessing the field via an interface.
+func (v *CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats) GetLastPrice() string {
+	return v.LastPrice
+}
+
+// CreateHistoricTickerStatsResponse is returned by CreateHistoricTickerStats on success.
+type CreateHistoricTickerStatsResponse struct {
+	// Creates an array of 24h Ticker Stats at a given timestamp
+	CreateHistoricTickerStats []CreateHistoricTickerStatsCreateHistoricTickerStats `json:"createHistoricTickerStats"`
+}
+
+// GetCreateHistoricTickerStats returns CreateHistoricTickerStatsResponse.CreateHistoricTickerStats, and is useful for accessing the field via an interface.
+func (v *CreateHistoricTickerStatsResponse) GetCreateHistoricTickerStats() []CreateHistoricTickerStatsCreateHistoricTickerStats {
+	return v.CreateHistoricTickerStats
+}
+
 // CreateProjectCreateProject includes the requested fields of the GraphQL type Project.
 type CreateProjectCreateProject struct {
 	Id          string   `json:"id"`
@@ -178,13 +267,13 @@ type CreateTaskCreateTask struct {
 	Title       string   `json:"title"`
 	Description string   `json:"description"`
 	Status      string   `json:"status"`
-	Priority    string   `json:"priority"`
-	Type        string   `json:"type"`
 	Labels      []string `json:"labels"`
 	AssignedTo  string   `json:"assignedTo"`
 	DueDate     string   `json:"dueDate"`
-	Category    string   `json:"category"`
+	DeferDate   string   `json:"deferDate"`
+	Department  string   `json:"department"`
 	ProjectId   string   `json:"projectId"`
+	Duration    int      `json:"duration"`
 	CreatedAt   string   `json:"createdAt"`
 	UpdatedAt   string   `json:"updatedAt"`
 }
@@ -201,12 +290,6 @@ func (v *CreateTaskCreateTask) GetDescription() string { return v.Description }
 // GetStatus returns CreateTaskCreateTask.Status, and is useful for accessing the field via an interface.
 func (v *CreateTaskCreateTask) GetStatus() string { return v.Status }
 
-// GetPriority returns CreateTaskCreateTask.Priority, and is useful for accessing the field via an interface.
-func (v *CreateTaskCreateTask) GetPriority() string { return v.Priority }
-
-// GetType returns CreateTaskCreateTask.Type, and is useful for accessing the field via an interface.
-func (v *CreateTaskCreateTask) GetType() string { return v.Type }
-
 // GetLabels returns CreateTaskCreateTask.Labels, and is useful for accessing the field via an interface.
 func (v *CreateTaskCreateTask) GetLabels() []string { return v.Labels }
 
@@ -216,11 +299,17 @@ func (v *CreateTaskCreateTask) GetAssignedTo() string { return v.AssignedTo }
 // GetDueDate returns CreateTaskCreateTask.DueDate, and is useful for accessing the field via an interface.
 func (v *CreateTaskCreateTask) GetDueDate() string { return v.DueDate }
 
-// GetCategory returns CreateTaskCreateTask.Category, and is useful for accessing the field via an interface.
-func (v *CreateTaskCreateTask) GetCategory() string { return v.Category }
+// GetDeferDate returns CreateTaskCreateTask.DeferDate, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetDeferDate() string { return v.DeferDate }
+
+// GetDepartment returns CreateTaskCreateTask.Department, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetDepartment() string { return v.Department }
 
 // GetProjectId returns CreateTaskCreateTask.ProjectId, and is useful for accessing the field via an interface.
 func (v *CreateTaskCreateTask) GetProjectId() string { return v.ProjectId }
+
+// GetDuration returns CreateTaskCreateTask.Duration, and is useful for accessing the field via an interface.
+func (v *CreateTaskCreateTask) GetDuration() int { return v.Duration }
 
 // GetCreatedAt returns CreateTaskCreateTask.CreatedAt, and is useful for accessing the field via an interface.
 func (v *CreateTaskCreateTask) GetCreatedAt() string { return v.CreatedAt }
@@ -232,13 +321,13 @@ type CreateTaskInput struct {
 	Title       string   `json:"title"`
 	Description string   `json:"description"`
 	Status      string   `json:"status"`
-	Priority    string   `json:"priority"`
-	Type        string   `json:"type"`
 	Labels      []string `json:"labels"`
 	AssignedTo  string   `json:"assignedTo"`
 	DueDate     string   `json:"dueDate"`
-	Category    string   `json:"category"`
+	DeferDate   string   `json:"deferDate"`
+	Department  string   `json:"department"`
 	ProjectId   string   `json:"projectId"`
+	Duration    int      `json:"duration"`
 }
 
 // GetTitle returns CreateTaskInput.Title, and is useful for accessing the field via an interface.
@@ -250,12 +339,6 @@ func (v *CreateTaskInput) GetDescription() string { return v.Description }
 // GetStatus returns CreateTaskInput.Status, and is useful for accessing the field via an interface.
 func (v *CreateTaskInput) GetStatus() string { return v.Status }
 
-// GetPriority returns CreateTaskInput.Priority, and is useful for accessing the field via an interface.
-func (v *CreateTaskInput) GetPriority() string { return v.Priority }
-
-// GetType returns CreateTaskInput.Type, and is useful for accessing the field via an interface.
-func (v *CreateTaskInput) GetType() string { return v.Type }
-
 // GetLabels returns CreateTaskInput.Labels, and is useful for accessing the field via an interface.
 func (v *CreateTaskInput) GetLabels() []string { return v.Labels }
 
@@ -265,11 +348,17 @@ func (v *CreateTaskInput) GetAssignedTo() string { return v.AssignedTo }
 // GetDueDate returns CreateTaskInput.DueDate, and is useful for accessing the field via an interface.
 func (v *CreateTaskInput) GetDueDate() string { return v.DueDate }
 
-// GetCategory returns CreateTaskInput.Category, and is useful for accessing the field via an interface.
-func (v *CreateTaskInput) GetCategory() string { return v.Category }
+// GetDeferDate returns CreateTaskInput.DeferDate, and is useful for accessing the field via an interface.
+func (v *CreateTaskInput) GetDeferDate() string { return v.DeferDate }
+
+// GetDepartment returns CreateTaskInput.Department, and is useful for accessing the field via an interface.
+func (v *CreateTaskInput) GetDepartment() string { return v.Department }
 
 // GetProjectId returns CreateTaskInput.ProjectId, and is useful for accessing the field via an interface.
 func (v *CreateTaskInput) GetProjectId() string { return v.ProjectId }
+
+// GetDuration returns CreateTaskInput.Duration, and is useful for accessing the field via an interface.
+func (v *CreateTaskInput) GetDuration() int { return v.Duration }
 
 // CreateTaskResponse is returned by CreateTask on success.
 type CreateTaskResponse struct {
@@ -374,14 +463,14 @@ func (v *CreateUserCreateUser) GetEmail() string { return v.Email }
 func (v *CreateUserCreateUser) GetRole() string { return v.Role }
 
 type CreateUserInput struct {
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	Contact   string `json:"contact"`
-	Address1  string `json:"address1"`
-	Address2  string `json:"address2"`
-	Role      string `json:"role"`
+	FirstName              string `json:"firstName"`
+	LastName               string `json:"lastName"`
+	Email                  string `json:"email"`
+	Password               string `json:"password"`
+	MobileNumber           string `json:"mobileNumber"`
+	Role                   string `json:"role"`
+	InvitedBy              string `json:"invitedBy"`
+	PreferredContactMethod string `json:"preferredContactMethod"`
 }
 
 // GetFirstName returns CreateUserInput.FirstName, and is useful for accessing the field via an interface.
@@ -396,17 +485,17 @@ func (v *CreateUserInput) GetEmail() string { return v.Email }
 // GetPassword returns CreateUserInput.Password, and is useful for accessing the field via an interface.
 func (v *CreateUserInput) GetPassword() string { return v.Password }
 
-// GetContact returns CreateUserInput.Contact, and is useful for accessing the field via an interface.
-func (v *CreateUserInput) GetContact() string { return v.Contact }
-
-// GetAddress1 returns CreateUserInput.Address1, and is useful for accessing the field via an interface.
-func (v *CreateUserInput) GetAddress1() string { return v.Address1 }
-
-// GetAddress2 returns CreateUserInput.Address2, and is useful for accessing the field via an interface.
-func (v *CreateUserInput) GetAddress2() string { return v.Address2 }
+// GetMobileNumber returns CreateUserInput.MobileNumber, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetMobileNumber() string { return v.MobileNumber }
 
 // GetRole returns CreateUserInput.Role, and is useful for accessing the field via an interface.
 func (v *CreateUserInput) GetRole() string { return v.Role }
+
+// GetInvitedBy returns CreateUserInput.InvitedBy, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetInvitedBy() string { return v.InvitedBy }
+
+// GetPreferredContactMethod returns CreateUserInput.PreferredContactMethod, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetPreferredContactMethod() string { return v.PreferredContactMethod }
 
 // CreateUserResponse is returned by CreateUser on success.
 type CreateUserResponse struct {
@@ -599,17 +688,19 @@ func (v *GetAllStrategiesResponse) GetGetAllStrategies() []GetAllStrategiesGetAl
 
 // GetAllTasksAllTasksTask includes the requested fields of the GraphQL type Task.
 type GetAllTasksAllTasksTask struct {
-	Id          string `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Status      string `json:"status"`
-	Priority    string `json:"priority"`
-	AssignedTo  string `json:"assignedTo"`
-	DueDate     string `json:"dueDate"`
-	Category    string `json:"category"`
-	ProjectId   string `json:"projectId"`
-	CreatedAt   string `json:"createdAt"`
-	UpdatedAt   string `json:"updatedAt"`
+	Id          string   `json:"id"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Status      string   `json:"status"`
+	Labels      []string `json:"labels"`
+	AssignedTo  string   `json:"assignedTo"`
+	DueDate     string   `json:"dueDate"`
+	DeferDate   string   `json:"deferDate"`
+	Department  string   `json:"department"`
+	ProjectId   string   `json:"projectId"`
+	Duration    int      `json:"duration"`
+	CreatedAt   string   `json:"createdAt"`
+	UpdatedAt   string   `json:"updatedAt"`
 }
 
 // GetId returns GetAllTasksAllTasksTask.Id, and is useful for accessing the field via an interface.
@@ -624,8 +715,8 @@ func (v *GetAllTasksAllTasksTask) GetDescription() string { return v.Description
 // GetStatus returns GetAllTasksAllTasksTask.Status, and is useful for accessing the field via an interface.
 func (v *GetAllTasksAllTasksTask) GetStatus() string { return v.Status }
 
-// GetPriority returns GetAllTasksAllTasksTask.Priority, and is useful for accessing the field via an interface.
-func (v *GetAllTasksAllTasksTask) GetPriority() string { return v.Priority }
+// GetLabels returns GetAllTasksAllTasksTask.Labels, and is useful for accessing the field via an interface.
+func (v *GetAllTasksAllTasksTask) GetLabels() []string { return v.Labels }
 
 // GetAssignedTo returns GetAllTasksAllTasksTask.AssignedTo, and is useful for accessing the field via an interface.
 func (v *GetAllTasksAllTasksTask) GetAssignedTo() string { return v.AssignedTo }
@@ -633,11 +724,17 @@ func (v *GetAllTasksAllTasksTask) GetAssignedTo() string { return v.AssignedTo }
 // GetDueDate returns GetAllTasksAllTasksTask.DueDate, and is useful for accessing the field via an interface.
 func (v *GetAllTasksAllTasksTask) GetDueDate() string { return v.DueDate }
 
-// GetCategory returns GetAllTasksAllTasksTask.Category, and is useful for accessing the field via an interface.
-func (v *GetAllTasksAllTasksTask) GetCategory() string { return v.Category }
+// GetDeferDate returns GetAllTasksAllTasksTask.DeferDate, and is useful for accessing the field via an interface.
+func (v *GetAllTasksAllTasksTask) GetDeferDate() string { return v.DeferDate }
+
+// GetDepartment returns GetAllTasksAllTasksTask.Department, and is useful for accessing the field via an interface.
+func (v *GetAllTasksAllTasksTask) GetDepartment() string { return v.Department }
 
 // GetProjectId returns GetAllTasksAllTasksTask.ProjectId, and is useful for accessing the field via an interface.
 func (v *GetAllTasksAllTasksTask) GetProjectId() string { return v.ProjectId }
+
+// GetDuration returns GetAllTasksAllTasksTask.Duration, and is useful for accessing the field via an interface.
+func (v *GetAllTasksAllTasksTask) GetDuration() int { return v.Duration }
 
 // GetCreatedAt returns GetAllTasksAllTasksTask.CreatedAt, and is useful for accessing the field via an interface.
 func (v *GetAllTasksAllTasksTask) GetCreatedAt() string { return v.CreatedAt }
@@ -748,7 +845,6 @@ func (v *GetUserByEmailGetUserByEmailUser) GetEmail() string { return v.Email }
 
 // GetUserByEmailResponse is returned by GetUserByEmail on success.
 type GetUserByEmailResponse struct {
-	// Get a user by email
 	GetUserByEmail GetUserByEmailGetUserByEmailUser `json:"getUserByEmail"`
 }
 
@@ -768,6 +864,17 @@ func (v *NewHistoricPriceInput) GetPairs() []PairInput { return v.Pairs }
 // GetTimestamp returns NewHistoricPriceInput.Timestamp, and is useful for accessing the field via an interface.
 func (v *NewHistoricPriceInput) GetTimestamp() int { return v.Timestamp }
 
+type NewHistoricTickerStatsInput struct {
+	Timestamp int                `json:"Timestamp"`
+	Stats     []TickerStatsInput `json:"Stats"`
+}
+
+// GetTimestamp returns NewHistoricTickerStatsInput.Timestamp, and is useful for accessing the field via an interface.
+func (v *NewHistoricTickerStatsInput) GetTimestamp() int { return v.Timestamp }
+
+// GetStats returns NewHistoricTickerStatsInput.Stats, and is useful for accessing the field via an interface.
+func (v *NewHistoricTickerStatsInput) GetStats() []TickerStatsInput { return v.Stats }
+
 type PairInput struct {
 	Symbol string `json:"Symbol"`
 	Price  string `json:"Price"`
@@ -778,6 +885,45 @@ func (v *PairInput) GetSymbol() string { return v.Symbol }
 
 // GetPrice returns PairInput.Price, and is useful for accessing the field via an interface.
 func (v *PairInput) GetPrice() string { return v.Price }
+
+type TickerStatsInput struct {
+	Symbol         string `json:"Symbol"`
+	PriceChange    string `json:"PriceChange"`
+	PriceChangePct string `json:"PriceChangePct"`
+	QuoteVolume    string `json:"QuoteVolume"`
+	Volume         string `json:"Volume"`
+	TradeCount     int    `json:"TradeCount"`
+	HighPrice      string `json:"HighPrice"`
+	LowPrice       string `json:"LowPrice"`
+	LastPrice      string `json:"LastPrice"`
+}
+
+// GetSymbol returns TickerStatsInput.Symbol, and is useful for accessing the field via an interface.
+func (v *TickerStatsInput) GetSymbol() string { return v.Symbol }
+
+// GetPriceChange returns TickerStatsInput.PriceChange, and is useful for accessing the field via an interface.
+func (v *TickerStatsInput) GetPriceChange() string { return v.PriceChange }
+
+// GetPriceChangePct returns TickerStatsInput.PriceChangePct, and is useful for accessing the field via an interface.
+func (v *TickerStatsInput) GetPriceChangePct() string { return v.PriceChangePct }
+
+// GetQuoteVolume returns TickerStatsInput.QuoteVolume, and is useful for accessing the field via an interface.
+func (v *TickerStatsInput) GetQuoteVolume() string { return v.QuoteVolume }
+
+// GetVolume returns TickerStatsInput.Volume, and is useful for accessing the field via an interface.
+func (v *TickerStatsInput) GetVolume() string { return v.Volume }
+
+// GetTradeCount returns TickerStatsInput.TradeCount, and is useful for accessing the field via an interface.
+func (v *TickerStatsInput) GetTradeCount() int { return v.TradeCount }
+
+// GetHighPrice returns TickerStatsInput.HighPrice, and is useful for accessing the field via an interface.
+func (v *TickerStatsInput) GetHighPrice() string { return v.HighPrice }
+
+// GetLowPrice returns TickerStatsInput.LowPrice, and is useful for accessing the field via an interface.
+func (v *TickerStatsInput) GetLowPrice() string { return v.LowPrice }
+
+// GetLastPrice returns TickerStatsInput.LastPrice, and is useful for accessing the field via an interface.
+func (v *TickerStatsInput) GetLastPrice() string { return v.LastPrice }
 
 // __CreateActivityReportInput is used internally by genqlient
 type __CreateActivityReportInput struct {
@@ -818,6 +964,14 @@ type __CreateHistoricPricesInput struct {
 
 // GetInput returns __CreateHistoricPricesInput.Input, and is useful for accessing the field via an interface.
 func (v *__CreateHistoricPricesInput) GetInput() NewHistoricPriceInput { return v.Input }
+
+// __CreateHistoricTickerStatsInput is used internally by genqlient
+type __CreateHistoricTickerStatsInput struct {
+	Input NewHistoricTickerStatsInput `json:"input"`
+}
+
+// GetInput returns __CreateHistoricTickerStatsInput.Input, and is useful for accessing the field via an interface.
+func (v *__CreateHistoricTickerStatsInput) GetInput() NewHistoricTickerStatsInput { return v.Input }
 
 // __CreateProjectInput is used internally by genqlient
 type __CreateProjectInput struct {
@@ -1017,6 +1171,52 @@ func CreateHistoricPrices(
 	return data_, err_
 }
 
+// The mutation executed by CreateHistoricTickerStats.
+const CreateHistoricTickerStats_Operation = `
+mutation CreateHistoricTickerStats ($input: NewHistoricTickerStatsInput!) {
+	createHistoricTickerStats(input: $input) {
+		Timestamp
+		Stats {
+			Symbol
+			PriceChange
+			PriceChangePct
+			QuoteVolume
+			Volume
+			TradeCount
+			HighPrice
+			LowPrice
+			LastPrice
+		}
+		CreatedAt
+	}
+}
+`
+
+func CreateHistoricTickerStats(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input NewHistoricTickerStatsInput,
+) (data_ *CreateHistoricTickerStatsResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "CreateHistoricTickerStats",
+		Query:  CreateHistoricTickerStats_Operation,
+		Variables: &__CreateHistoricTickerStatsInput{
+			Input: input,
+		},
+	}
+
+	data_ = &CreateHistoricTickerStatsResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by CreateProject.
 const CreateProject_Operation = `
 mutation CreateProject ($input: CreateProjectInput!) {
@@ -1068,13 +1268,13 @@ mutation CreateTask ($input: CreateTaskInput!) {
 		title
 		description
 		status
-		priority
-		type
 		labels
 		assignedTo
 		dueDate
-		category
+		deferDate
+		department
 		projectId
+		duration
 		createdAt
 		updatedAt
 	}
@@ -1312,11 +1512,13 @@ query GetAllTasks {
 		title
 		description
 		status
-		priority
+		labels
 		assignedTo
 		dueDate
-		category
+		deferDate
+		department
 		projectId
+		duration
 		createdAt
 		updatedAt
 	}
