@@ -118,96 +118,176 @@ func calculateValue(num float64) float64 {
 	}
 }
 
-// SavePriceData writes market price data using GraphQL mutation
-func SavePriceData(ctx context.Context, client graphql.Client, market []model.Pair, datetime int) error {
-	var pairsInput []graph.PairInput
-	for _, price := range market {
-		pairsInput = append(pairsInput, graph.PairInput{
-			Symbol: price.Symbol,
-			Price:  price.Price,
-		})
-	}
+// // SavePriceData writes market price data using GraphQL mutation
+// func SavePriceData(ctx context.Context, client graphql.Client, market []model.Pair, datetime int) error {
+// 	var pairsInput []graph.PairInput
+// 	for _, price := range market {
+// 		pairsInput = append(pairsInput, graph.PairInput{
+// 			Symbol: price.Symbol,
+// 			Price:  price.Price,
+// 		})
+// 	}
 
-	chunks := chunkPairs(pairsInput, 250) // or 500 depending on how large each payload is
-	for i, chunk := range chunks {
-		log.Info().Int("chunk", i+1).Int("size", len(chunk)).Msg("Saving price chunk...")
-		if err := saveChunkWithRetry(ctx, client, chunk, datetime, 3); err != nil {
-			log.Error().Err(err).Int("chunk", i+1).Msg("Failed to save chunk after retries")
-			return err // Or continue if partial failure is acceptable
-		}
-	}
+// 	chunks := chunkPairs(pairsInput, 250) // or 500 depending on how large each payload is
+// 	for i, chunk := range chunks {
+// 		log.Info().Int("chunk", i+1).Int("size", len(chunk)).Msg("Saving price chunk...")
+// 		if err := saveChunkWithRetry(ctx, client, chunk, datetime, 3); err != nil {
+// 			log.Error().Err(err).Int("chunk", i+1).Msg("Failed to save chunk after retries")
+// 			return err // Or continue if partial failure is acceptable
+// 		}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
-func chunkPairs(pairs []graph.PairInput, size int) [][]graph.PairInput {
-	var chunks [][]graph.PairInput
-	for size < len(pairs) {
-		pairs, chunks = pairs[size:], append(chunks, pairs[0:size:size])
-	}
-	return append(chunks, pairs)
-}
+// func SaveTradeStats(ctx context.Context, client graphql.Client, market []model.TickerStatsInput, datetime int) error {
+// 	var chunks [][]model.TickerStatsInput
+// 	chunkSize := 250 // or 500 depending on how large each payload is
+// 	for chunkSize < len(market) {
+// 		market, chunks = market[chunkSize:], append(chunks, market[0:chunkSize:chunkSize])
+// 	}
+// 	chunks = append(chunks, market)
 
-func saveChunkWithRetry(ctx context.Context, client graphql.Client, pairs []graph.PairInput, timestamp int, retries int) error {
-	var err error
-	for attempt := 1; attempt <= retries; attempt++ {
-		input := graph.NewHistoricPriceInput{
-			Pairs:     pairs,
-			Timestamp: timestamp,
-		}
+// 	for i, chunk := range chunks {
+// 		log.Info().Int("chunk", i+1).Int("size", len(chunk)).Msg("Saving trade stats chunk...")
+// 		if err := saveTradeStatsChunkWithRetry(ctx, client, chunk, datetime, 3); err != nil {
+// 			log.Error().Err(err).Int("chunk", i+1).Msg("Failed to save chunk after retries")
+// 			return err // Or continue if partial failure is acceptable
+// 		}
+// 	}
 
-		_, err = graph.CreateHistoricPrices(ctx, client, input)
-		if err == nil {
-			return nil
-		}
+// 	return nil
+// }
 
-		log.Warn().
-			Err(err).
-			Int("attempt", attempt).
-			Int("chunk_size", len(pairs)).
-			Msg("Failed to write price chunk, will retry...")
+// func chunkPairs(pairs []graph.PairInput, size int) [][]graph.PairInput {
+// 	var chunks [][]graph.PairInput
+// 	for size < len(pairs) {
+// 		pairs, chunks = pairs[size:], append(chunks, pairs[0:size:size])
+// 	}
+// 	return append(chunks, pairs)
+// }
 
-		time.Sleep(time.Duration(attempt*2) * time.Second) // backoff
-	}
-	return err
-}
+// func saveChunkWithRetry(ctx context.Context, client graphql.Client, pairs []graph.PairInput, timestamp int, retries int) error {
+// 	var err error
+// 	for attempt := 1; attempt <= retries; attempt++ {
+// 		input := graph.NewHistoricPriceInput{
+// 			Pairs:     pairs,
+// 			Timestamp: timestamp,
+// 		}
+
+// 		_, err = graph.CreateHistoricPrices(ctx, client, input)
+// 		if err == nil {
+// 			return nil
+// 		}
+
+// 		log.Warn().
+// 			Err(err).
+// 			Int("attempt", attempt).
+// 			Int("chunk_size", len(pairs)).
+// 			Msg("Failed to write price chunk, will retry...")
+
+// 		time.Sleep(time.Duration(attempt*2) * time.Second) // backoff
+// 	}
+// 	return err
+// }
+
+// func saveTradeStatsChunkWithRetry(ctx context.Context, client graphql.Client, pairs []graph.TickerStatsInput, timestamp int, retries int) error {
+// 	var err error
+// 	for attempt := 1; attempt <= retries; attempt++ {
+// 		input := graph.NewHistoricTickerStatsInput{
+// 			Timestamp: timestamp,
+// 			Stats:     pairs,
+// 		}
+
+// 		_, err = graph.CreateHistoricTickerStats(ctx, client, input)
+// 		if err == nil {
+// 			return nil
+// 		}
+
+// 		log.Warn().
+// 			Err(err).
+// 			Int("attempt", attempt).
+// 			Int("chunk_size", len(pairs)).
+// 			Msg("Failed to write trade stats chunk, will retry...")
+
+// 		time.Sleep(time.Duration(attempt*2) * time.Second) // backoff
+// 	}
+// 	return err
+// }
 
 // SavePriceDataAsJSON saves Binance price data to a JSON file, appending data in 5-minute intervals
-func SavePriceDataAsJSON(market []model.Pair, timestamp int64) error {
-	// Convert epoch timestamp to UTC date (YYYY-MM-DD)
-	date := time.Unix(timestamp, 0).UTC().Format("2006-01-02")
+// func SavePriceDataAsJSON(market []model.Pair, timestamp int64) error {
+// 	// Convert epoch timestamp to UTC date (YYYY-MM-DD)
+// 	date := time.Unix(timestamp, 0).UTC().Format("2006-01-02")
 
-	// Define filename based on the date
-	filename := fmt.Sprintf("/var/log/binance_prices_%s.json", date)
+// 	// Define filename based on the date
+// 	filename := fmt.Sprintf("/var/log/binance_prices_%s.json", date)
 
-	// Read existing data (if file exists)
-	var priceHistory []model.HistoricPrices
-	file, err := os.Open(filename)
-	if err == nil {
-		defer file.Close()
-		json.NewDecoder(file).Decode(&priceHistory)
-	}
+// 	// Read existing data (if file exists)
+// 	var priceHistory []model.HistoricPrices
+// 	file, err := os.Open(filename)
+// 	if err == nil {
+// 		defer file.Close()
+// 		json.NewDecoder(file).Decode(&priceHistory)
+// 	}
 
-	// Convert []model.Pair to []*model.Pair
-	var pairPtrs []*model.Pair
-	for i := range market {
-		pairPtrs = append(pairPtrs, &market[i])
-	}
+// 	// Convert []model.Pair to []*model.Pair
+// 	var pairPtrs []*model.Pair
+// 	for i := range market {
+// 		pairPtrs = append(pairPtrs, &market[i])
+// 	}
 
-	// Append new data
-	priceHistory = append(priceHistory, model.HistoricPrices{
-		Pair:      pairPtrs,
-		Timestamp: int(timestamp),
-	})
+// 	// Append new data
+// 	priceHistory = append(priceHistory, model.HistoricPrices{
+// 		Pair:      pairPtrs,
+// 		Timestamp: int(timestamp),
+// 	})
 
-	// Write updated JSON back to file
-	fileData, err := json.MarshalIndent(priceHistory, "", "  ")
-	if err != nil {
-		return err
-	}
+// 	// Write updated JSON back to file
+// 	fileData, err := json.MarshalIndent(priceHistory, "", "  ")
+// 	if err != nil {
+// 		return err
+// 	}
 
-	return os.WriteFile(filename, fileData, 0644)
-}
+// 	return os.WriteFile(filename, fileData, 0644)
+// }
+
+// // SavePriceDataAsJSON saves Binance price data to a JSON file, appending data in 5-minute intervals
+// func SaveTradeStatsAsJSON(market []model.TickerStatsInput, timestamp int64) error {
+// 	// Convert epoch timestamp to UTC date (YYYY-MM-DD)
+// 	date := time.Unix(timestamp, 0).UTC().Format("2006-01-02")
+
+// 	// Define filename based on the date
+// 	filename := fmt.Sprintf("/var/log/binance_prices_%s.json", date)
+
+// 	// Read existing data (if file exists)
+// 	var priceHistory []model.HistoricPrices
+// 	file, err := os.Open(filename)
+// 	if err == nil {
+// 		defer file.Close()
+// 		json.NewDecoder(file).Decode(&priceHistory)
+// 	}
+
+// 	// Convert []model.Pair to []*model.Pair
+// 	var pairPtrs []*model.TickerStatsInput
+// 	for i := range market {
+// 		pairPtrs = append(pairPtrs, &market[i])
+// 	}
+
+// 	// Append new data
+// 	priceHistory = append(priceHistory, model.HistoricPrices{
+// 		Pair:      pairPtrs,
+// 		Timestamp: int(timestamp),
+// 	})
+
+// 	// Write updated JSON back to file
+// 	fileData, err := json.MarshalIndent(priceHistory, "", "  ")
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	return os.WriteFile(filename, fileData, 0644)
+// }
 
 // ParseDemoCSVData reads a CSV file and saves the data to the GraphQL database
 func ParseDemoCSVData(ctx context.Context, client graphql.Client, csvFile string) ([]model.Pair, error) {
@@ -279,4 +359,164 @@ func ParseDemoCSVData(ctx context.Context, client graphql.Client, csvFile string
 	}
 
 	return currentPrices, nil
+}
+
+// NEW DRY CODE
+
+func Chunk[T any](items []T, size int) [][]T {
+	var chunks [][]T
+	for size < len(items) {
+		items, chunks = items[size:], append(chunks, items[:size:size])
+	}
+	return append(chunks, items)
+}
+
+func RetryWithBackoff[T any](ctx context.Context, data []T, retries int, fn func([]T) error) error {
+	var err error
+	for attempt := 1; attempt <= retries; attempt++ {
+		if err = fn(data); err == nil {
+			return nil
+		}
+		log.Warn().
+			Err(err).
+			Int("attempt", attempt).
+			Int("chunk_size", len(data)).
+			Msg("Failed to write chunk, will retry...")
+		time.Sleep(time.Duration(attempt*2) * time.Second)
+	}
+	return err
+}
+
+func SaveWithChunks[T any](ctx context.Context, client graphql.Client, items []T, chunkSize int, retries int, mutationFn func(context.Context, graphql.Client, []T, int) error, timestamp int) error {
+	chunks := Chunk(items, chunkSize)
+	for i, chunk := range chunks {
+		log.Info().Int("chunk", i+1).Int("size", len(chunk)).Msg("Saving chunk...")
+		err := RetryWithBackoff(ctx, chunk, retries, func(data []T) error {
+			return mutationFn(ctx, client, data, timestamp)
+		})
+		if err != nil {
+			log.Error().Err(err).Int("chunk", i+1).Msg("Failed to save chunk after retries")
+			return err
+		}
+	}
+	return nil
+}
+
+func SavePriceData(ctx context.Context, client graphql.Client, market []model.Pair, datetime int) error {
+	pairsInput := make([]graph.PairInput, 0, len(market))
+	for _, p := range market {
+		pairsInput = append(pairsInput, graph.PairInput{
+			Symbol: p.Symbol,
+			Price:  p.Price,
+		})
+	}
+
+	return SaveWithChunks(ctx, client, pairsInput, 250, 3, func(ctx context.Context, client graphql.Client, chunk []graph.PairInput, timestamp int) error {
+		input := graph.NewHistoricPriceInput{
+			Pairs:     chunk,
+			Timestamp: timestamp,
+		}
+		_, err := graph.CreateHistoricPrices(ctx, client, input)
+		return err
+	}, datetime)
+}
+
+func SaveTradeStats(ctx context.Context, client graphql.Client, market []model.TickerStatsInput, datetime int) error {
+	statsInput := make([]graph.TickerStatsInput, 0, len(market))
+	for _, s := range market {
+		statsInput = append(statsInput, graph.TickerStatsInput{
+			Symbol:         s.Symbol,
+			PriceChange:    s.PriceChange,
+			PriceChangePct: s.PriceChangePct,
+			QuoteVolume:    s.QuoteVolume,
+			Volume:         s.Volume,
+			TradeCount:     s.TradeCount,
+			HighPrice:      s.HighPrice,
+			LowPrice:       s.LowPrice,
+			LastPrice:      s.LastPrice,
+		})
+	}
+
+	return SaveWithChunks(ctx, client, statsInput, 250, 3, func(ctx context.Context, client graphql.Client, stats []graph.TickerStatsInput, ts int) error {
+		_, err := graph.CreateHistoricTickerStats(ctx, client, graph.NewHistoricTickerStatsInput{
+			Timestamp: ts,
+			Stats:     stats,
+		})
+		return err
+	}, datetime)
+}
+
+func saveJSON[TInput any, TBatch any](
+	filenameFormat string,
+	market []TInput,
+	timestamp int64,
+	toBatch func([]TInput, int) TBatch,
+) error {
+	date := time.Unix(timestamp, 0).UTC().Format("2006-01-02")
+	filename := fmt.Sprintf(filenameFormat, date)
+
+	// Read existing data
+	var history []TBatch
+	file, err := os.Open(filename)
+	if err == nil {
+		defer file.Close()
+		json.NewDecoder(file).Decode(&history)
+	}
+
+	// Append new data
+	history = append(history, toBatch(market, int(timestamp)))
+
+	// Write back
+	fileData, err := json.MarshalIndent(history, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(filename, fileData, 0644)
+}
+
+func SavePriceDataAsJSON(market []model.Pair, timestamp int64) error {
+	return saveJSON(
+		"/var/log/binance_prices_%s.json",
+		market,
+		timestamp,
+		func(pairs []model.Pair, ts int) model.HistoricPrices {
+			ptrs := make([]*model.Pair, len(pairs))
+			for i := range pairs {
+				ptrs[i] = &pairs[i]
+			}
+			return model.HistoricPrices{
+				Pair:      ptrs,
+				Timestamp: ts,
+			}
+		},
+	)
+}
+
+func SaveTradeStatsAsJSON(market []model.TickerStatsInput, timestamp int64) error {
+	return saveJSON(
+		"/var/log/binance_stats_%s.json",
+		market,
+		timestamp,
+		func(inputs []model.TickerStatsInput, ts int) model.HistoricTickerStats {
+			stats := make([]*model.TickerStats, len(inputs))
+			for i, in := range inputs {
+				stats[i] = &model.TickerStats{
+					Symbol:         in.Symbol,
+					PriceChange:    in.PriceChange,
+					PriceChangePct: in.PriceChangePct,
+					QuoteVolume:    in.QuoteVolume,
+					Volume:         in.Volume,
+					TradeCount:     in.TradeCount,
+					HighPrice:      in.HighPrice,
+					LowPrice:       in.LowPrice,
+					LastPrice:      in.LastPrice,
+				}
+			}
+			return model.HistoricTickerStats{
+				Stats:     stats,
+				Timestamp: ts,
+				CreatedAt: time.Now().UTC(),
+			}
+		},
+	)
 }

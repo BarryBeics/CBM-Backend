@@ -36,6 +36,43 @@ type Pair {
 	  TradeVolume: String! 
 	  Symbol:      String! 
   }
+
+  type TickerStats {
+	Symbol:          String!
+	PriceChange:     String!
+	PriceChangePct:  String!
+	QuoteVolume:     String!
+	Volume:          String!
+	TradeCount:      Int!
+	HighPrice:       String!
+	LowPrice:        String!
+	LastPrice:       String!
+}
+
+input TickerStatsInput {
+  Symbol: String!
+  PriceChange: String!
+  PriceChangePct: String!
+  QuoteVolume: String!
+  Volume: String!
+  TradeCount: Int!
+  HighPrice: String!
+  LowPrice: String!
+  LastPrice: String!
+}
+
+type HistoricTickerStats {
+  Timestamp: Int!
+  Stats: [TickerStats!]!
+  CreatedAt: DateTime!
+}
+
+input NewHistoricTickerStatsInput {
+  Timestamp: Int!
+  Stats: [TickerStatsInput!]!
+}
+
+
   
   type HistoricKlineData {
   opentime: Int!
@@ -57,6 +94,12 @@ type Pair {
   
 	"Deletes all prices data for the matching given timestamp"
 	deleteHistoricPrices(Timestamp: Int!): Boolean!
+
+	"Creates an array of 24h Ticker Stats at a given timestamp"
+	createHistoricTickerStats(input: NewHistoricTickerStatsInput!): [HistoricTickerStats!]!
+
+	"Deletes all Ticker Stats at a specific timestamp"
+	deleteHistoricTickerStats(Timestamp: Int!): Boolean!
   }
   
   extend type Query {
@@ -74,4 +117,16 @@ type Pair {
 
     "This will give you a []string of all available trading symbols in your HistoricPrices collection."
 	availableSymbols: [String!]!
+
+	"Gets all 24h Ticker Stats at a specific timestamp"
+	getHistoricTickerStatsAtTimestamp(Timestamp: Int!): [HistoricTickerStats!]!
+
+	"Fetches TickerStats history for a given symbol (e.g., to chart volatility or volume)"
+	getTickerStatsBySymbol(symbol: String!, limit: Int): [TickerStats!]!
+
+	"Returns a list of available symbols from TickerStats data"
+	availableTickerSymbols: [String!]!
+
+	"Returns a count of stored timestamps (like snapshots)"
+	getTickerStatsSnapshotCount: Int!
   }

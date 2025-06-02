@@ -66,6 +66,12 @@ type HistoricPrices struct {
 	CreatedAt time.Time `json:"CreatedAt"`
 }
 
+type HistoricTickerStats struct {
+	Timestamp int            `json:"Timestamp"`
+	Stats     []*TickerStats `json:"Stats"`
+	CreatedAt time.Time      `json:"CreatedAt"`
+}
+
 type LoginInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -102,6 +108,11 @@ type NewHistoricKlineDataInput struct {
 type NewHistoricPriceInput struct {
 	Pairs     []*PairInput `json:"Pairs"`
 	Timestamp int          `json:"Timestamp"`
+}
+
+type NewHistoricTickerStatsInput struct {
+	Timestamp int                 `json:"Timestamp"`
+	Stats     []*TickerStatsInput `json:"Stats"`
 }
 
 type NewTradeOutcomeReport struct {
@@ -227,6 +238,30 @@ type Task struct {
 	Duration    *int      `json:"duration,omitempty"`
 	CreatedAt   string    `json:"createdAt"`
 	UpdatedAt   string    `json:"updatedAt"`
+}
+
+type TickerStats struct {
+	Symbol         string `json:"Symbol"`
+	PriceChange    string `json:"PriceChange"`
+	PriceChangePct string `json:"PriceChangePct"`
+	QuoteVolume    string `json:"QuoteVolume"`
+	Volume         string `json:"Volume"`
+	TradeCount     int    `json:"TradeCount"`
+	HighPrice      string `json:"HighPrice"`
+	LowPrice       string `json:"LowPrice"`
+	LastPrice      string `json:"LastPrice"`
+}
+
+type TickerStatsInput struct {
+	Symbol         string `json:"Symbol"`
+	PriceChange    string `json:"PriceChange"`
+	PriceChangePct string `json:"PriceChangePct"`
+	QuoteVolume    string `json:"QuoteVolume"`
+	Volume         string `json:"Volume"`
+	TradeCount     int    `json:"TradeCount"`
+	HighPrice      string `json:"HighPrice"`
+	LowPrice       string `json:"LowPrice"`
+	LastPrice      string `json:"LastPrice"`
 }
 
 type TradeOutcomeReport struct {

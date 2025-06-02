@@ -6,6 +6,7 @@ package resolvers
 
 import (
 	"context"
+	"fmt"
 
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	"github.com/rs/zerolog/log"
@@ -40,6 +41,30 @@ func (r *mutationResolver) CreateHistoricKline(ctx context.Context, input *model
 // DeleteHistoricPrices is the resolver for the deleteHistoricPrices field.
 func (r *mutationResolver) DeleteHistoricPrices(ctx context.Context, timestamp int) (bool, error) {
 	err := db.DeleteHistoricPricesByTimestamp(ctx, timestamp)
+
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting Unique Timestamp Count")
+		return false, err
+	}
+
+	return true, nil
+}
+
+// CreateHistoricTickerStats is the resolver for the createHistoricTickerStats field.
+func (r *mutationResolver) CreateHistoricTickerStats(ctx context.Context, input model.NewHistoricTickerStatsInput) ([]*model.HistoricTickerStats, error) {
+	// Assuming you want to save multiple HistoricKlineData in the input
+	insertedHistoricKlineData, err := db.SaveHistoricTickerStats(input)
+	if err != nil {
+		return nil, err
+	}
+
+	// Assuming you want to return the insertedHistoricKlineData and the timestamp
+	return insertedHistoricKlineData, nil
+}
+
+// DeleteHistoricTickerStats is the resolver for the deleteHistoricTickerStats field.
+func (r *mutationResolver) DeleteHistoricTickerStats(ctx context.Context, timestamp int) (bool, error) {
+	err := db.DeleteHistoricTickerStatsByTimestamp(ctx, timestamp)
 
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting Unique Timestamp Count")
@@ -129,4 +154,61 @@ func (r *queryResolver) GetUniqueTimestampCount(ctx context.Context) (int, error
 // AvailableSymbols is the resolver for the availableSymbols field.
 func (r *queryResolver) AvailableSymbols(ctx context.Context) ([]string, error) {
 	return db.AvailableSymbols()
+}
+
+// GetHistoricTickerStatsAtTimestamp is the resolver for the getHistoricTickerStatsAtTimestamp field.
+func (r *queryResolver) GetHistoricTickerStatsAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricTickerStats, error) {
+	log.Info().Msgf("Fetching historic ticker stats at Timestamp: %d", timestamp)
+
+	historicTickerStats, err := db.HistoricTickerStatsAtTimestamp(timestamp)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting historic ticker stats at timestamp")
+		return nil, err
+	}
+
+	// Convert slice of model.HistoricTickerStats to slice of *model.HistoricTickerStats
+	var result []*model.HistoricTickerStats
+	for i := range historicTickerStats {
+		result = append(result, &historicTickerStats[i])
+	}
+
+	log.Info().Msgf("Retrieved ticker stats: %+v", historicTickerStats)
+
+	// Return the slice of pointers to historic ticker stats
+	return result, nil
+}
+
+// GetTickerStatsBySymbol is the resolver for the getTickerStatsBySymbol field.
+func (r *queryResolver) GetTickerStatsBySymbol(ctx context.Context, symbol string, limit *int) ([]*model.TickerStats, error) {
+	log.Info().Str("symbol", symbol).Int("limit", *limit).Msg("GetTickerStatsBySymbol called")
+
+	l := 0
+	if limit != nil {
+		l = *limit
+	}
+
+	tickerStats, err := db.TickerStatsBySymbol(symbol, l)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting ticker stats by symbol")
+		return nil, err
+	}
+
+	// Convert slice of model.TickerStats to slice of *model.TickerStats
+	var result []*model.TickerStats
+	for i := range tickerStats {
+		result = append(result, &tickerStats[i])
+	}
+
+	// Return the slice of pointers to ticker stats
+	return result, nil
+}
+
+// AvailableTickerSymbols is the resolver for the availableTickerSymbols field.
+func (r *queryResolver) AvailableTickerSymbols(ctx context.Context) ([]string, error) {
+	panic(fmt.Errorf("not implemented: AvailableTickerSymbols - availableTickerSymbols"))
+}
+
+// GetTickerStatsSnapshotCount is the resolver for the getTickerStatsSnapshotCount field.
+func (r *queryResolver) GetTickerStatsSnapshotCount(ctx context.Context) (int, error) {
+	panic(fmt.Errorf("not implemented: GetTickerStatsSnapshotCount - getTickerStatsSnapshotCount"))
 }

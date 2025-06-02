@@ -4,11 +4,13 @@ query GetAllTasks{
     title
     description
     status
-    priority
+    labels
     assignedTo
     dueDate
-    category
+    deferDate
+    department
     projectId
+    duration
     createdAt
     updatedAt
   }
@@ -52,17 +54,17 @@ mutation CreateProject($input: CreateProjectInput!) {
 
 mutation CreateTask($input: CreateTaskInput!) {
   createTask(input: $input) {
-    id
+     id
     title
     description
     status
-    priority
-    type
     labels
     assignedTo
     dueDate
-    category
+    deferDate
+    department
     projectId
+    duration
     createdAt
     updatedAt
   }
