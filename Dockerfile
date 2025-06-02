@@ -10,6 +10,7 @@ RUN go work sync
 RUN go mod tidy && go build -o /usr/local/bin/microservice-binaries/dataManager microservices/dataManager/main.go
 RUN go build -o /usr/local/bin/microservice-binaries/backTesting microservices/backTesting/main.go
 RUN go build -o /usr/local/bin/microservice-binaries/fetchPrices microservices/binance/cmd/fetchPrices/main.go
+RUN go build -o /usr/local/bin/microservice-binaries/fetchLiquidity microservices/binance/cmd/fetchLiquidity/main.go
 
 # Copy static seed files into the image (for use in runtime)
 COPY microservices/dataManager/*.json /usr/local/share/seeds/
