@@ -241,27 +241,29 @@ type Task struct {
 }
 
 type TickerStats struct {
-	Symbol         string `json:"Symbol"`
-	PriceChange    string `json:"PriceChange"`
-	PriceChangePct string `json:"PriceChangePct"`
-	QuoteVolume    string `json:"QuoteVolume"`
-	Volume         string `json:"Volume"`
-	TradeCount     int    `json:"TradeCount"`
-	HighPrice      string `json:"HighPrice"`
-	LowPrice       string `json:"LowPrice"`
-	LastPrice      string `json:"LastPrice"`
+	Symbol            string  `json:"Symbol"`
+	PriceChange       string  `json:"PriceChange"`
+	PriceChangePct    string  `json:"PriceChangePct"`
+	QuoteVolume       string  `json:"QuoteVolume"`
+	Volume            string  `json:"Volume"`
+	TradeCount        int     `json:"TradeCount"`
+	HighPrice         string  `json:"HighPrice"`
+	LowPrice          string  `json:"LowPrice"`
+	LastPrice         string  `json:"LastPrice"`
+	LiquidityEstimate *string `json:"LiquidityEstimate,omitempty"`
 }
 
 type TickerStatsInput struct {
-	Symbol         string `json:"Symbol"`
-	PriceChange    string `json:"PriceChange"`
-	PriceChangePct string `json:"PriceChangePct"`
-	QuoteVolume    string `json:"QuoteVolume"`
-	Volume         string `json:"Volume"`
-	TradeCount     int    `json:"TradeCount"`
-	HighPrice      string `json:"HighPrice"`
-	LowPrice       string `json:"LowPrice"`
-	LastPrice      string `json:"LastPrice"`
+	Symbol            string  `json:"Symbol"`
+	PriceChange       string  `json:"PriceChange"`
+	PriceChangePct    string  `json:"PriceChangePct"`
+	QuoteVolume       string  `json:"QuoteVolume"`
+	Volume            string  `json:"Volume"`
+	TradeCount        int     `json:"TradeCount"`
+	HighPrice         string  `json:"HighPrice"`
+	LowPrice          string  `json:"LowPrice"`
+	LastPrice         string  `json:"LastPrice"`
+	LiquidityEstimate *string `json:"LiquidityEstimate,omitempty"`
 }
 
 type TradeOutcomeReport struct {

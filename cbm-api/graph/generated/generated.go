@@ -201,15 +201,16 @@ type ComplexityRoot struct {
 	}
 
 	TickerStats struct {
-		HighPrice      func(childComplexity int) int
-		LastPrice      func(childComplexity int) int
-		LowPrice       func(childComplexity int) int
-		PriceChange    func(childComplexity int) int
-		PriceChangePct func(childComplexity int) int
-		QuoteVolume    func(childComplexity int) int
-		Symbol         func(childComplexity int) int
-		TradeCount     func(childComplexity int) int
-		Volume         func(childComplexity int) int
+		HighPrice         func(childComplexity int) int
+		LastPrice         func(childComplexity int) int
+		LiquidityEstimate func(childComplexity int) int
+		LowPrice          func(childComplexity int) int
+		PriceChange       func(childComplexity int) int
+		PriceChangePct    func(childComplexity int) int
+		QuoteVolume       func(childComplexity int) int
+		Symbol            func(childComplexity int) int
+		TradeCount        func(childComplexity int) int
+		Volume            func(childComplexity int) int
 	}
 
 	TradeOutcomeReport struct {
@@ -1344,6 +1345,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.TickerStats.LastPrice(childComplexity), true
 
+	case "TickerStats.LiquidityEstimate":
+		if e.complexity.TickerStats.LiquidityEstimate == nil {
+			break
+		}
+
+		return e.complexity.TickerStats.LiquidityEstimate(childComplexity), true
+
 	case "TickerStats.LowPrice":
 		if e.complexity.TickerStats.LowPrice == nil {
 			break
@@ -1989,6 +1997,7 @@ extend type Mutation {
 	HighPrice:       String!
 	LowPrice:        String!
 	LastPrice:       String!
+	LiquidityEstimate: String
 }
 
 input TickerStatsInput {
@@ -2001,6 +2010,7 @@ input TickerStatsInput {
   HighPrice: String!
   LowPrice: String!
   LastPrice: String!
+  LiquidityEstimate: String
 }
 
 type HistoricTickerStats {
@@ -4332,6 +4342,8 @@ func (ec *executionContext) fieldContext_HistoricTickerStats_Stats(_ context.Con
 				return ec.fieldContext_TickerStats_LowPrice(ctx, field)
 			case "LastPrice":
 				return ec.fieldContext_TickerStats_LastPrice(ctx, field)
+			case "LiquidityEstimate":
+				return ec.fieldContext_TickerStats_LiquidityEstimate(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type TickerStats", field.Name)
 		},
@@ -8214,6 +8226,8 @@ func (ec *executionContext) fieldContext_Query_getTickerStatsBySymbol(ctx contex
 				return ec.fieldContext_TickerStats_LowPrice(ctx, field)
 			case "LastPrice":
 				return ec.fieldContext_TickerStats_LastPrice(ctx, field)
+			case "LiquidityEstimate":
+				return ec.fieldContext_TickerStats_LiquidityEstimate(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type TickerStats", field.Name)
 		},
@@ -10531,6 +10545,47 @@ func (ec *executionContext) _TickerStats_LastPrice(ctx context.Context, field gr
 }
 
 func (ec *executionContext) fieldContext_TickerStats_LastPrice(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TickerStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TickerStats_LiquidityEstimate(ctx context.Context, field graphql.CollectedField, obj *model.TickerStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TickerStats_LiquidityEstimate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LiquidityEstimate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TickerStats_LiquidityEstimate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "TickerStats",
 		Field:      field,
@@ -14712,7 +14767,7 @@ func (ec *executionContext) unmarshalInputTickerStatsInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"Symbol", "PriceChange", "PriceChangePct", "QuoteVolume", "Volume", "TradeCount", "HighPrice", "LowPrice", "LastPrice"}
+	fieldsInOrder := [...]string{"Symbol", "PriceChange", "PriceChangePct", "QuoteVolume", "Volume", "TradeCount", "HighPrice", "LowPrice", "LastPrice", "LiquidityEstimate"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -14782,6 +14837,13 @@ func (ec *executionContext) unmarshalInputTickerStatsInput(ctx context.Context, 
 				return it, err
 			}
 			it.LastPrice = data
+		case "LiquidityEstimate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("LiquidityEstimate"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LiquidityEstimate = data
 		}
 	}
 
@@ -16571,6 +16633,8 @@ func (ec *executionContext) _TickerStats(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "LiquidityEstimate":
+			out.Values[i] = ec._TickerStats_LiquidityEstimate(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

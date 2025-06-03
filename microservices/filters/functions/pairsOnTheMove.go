@@ -3,7 +3,6 @@ package functions
 import (
 	"context"
 	"strconv"
-	"time"
 
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	"cryptobotmanager.com/cbm-backend/shared"
@@ -60,7 +59,7 @@ func FirstFilter(ctx context.Context, client graphql.Client, datetime int, marke
 	}
 	var previousTime int
 
-	returnedPreviousTime, err := getPreviousTime(datetime, 5)
+	returnedPreviousTime, err := shared.GetPreviousTime(datetime, 5)
 	if err != nil {
 		log.Error().Msgf("Failed to get previous time!")
 		return nil, err
@@ -127,17 +126,4 @@ func convertToPriceDataList(response *graph.GetHistoricPricesAtTimestampResponse
 	}
 
 	return priceDataList, nil
-}
-
-func getPreviousTime(currentTime int, minutesToSubtract int) (int64, error) {
-	// Convert the integer currentTime to time.Time
-	currentTimeAsTime := time.Unix(int64(currentTime), 0)
-
-	// Subtract minutes from the current time
-	subtractedTime := currentTimeAsTime.Add(time.Duration(-minutesToSubtract) * time.Minute)
-
-	// Convert the result to epoch time (seconds since 1970)
-	epochTime := subtractedTime.Unix()
-
-	return epochTime, nil
 }

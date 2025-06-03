@@ -424,16 +424,21 @@ func SavePriceData(ctx context.Context, client graphql.Client, market []model.Pa
 func SaveTradeStats(ctx context.Context, client graphql.Client, market []model.TickerStatsInput, datetime int) error {
 	statsInput := make([]graph.TickerStatsInput, 0, len(market))
 	for _, s := range market {
+		var liquidityEstimate string
+		if s.LiquidityEstimate != nil {
+			liquidityEstimate = *s.LiquidityEstimate
+		}
 		statsInput = append(statsInput, graph.TickerStatsInput{
-			Symbol:         s.Symbol,
-			PriceChange:    s.PriceChange,
-			PriceChangePct: s.PriceChangePct,
-			QuoteVolume:    s.QuoteVolume,
-			Volume:         s.Volume,
-			TradeCount:     s.TradeCount,
-			HighPrice:      s.HighPrice,
-			LowPrice:       s.LowPrice,
-			LastPrice:      s.LastPrice,
+			Symbol:            s.Symbol,
+			PriceChange:       s.PriceChange,
+			PriceChangePct:    s.PriceChangePct,
+			QuoteVolume:       s.QuoteVolume,
+			Volume:            s.Volume,
+			TradeCount:        s.TradeCount,
+			HighPrice:         s.HighPrice,
+			LowPrice:          s.LowPrice,
+			LastPrice:         s.LastPrice,
+			LiquidityEstimate: liquidityEstimate,
 		})
 	}
 
@@ -501,15 +506,16 @@ func SaveTradeStatsAsJSON(market []model.TickerStatsInput, timestamp int64) erro
 			stats := make([]*model.TickerStats, len(inputs))
 			for i, in := range inputs {
 				stats[i] = &model.TickerStats{
-					Symbol:         in.Symbol,
-					PriceChange:    in.PriceChange,
-					PriceChangePct: in.PriceChangePct,
-					QuoteVolume:    in.QuoteVolume,
-					Volume:         in.Volume,
-					TradeCount:     in.TradeCount,
-					HighPrice:      in.HighPrice,
-					LowPrice:       in.LowPrice,
-					LastPrice:      in.LastPrice,
+					Symbol:            in.Symbol,
+					PriceChange:       in.PriceChange,
+					PriceChangePct:    in.PriceChangePct,
+					QuoteVolume:       in.QuoteVolume,
+					Volume:            in.Volume,
+					TradeCount:        in.TradeCount,
+					HighPrice:         in.HighPrice,
+					LowPrice:          in.LowPrice,
+					LastPrice:         in.LastPrice,
+					LiquidityEstimate: in.LiquidityEstimate,
 				}
 			}
 			return model.HistoricTickerStats{
@@ -519,4 +525,17 @@ func SaveTradeStatsAsJSON(market []model.TickerStatsInput, timestamp int64) erro
 			}
 		},
 	)
+}
+
+func GetPreviousTime(currentTime int, minutesToSubtract int) (int64, error) {
+	// Convert the integer currentTime to time.Time
+	currentTimeAsTime := time.Unix(int64(currentTime), 0)
+
+	// Subtract minutes from the current time
+	subtractedTime := currentTimeAsTime.Add(time.Duration(-minutesToSubtract) * time.Minute)
+
+	// Convert the result to epoch time (seconds since 1970)
+	epochTime := subtractedTime.Unix()
+
+	return epochTime, nil
 }
