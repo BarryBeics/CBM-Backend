@@ -147,29 +147,41 @@ func (db *DB) HistoricPricesBySymbol(symbol string, limit int) ([]*model.Histori
 
 }
 
-func (db *DB) TickerStatsBySymbol(symbol string, limit int) ([]model.TickerStats, error) {
-	collection := db.client.Database("go_trading_db").Collection("TickerStats")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+func (db *DB) TickerStatsBySymbol(symbol string, limit int) ([]*model.TickerStats, error) {
+	log.Info().Msgf("Querying ticker stats at Symbol: %s", symbol)
+	collection := db.client.Database("go_trading_db").Collection("HistoricTickerStats")
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	findOptions := options.Find()
+	filter := bson.M{"stats.symbol": symbol}
+	findOptions := options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}})
 	if limit > 0 {
 		findOptions.SetLimit(int64(limit))
 	}
 
-	cursor, err := collection.Find(ctx, bson.M{"symbol": symbol}, findOptions)
+	cursor, err := collection.Find(ctx, filter, findOptions)
 	if err != nil {
 		log.Error().Err(err).Msg("Error fetching ticker stats by symbol")
 		return nil, err
 	}
 	defer cursor.Close(ctx)
 
-	var tickerStats []model.TickerStats
-	if err := cursor.All(ctx, &tickerStats); err != nil {
-		log.Error().Err(err).Msg("Error decoding ticker stats")
+	var docs []model.HistoricTickerStats
+	if err := cursor.All(ctx, &docs); err != nil {
+		log.Error().Err(err).Msg("Failed to decode raw bson")
 		return nil, err
 	}
 
+	var tickerStats []*model.TickerStats
+	for _, doc := range docs {
+		for _, stat := range doc.Stats {
+			if stat.Symbol == symbol {
+				tickerStats = append(tickerStats, stat)
+			}
+		}
+	}
+
+	log.Info().Int("count", len(tickerStats)).Msg("Fetched ticker stats by symbol")
 	return tickerStats, nil
 }
 
