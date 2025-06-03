@@ -488,6 +488,7 @@ type TickerStats {
   HighPrice: String!
   LowPrice: String!
   LastPrice: String!
+  LiquidityEstimate: String
 }
 
 input TickerStatsInput {
@@ -500,6 +501,7 @@ input TickerStatsInput {
   HighPrice: String!
   LowPrice: String!
   LastPrice: String!
+  LiquidityEstimate: String
 }
 
 type TradeOutcomeReport {

@@ -110,15 +110,16 @@ func (v *CreateHistoricTickerStatsCreateHistoricTickerStats) GetCreatedAt() stri
 
 // CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats includes the requested fields of the GraphQL type TickerStats.
 type CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats struct {
-	Symbol         string `json:"Symbol"`
-	PriceChange    string `json:"PriceChange"`
-	PriceChangePct string `json:"PriceChangePct"`
-	QuoteVolume    string `json:"QuoteVolume"`
-	Volume         string `json:"Volume"`
-	TradeCount     int    `json:"TradeCount"`
-	HighPrice      string `json:"HighPrice"`
-	LowPrice       string `json:"LowPrice"`
-	LastPrice      string `json:"LastPrice"`
+	Symbol            string `json:"Symbol"`
+	PriceChange       string `json:"PriceChange"`
+	PriceChangePct    string `json:"PriceChangePct"`
+	QuoteVolume       string `json:"QuoteVolume"`
+	Volume            string `json:"Volume"`
+	TradeCount        int    `json:"TradeCount"`
+	HighPrice         string `json:"HighPrice"`
+	LowPrice          string `json:"LowPrice"`
+	LastPrice         string `json:"LastPrice"`
+	LiquidityEstimate string `json:"LiquidityEstimate"`
 }
 
 // GetSymbol returns CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats.Symbol, and is useful for accessing the field via an interface.
@@ -164,6 +165,11 @@ func (v *CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats) Get
 // GetLastPrice returns CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats.LastPrice, and is useful for accessing the field via an interface.
 func (v *CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats) GetLastPrice() string {
 	return v.LastPrice
+}
+
+// GetLiquidityEstimate returns CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats.LiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *CreateHistoricTickerStatsCreateHistoricTickerStatsStatsTickerStats) GetLiquidityEstimate() string {
+	return v.LiquidityEstimate
 }
 
 // CreateHistoricTickerStatsResponse is returned by CreateHistoricTickerStats on success.
@@ -794,6 +800,97 @@ func (v *GetHistoricPricesAtTimestampResponse) GetGetHistoricPricesAtTimestamp()
 	return v.GetHistoricPricesAtTimestamp
 }
 
+// GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats includes the requested fields of the GraphQL type HistoricTickerStats.
+type GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats struct {
+	Timestamp int                                                                                                     `json:"Timestamp"`
+	Stats     []GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats `json:"Stats"`
+}
+
+// GetTimestamp returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats.Timestamp, and is useful for accessing the field via an interface.
+func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats) GetTimestamp() int {
+	return v.Timestamp
+}
+
+// GetStats returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats.Stats, and is useful for accessing the field via an interface.
+func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats) GetStats() []GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats {
+	return v.Stats
+}
+
+// GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats includes the requested fields of the GraphQL type TickerStats.
+type GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats struct {
+	Symbol            string `json:"Symbol"`
+	PriceChange       string `json:"PriceChange"`
+	PriceChangePct    string `json:"PriceChangePct"`
+	QuoteVolume       string `json:"QuoteVolume"`
+	Volume            string `json:"Volume"`
+	TradeCount        int    `json:"TradeCount"`
+	HighPrice         string `json:"HighPrice"`
+	LowPrice          string `json:"LowPrice"`
+	LastPrice         string `json:"LastPrice"`
+	LiquidityEstimate string `json:"LiquidityEstimate"`
+}
+
+// GetSymbol returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.Symbol, and is useful for accessing the field via an interface.
+func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetSymbol() string {
+	return v.Symbol
+}
+
+// GetPriceChange returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.PriceChange, and is useful for accessing the field via an interface.
+func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetPriceChange() string {
+	return v.PriceChange
+}
+
+// GetPriceChangePct returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.PriceChangePct, and is useful for accessing the field via an interface.
+func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetPriceChangePct() string {
+	return v.PriceChangePct
+}
+
+// GetQuoteVolume returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.QuoteVolume, and is useful for accessing the field via an interface.
+func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetQuoteVolume() string {
+	return v.QuoteVolume
+}
+
+// GetVolume returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.Volume, and is useful for accessing the field via an interface.
+func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetVolume() string {
+	return v.Volume
+}
+
+// GetTradeCount returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.TradeCount, and is useful for accessing the field via an interface.
+func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetTradeCount() int {
+	return v.TradeCount
+}
+
+// GetHighPrice returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.HighPrice, and is useful for accessing the field via an interface.
+func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetHighPrice() string {
+	return v.HighPrice
+}
+
+// GetLowPrice returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.LowPrice, and is useful for accessing the field via an interface.
+func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetLowPrice() string {
+	return v.LowPrice
+}
+
+// GetLastPrice returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.LastPrice, and is useful for accessing the field via an interface.
+func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetLastPrice() string {
+	return v.LastPrice
+}
+
+// GetLiquidityEstimate returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.LiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetLiquidityEstimate() string {
+	return v.LiquidityEstimate
+}
+
+// GetHistoricTickerStatsAtTimestampResponse is returned by GetHistoricTickerStatsAtTimestamp on success.
+type GetHistoricTickerStatsAtTimestampResponse struct {
+	// Gets all 24h Ticker Stats at a specific timestamp
+	GetHistoricTickerStatsAtTimestamp []GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats `json:"getHistoricTickerStatsAtTimestamp"`
+}
+
+// GetGetHistoricTickerStatsAtTimestamp returns GetHistoricTickerStatsAtTimestampResponse.GetHistoricTickerStatsAtTimestamp, and is useful for accessing the field via an interface.
+func (v *GetHistoricTickerStatsAtTimestampResponse) GetGetHistoricTickerStatsAtTimestamp() []GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats {
+	return v.GetHistoricTickerStatsAtTimestamp
+}
+
 // GetPriceDataGetHistoricPriceHistoricPrices includes the requested fields of the GraphQL type HistoricPrices.
 type GetPriceDataGetHistoricPriceHistoricPrices struct {
 	Pair      []GetPriceDataGetHistoricPriceHistoricPricesPair `json:"Pair"`
@@ -887,15 +984,16 @@ func (v *PairInput) GetSymbol() string { return v.Symbol }
 func (v *PairInput) GetPrice() string { return v.Price }
 
 type TickerStatsInput struct {
-	Symbol         string `json:"Symbol"`
-	PriceChange    string `json:"PriceChange"`
-	PriceChangePct string `json:"PriceChangePct"`
-	QuoteVolume    string `json:"QuoteVolume"`
-	Volume         string `json:"Volume"`
-	TradeCount     int    `json:"TradeCount"`
-	HighPrice      string `json:"HighPrice"`
-	LowPrice       string `json:"LowPrice"`
-	LastPrice      string `json:"LastPrice"`
+	Symbol            string `json:"Symbol"`
+	PriceChange       string `json:"PriceChange"`
+	PriceChangePct    string `json:"PriceChangePct"`
+	QuoteVolume       string `json:"QuoteVolume"`
+	Volume            string `json:"Volume"`
+	TradeCount        int    `json:"TradeCount"`
+	HighPrice         string `json:"HighPrice"`
+	LowPrice          string `json:"LowPrice"`
+	LastPrice         string `json:"LastPrice"`
+	LiquidityEstimate string `json:"LiquidityEstimate"`
 }
 
 // GetSymbol returns TickerStatsInput.Symbol, and is useful for accessing the field via an interface.
@@ -924,6 +1022,9 @@ func (v *TickerStatsInput) GetLowPrice() string { return v.LowPrice }
 
 // GetLastPrice returns TickerStatsInput.LastPrice, and is useful for accessing the field via an interface.
 func (v *TickerStatsInput) GetLastPrice() string { return v.LastPrice }
+
+// GetLiquidityEstimate returns TickerStatsInput.LiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *TickerStatsInput) GetLiquidityEstimate() string { return v.LiquidityEstimate }
 
 // __CreateActivityReportInput is used internally by genqlient
 type __CreateActivityReportInput struct {
@@ -1061,6 +1162,14 @@ type __GetHistoricPricesAtTimestampInput struct {
 // GetDatetime returns __GetHistoricPricesAtTimestampInput.Datetime, and is useful for accessing the field via an interface.
 func (v *__GetHistoricPricesAtTimestampInput) GetDatetime() int { return v.Datetime }
 
+// __GetHistoricTickerStatsAtTimestampInput is used internally by genqlient
+type __GetHistoricTickerStatsAtTimestampInput struct {
+	Datetime int `json:"datetime"`
+}
+
+// GetDatetime returns __GetHistoricTickerStatsAtTimestampInput.Datetime, and is useful for accessing the field via an interface.
+func (v *__GetHistoricTickerStatsAtTimestampInput) GetDatetime() int { return v.Datetime }
+
 // __GetPriceDataInput is used internally by genqlient
 type __GetPriceDataInput struct {
 	Symbol string `json:"symbol"`
@@ -1186,6 +1295,7 @@ mutation CreateHistoricTickerStats ($input: NewHistoricTickerStatsInput!) {
 			HighPrice
 			LowPrice
 			LastPrice
+			LiquidityEstimate
 		}
 		CreatedAt
 	}
@@ -1573,6 +1683,52 @@ func GetHistoricPricesAtTimestamp(
 	}
 
 	data_ = &GetHistoricPricesAtTimestampResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetHistoricTickerStatsAtTimestamp.
+const GetHistoricTickerStatsAtTimestamp_Operation = `
+query GetHistoricTickerStatsAtTimestamp ($datetime: Int!) {
+	getHistoricTickerStatsAtTimestamp(Timestamp: $datetime) {
+		Timestamp
+		Stats {
+			Symbol
+			PriceChange
+			PriceChangePct
+			QuoteVolume
+			Volume
+			TradeCount
+			HighPrice
+			LowPrice
+			LastPrice
+			LiquidityEstimate
+		}
+	}
+}
+`
+
+func GetHistoricTickerStatsAtTimestamp(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	datetime int,
+) (data_ *GetHistoricTickerStatsAtTimestampResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetHistoricTickerStatsAtTimestamp",
+		Query:  GetHistoricTickerStatsAtTimestamp_Operation,
+		Variables: &__GetHistoricTickerStatsAtTimestampInput{
+			Datetime: datetime,
+		},
+	}
+
+	data_ = &GetHistoricTickerStatsAtTimestampResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

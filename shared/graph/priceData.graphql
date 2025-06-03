@@ -1,0 +1,69 @@
+mutation CreateHistoricPrices($input: NewHistoricPriceInput!) {
+  createHistoricPrices(input: $input) {
+    Pair {
+      Symbol
+      Price
+    }
+  }
+}
+
+mutation CreateHistoricTickerStats($input: NewHistoricTickerStatsInput!) {
+  createHistoricTickerStats(input: $input) {
+    Timestamp
+    Stats {
+      Symbol
+      PriceChange
+      PriceChangePct
+      QuoteVolume
+      Volume
+      TradeCount
+      HighPrice
+      LowPrice
+      LastPrice
+      LiquidityEstimate
+    }
+    CreatedAt
+  }
+}
+
+query GetHistoricTickerStatsAtTimestamp($datetime: Int!) {
+  getHistoricTickerStatsAtTimestamp(Timestamp: $datetime) {
+    Timestamp
+    Stats {
+      Symbol
+      PriceChange
+      PriceChangePct
+      QuoteVolume
+      Volume
+      TradeCount
+      HighPrice
+      LowPrice
+      LastPrice
+      LiquidityEstimate
+    }
+  }
+}
+
+
+query GetHistoricPricesAtTimestamp(
+  $datetime: Int!
+  ){
+  getHistoricPricesAtTimestamp(
+    Timestamp: $datetime) {
+    Pair {
+      Symbol
+      Price
+    }
+    Timestamp
+  }
+}
+
+query GetPriceData($symbol: String!, $limit: Int!) {
+  getHistoricPrice(symbol: $symbol, limit: $limit) {
+    Pair {
+      Symbol
+      Price
+    }
+    Timestamp
+  }
+}
