@@ -180,7 +180,15 @@ func (r *queryResolver) GetHistoricTickerStatsAtTimestamp(ctx context.Context, t
 
 // GetTickerStatsBySymbol is the resolver for the getTickerStatsBySymbol field.
 func (r *queryResolver) GetTickerStatsBySymbol(ctx context.Context, symbol string, limit *int) ([]*model.TickerStats, error) {
-	log.Info().Str("symbol", symbol).Int("limit", *limit).Msg("GetTickerStatsBySymbol called")
+	log.Info().
+		Str("symbol", symbol).
+		Int("limit", func() int {
+			if limit != nil {
+				return *limit
+			}
+			return 0
+		}()).
+		Msg("GetTickerStatsBySymbol called")
 
 	l := 0
 	if limit != nil {
@@ -193,14 +201,7 @@ func (r *queryResolver) GetTickerStatsBySymbol(ctx context.Context, symbol strin
 		return nil, err
 	}
 
-	// Convert slice of model.TickerStats to slice of *model.TickerStats
-	var result []*model.TickerStats
-	for i := range tickerStats {
-		result = append(result, &tickerStats[i])
-	}
-
-	// Return the slice of pointers to ticker stats
-	return result, nil
+	return tickerStats, nil // already []*model.TickerStats
 }
 
 // AvailableTickerSymbols is the resolver for the availableTickerSymbols field.
