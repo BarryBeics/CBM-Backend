@@ -928,6 +928,27 @@ func (v *GetPriceDataResponse) GetGetHistoricPrice() []GetPriceDataGetHistoricPr
 	return v.GetHistoricPrice
 }
 
+// GetTickerLiquidityEstimateGetTickerStatsBySymbolTickerStats includes the requested fields of the GraphQL type TickerStats.
+type GetTickerLiquidityEstimateGetTickerStatsBySymbolTickerStats struct {
+	LiquidityEstimate string `json:"LiquidityEstimate"`
+}
+
+// GetLiquidityEstimate returns GetTickerLiquidityEstimateGetTickerStatsBySymbolTickerStats.LiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *GetTickerLiquidityEstimateGetTickerStatsBySymbolTickerStats) GetLiquidityEstimate() string {
+	return v.LiquidityEstimate
+}
+
+// GetTickerLiquidityEstimateResponse is returned by GetTickerLiquidityEstimate on success.
+type GetTickerLiquidityEstimateResponse struct {
+	// Fetches TickerStats history for a given symbol (e.g., to chart volatility or volume)
+	GetTickerStatsBySymbol []GetTickerLiquidityEstimateGetTickerStatsBySymbolTickerStats `json:"getTickerStatsBySymbol"`
+}
+
+// GetGetTickerStatsBySymbol returns GetTickerLiquidityEstimateResponse.GetTickerStatsBySymbol, and is useful for accessing the field via an interface.
+func (v *GetTickerLiquidityEstimateResponse) GetGetTickerStatsBySymbol() []GetTickerLiquidityEstimateGetTickerStatsBySymbolTickerStats {
+	return v.GetTickerStatsBySymbol
+}
+
 // GetUserByEmailGetUserByEmailUser includes the requested fields of the GraphQL type User.
 type GetUserByEmailGetUserByEmailUser struct {
 	Id    string `json:"id"`
@@ -1181,6 +1202,18 @@ func (v *__GetPriceDataInput) GetSymbol() string { return v.Symbol }
 
 // GetLimit returns __GetPriceDataInput.Limit, and is useful for accessing the field via an interface.
 func (v *__GetPriceDataInput) GetLimit() int { return v.Limit }
+
+// __GetTickerLiquidityEstimateInput is used internally by genqlient
+type __GetTickerLiquidityEstimateInput struct {
+	Symbol string `json:"symbol"`
+	Limit  int    `json:"limit"`
+}
+
+// GetSymbol returns __GetTickerLiquidityEstimateInput.Symbol, and is useful for accessing the field via an interface.
+func (v *__GetTickerLiquidityEstimateInput) GetSymbol() string { return v.Symbol }
+
+// GetLimit returns __GetTickerLiquidityEstimateInput.Limit, and is useful for accessing the field via an interface.
+func (v *__GetTickerLiquidityEstimateInput) GetLimit() int { return v.Limit }
 
 // __GetUserByEmailInput is used internally by genqlient
 type __GetUserByEmailInput struct {
@@ -1769,6 +1802,42 @@ func GetPriceData(
 	}
 
 	data_ = &GetPriceDataResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetTickerLiquidityEstimate.
+const GetTickerLiquidityEstimate_Operation = `
+query GetTickerLiquidityEstimate ($symbol: String!, $limit: Int!) {
+	getTickerStatsBySymbol(symbol: $symbol, limit: $limit) {
+		LiquidityEstimate
+	}
+}
+`
+
+func GetTickerLiquidityEstimate(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	symbol string,
+	limit int,
+) (data_ *GetTickerLiquidityEstimateResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetTickerLiquidityEstimate",
+		Query:  GetTickerLiquidityEstimate_Operation,
+		Variables: &__GetTickerLiquidityEstimateInput{
+			Symbol: symbol,
+			Limit:  limit,
+		},
+	}
+
+	data_ = &GetTickerLiquidityEstimateResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
