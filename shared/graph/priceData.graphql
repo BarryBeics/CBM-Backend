@@ -44,6 +44,12 @@ query GetHistoricTickerStatsAtTimestamp($datetime: Int!) {
   }
 }
 
+query GetTickerLiquidityEstimate($symbol: String!, $limit: Int!) {
+		getTickerStatsBySymbol(symbol: $symbol, limit: $limit) {
+			LiquidityEstimate
+		}
+	}
+
 
 query GetHistoricPricesAtTimestamp(
   $datetime: Int!
