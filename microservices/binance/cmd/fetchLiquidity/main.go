@@ -54,8 +54,8 @@ func BinanceTradeVolumes(backend string) error {
 	var market []model.TickerStatsInput
 	var err error
 
-	// STEP 3 : Get previous time (5 minutes ago) from roundedEpoch
-	returnedPreviousTime, err := shared.GetPreviousTime(roundedEpoch, 5)
+	// STEP 3 : Get previous time (60 minutes ago) from roundedEpoch
+	returnedPreviousTime, err := shared.GetPreviousTime(roundedEpoch, 60)
 	if err != nil {
 		log.Error().Msgf("Failed to get previous time!")
 		return err
