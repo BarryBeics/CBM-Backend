@@ -67,7 +67,7 @@ func FirstFilter(ctx context.Context, client graphql.Client, datetime int, marke
 	previousTime = int(returnedPreviousTime)
 
 	log.Debug().Int("Previous", previousTime).Msg("Loading previous Prices ...")
-	previousPrices, err := GetPriceData(ctx, client, previousTime, "Baz")
+	previousPrices, err := GetPriceData(ctx, client, previousTime, "Gopher")
 	if err != nil {
 		log.Error().Msgf("Failed to get previous prices!")
 		return nil, err

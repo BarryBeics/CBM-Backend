@@ -1047,6 +1047,54 @@ func (v *TickerStatsInput) GetLastPrice() string { return v.LastPrice }
 // GetLiquidityEstimate returns TickerStatsInput.LiquidityEstimate, and is useful for accessing the field via an interface.
 func (v *TickerStatsInput) GetLiquidityEstimate() string { return v.LiquidityEstimate }
 
+type UpdateCountersInput struct {
+	BotInstanceName    string  `json:"BotInstanceName"`
+	WINCounter         bool    `json:"WINCounter"`
+	LOSSCounter        bool    `json:"LOSSCounter"`
+	TIMEOUTGainCounter bool    `json:"TIMEOUTGainCounter"`
+	TIMEOUTLossCounter bool    `json:"TIMEOUTLossCounter"`
+	NetGainCounter     bool    `json:"NetGainCounter"`
+	NetLossCounter     bool    `json:"NetLossCounter"`
+	AccountBalance     float64 `json:"AccountBalance"`
+	FeesTotal          float64 `json:"FeesTotal"`
+}
+
+// GetBotInstanceName returns UpdateCountersInput.BotInstanceName, and is useful for accessing the field via an interface.
+func (v *UpdateCountersInput) GetBotInstanceName() string { return v.BotInstanceName }
+
+// GetWINCounter returns UpdateCountersInput.WINCounter, and is useful for accessing the field via an interface.
+func (v *UpdateCountersInput) GetWINCounter() bool { return v.WINCounter }
+
+// GetLOSSCounter returns UpdateCountersInput.LOSSCounter, and is useful for accessing the field via an interface.
+func (v *UpdateCountersInput) GetLOSSCounter() bool { return v.LOSSCounter }
+
+// GetTIMEOUTGainCounter returns UpdateCountersInput.TIMEOUTGainCounter, and is useful for accessing the field via an interface.
+func (v *UpdateCountersInput) GetTIMEOUTGainCounter() bool { return v.TIMEOUTGainCounter }
+
+// GetTIMEOUTLossCounter returns UpdateCountersInput.TIMEOUTLossCounter, and is useful for accessing the field via an interface.
+func (v *UpdateCountersInput) GetTIMEOUTLossCounter() bool { return v.TIMEOUTLossCounter }
+
+// GetNetGainCounter returns UpdateCountersInput.NetGainCounter, and is useful for accessing the field via an interface.
+func (v *UpdateCountersInput) GetNetGainCounter() bool { return v.NetGainCounter }
+
+// GetNetLossCounter returns UpdateCountersInput.NetLossCounter, and is useful for accessing the field via an interface.
+func (v *UpdateCountersInput) GetNetLossCounter() bool { return v.NetLossCounter }
+
+// GetAccountBalance returns UpdateCountersInput.AccountBalance, and is useful for accessing the field via an interface.
+func (v *UpdateCountersInput) GetAccountBalance() float64 { return v.AccountBalance }
+
+// GetFeesTotal returns UpdateCountersInput.FeesTotal, and is useful for accessing the field via an interface.
+func (v *UpdateCountersInput) GetFeesTotal() float64 { return v.FeesTotal }
+
+// UpdateCountersResponse is returned by UpdateCounters on success.
+type UpdateCountersResponse struct {
+	// Updates the outcome counters and account balance help on the strategy object
+	UpdateCounters bool `json:"updateCounters"`
+}
+
+// GetUpdateCounters returns UpdateCountersResponse.UpdateCounters, and is useful for accessing the field via an interface.
+func (v *UpdateCountersResponse) GetUpdateCounters() bool { return v.UpdateCounters }
+
 // __CreateActivityReportInput is used internally by genqlient
 type __CreateActivityReportInput struct {
 	TimeStamp      int     `json:"timeStamp"`
@@ -1222,6 +1270,14 @@ type __GetUserByEmailInput struct {
 
 // GetEmail returns __GetUserByEmailInput.Email, and is useful for accessing the field via an interface.
 func (v *__GetUserByEmailInput) GetEmail() string { return v.Email }
+
+// __UpdateCountersInput is used internally by genqlient
+type __UpdateCountersInput struct {
+	Input UpdateCountersInput `json:"input"`
+}
+
+// GetInput returns __UpdateCountersInput.Input, and is useful for accessing the field via an interface.
+func (v *__UpdateCountersInput) GetInput() UpdateCountersInput { return v.Input }
 
 // The mutation executed by CreateActivityReport.
 const CreateActivityReport_Operation = `
@@ -1873,6 +1929,38 @@ func GetUserByEmail(
 	}
 
 	data_ = &GetUserByEmailResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by UpdateCounters.
+const UpdateCounters_Operation = `
+mutation UpdateCounters ($input: UpdateCountersInput!) {
+	updateCounters(input: $input)
+}
+`
+
+func UpdateCounters(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input UpdateCountersInput,
+) (data_ *UpdateCountersResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "UpdateCounters",
+		Query:  UpdateCounters_Operation,
+		Variables: &__UpdateCountersInput{
+			Input: input,
+		},
+	}
+
+	data_ = &UpdateCountersResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

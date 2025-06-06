@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
+	trade "cryptobotmanager.com/cbm-backend/microservices/binance/streamPrices"
 	filter "cryptobotmanager.com/cbm-backend/microservices/filters/functions"
 	reports "cryptobotmanager.com/cbm-backend/microservices/reports/functions"
 	tradingBots "cryptobotmanager.com/cbm-backend/microservices/tradingBots/functions"
@@ -95,7 +96,7 @@ func LetsTrade(ctx context.Context, client graphql.Client, market []model.Pair, 
 							Msg("Paper Trading - Temporary Selection Without ATR")
 
 						// Optionally call the MakeTrade or just log it for now
-						// goBot.MakeTrade(client, chosenTicker, scenarioType, details)
+						trade.ListenAndPaperTrade(ctx, client, chosenTicker, details)
 					}
 
 					// for _, coin := range *coinsWithMomentum {

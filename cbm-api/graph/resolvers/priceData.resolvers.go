@@ -115,7 +115,7 @@ func (r *queryResolver) GetHistoricPricesAtTimestamp(ctx context.Context, timest
 		result = append(result, &historicPrices[i])
 	}
 
-	log.Info().Msgf("Retrieved prices: %+v", historicPrices)
+	log.Debug().Msgf("Retrieved prices: %+v", historicPrices)
 
 	// Return the slice of pointers to historic prices
 	return result, nil
