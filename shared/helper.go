@@ -390,7 +390,7 @@ func RetryWithBackoff[T any](ctx context.Context, data []T, retries int, fn func
 func SaveWithChunks[T any](ctx context.Context, client graphql.Client, items []T, chunkSize int, retries int, mutationFn func(context.Context, graphql.Client, []T, int) error, timestamp int) error {
 	chunks := Chunk(items, chunkSize)
 	for i, chunk := range chunks {
-		log.Info().Int("chunk", i+1).Int("size", len(chunk)).Msg("Saving chunk...")
+		log.Debug().Int("chunk", i+1).Int("size", len(chunk)).Msg("Saving chunk...")
 		err := RetryWithBackoff(ctx, chunk, retries, func(data []T) error {
 			return mutationFn(ctx, client, data, timestamp)
 		})

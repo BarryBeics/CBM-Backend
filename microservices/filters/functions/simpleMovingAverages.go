@@ -31,7 +31,7 @@ func CompareSimpleMovingAverages(ctx context.Context, client graphql.Client, dat
 	log.Debug().Msg("Extracting price data from database ...")
 	allPriceData, _ := extractPriceData(ctx, client, trackGainers, datetime, long, botName)
 
-	fmt.Print(allPriceData)
+	// fmt.Print(allPriceData)
 	fmt.Print("INSIDE COmpare SMA")
 
 	currentPrices, shortAverages, longAverages, err := ProcessAllPriceData(allPriceData, short, long, botName)
@@ -98,7 +98,7 @@ func extractPriceData(ctx context.Context, client graphql.Client, trackGainers *
 			for j, Pair := range *trackGainers {
 				coin := historicPricesList[i].Symbol
 				if coin == Pair.Symbol {
-					log.Info().Str("coin", coin).Str("Symbol", Pair.Symbol).Msg("start")
+					log.Debug().Str("coin", coin).Str("Symbol", Pair.Symbol).Msg("start")
 
 					// Convert coin.Price to a float64
 					Price, err = strconv.ParseFloat(historicPricesList[i].Price, 64)
@@ -137,7 +137,7 @@ func extractPriceData(ctx context.Context, client graphql.Client, trackGainers *
 func ProcessAllPriceData(allPriceData []SMA, short, long int, botName string) (map[string]float64, map[string]float64, map[string]float64, error) {
 
 	fmt.Println("INSIDE PROCESS ALL PRICE DATA")
-	fmt.Println(allPriceData)
+	// fmt.Println(allPriceData)
 	// Reverse the array
 	rollingTotals := make(map[string]float64)
 	currentPrice, shortAve, longAve := make(map[string]float64), make(map[string]float64), make(map[string]float64)
@@ -157,19 +157,19 @@ func ProcessAllPriceData(allPriceData []SMA, short, long int, botName string) (m
 
 			//if timeFramePrices.TimeFrame == 0 {
 			currentPrice[symbol] = price // Update the currentPrice map
-			log.Info().Str("Bot", botName).Str("Symbol", symbol).Float64("Price", currentPrice[symbol]).Msg("Current Price")
+			log.Debug().Str("Bot", botName).Str("Symbol", symbol).Float64("Price", currentPrice[symbol]).Msg("Current Price")
 			//}
 
 			if timeFramePrices.TimeFrame == short-1 {
 				shortAve[symbol] = rollingTotals[symbol] / float64(short)
 				shortAverage := (shortAve[symbol])
-				log.Info().Int("Short", short-1).Int("timefream if", timeFramePrices.TimeFrame).Str("Bot", botName).Int("Minutes", short*5).Str("Symbol", symbol).Float64("Average", shortAverage).Msg("Short period Simple Moving Ave")
+				log.Debug().Int("Short", short-1).Int("timefream if", timeFramePrices.TimeFrame).Str("Bot", botName).Int("Minutes", short*5).Str("Symbol", symbol).Float64("Average", shortAverage).Msg("Short period Simple Moving Ave")
 			}
 
 			if timeFramePrices.TimeFrame == long-1 {
 				longAve[symbol] = rollingTotals[symbol] / float64(long)
 				longAverage := longAve[symbol]
-				log.Info().Str("Bot", botName).Int("Minutes", long*5).Str("Symbol", symbol).Float64("Average", longAverage).Msg("Long period Simple Moving Ave")
+				log.Debug().Str("Bot", botName).Int("Minutes", long*5).Str("Symbol", symbol).Float64("Average", longAverage).Msg("Long period Simple Moving Ave")
 			}
 			//fmt.Println("A")
 		}

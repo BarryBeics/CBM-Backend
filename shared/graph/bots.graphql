@@ -1,0 +1,7 @@
+mutation UpdateCounters(
+  $input: UpdateCountersInput!
+)  {
+  updateCounters(
+    input: $input
+  )
+}

@@ -21,6 +21,7 @@ require (
 	cryptobotmanager.com/cbm-backend/microservices/filters v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/microservices/reports v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/microservices/tradingBots v0.0.0-00010101000000-000000000000
+	cryptobotmanager.com/cbm-backend/microservices/binance v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/shared v0.0.0-00010101000000-000000000000
 	github.com/Khan/genqlient v0.8.0
 	github.com/joho/godotenv v1.5.1
@@ -30,6 +31,7 @@ require (
 require (
 	github.com/go-gota/gota v0.12.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/vektah/gqlparser/v2 v2.5.25 // indirect
