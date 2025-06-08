@@ -1,11 +1,13 @@
 type Pair {
 	Symbol: String!
 	Price: String!
+	PercentageChange: String
   }
   
   input PairInput {
 	Symbol: String!
 	Price: String!
+	PercentageChange: String
   }
   
   type HistoricPrices {

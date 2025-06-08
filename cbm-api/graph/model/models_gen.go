@@ -148,13 +148,15 @@ type OHLCInput struct {
 }
 
 type Pair struct {
-	Symbol string `json:"Symbol"`
-	Price  string `json:"Price"`
+	Symbol           string  `json:"Symbol"`
+	Price            string  `json:"Price"`
+	PercentageChange *string `json:"PercentageChange,omitempty"`
 }
 
 type PairInput struct {
-	Symbol string `json:"Symbol"`
-	Price  string `json:"Price"`
+	Symbol           string  `json:"Symbol"`
+	Price            string  `json:"Price"`
+	PercentageChange *string `json:"PercentageChange,omitempty"`
 }
 
 type Project struct {

@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
+	filter "cryptobotmanager.com/cbm-backend/microservices/filters/functions"
 	"cryptobotmanager.com/cbm-backend/shared"
 	"github.com/Khan/genqlient/graphql"
 	"github.com/rs/zerolog/log"
@@ -38,7 +39,7 @@ func CSVPrices(backend string) error {
 
 	// Loop through each file and "replay" the data
 	for _, file := range files {
-		log.Debug().Str("File", file).Msg("Processing file")
+		log.Info().Str("File", file).Msg("Processing file")
 
 		marketData, err := LoadPriceSnapshotsFromFile(file)
 		if err != nil {
@@ -47,27 +48,41 @@ func CSVPrices(backend string) error {
 		}
 
 		for _, snapshot := range marketData {
-			var market []model.Pair
+			var currentPrices []model.Pair
 			for _, p := range snapshot.Pairs {
-				market = append(market, model.Pair{
+				currentPrices = append(currentPrices, model.Pair{
 					Symbol: p.Symbol,
 					Price:  p.Price,
 				})
 			}
 
-			if len(market) == 0 {
+			if len(currentPrices) == 0 {
 				log.Warn().
 					Int("timestamp", snapshot.Timestamp).
 					Msg("Skipping snapshot due to empty market data")
 				continue
 			}
 
-			if err := shared.SavePriceData(ctx, client, market, int(snapshot.Timestamp)); err != nil {
+			previousTime := int(snapshot.Timestamp) - 300
+
+			previousPrices, err := filter.GetPriceData(ctx, client, previousTime, "Gopher")
+			if err != nil {
+				log.Error().Err(err).Msgf("Failed to get previous price data!")
+				return err
+			}
+
+			currentPrices, err = filter.EnrichWithPercentageChange(currentPrices, previousPrices)
+			if err != nil {
+				log.Error().Err(err).Msg("Failed to enrich prices with % change")
+				return err
+			}
+
+			if err := shared.SavePriceData(ctx, client, currentPrices, int(snapshot.Timestamp)); err != nil {
 				log.Error().Err(err).Int("timestamp", snapshot.Timestamp).Msg("Save PriceData")
 			}
 
 			// Start trading
-			err := LetsTrade(ctx, client, market, int(snapshot.Timestamp))
+			err = LetsTrade(ctx, client, currentPrices, int(snapshot.Timestamp))
 			if err != nil {
 				log.Error().Err(err).Int("timestamp", snapshot.Timestamp).Msg("lets trade")
 			}

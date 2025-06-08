@@ -30,8 +30,9 @@ func (db *DB) SaveHistoricPrices(input *model.NewHistoricPriceInput) ([]*model.H
 
 	for i, pairInput := range input.Pairs {
 		historicPrices.Pair[i] = &model.Pair{
-			Symbol: pairInput.Symbol,
-			Price:  pairInput.Price,
+			Symbol:           pairInput.Symbol,
+			Price:            pairInput.Price,
+			PercentageChange: pairInput.PercentageChange,
 		}
 	}
 

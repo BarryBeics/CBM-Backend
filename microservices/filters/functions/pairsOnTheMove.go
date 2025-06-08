@@ -49,38 +49,26 @@ func PairsOnTheMove(currentPrices, previousPrices []model.Pair, marketMomentum f
 // previous price data, and returns pairs of assets that have moved in the
 // market by at least the specified momentum value. If an error occurs during
 // any of the steps, an error is returned along with a nil slice of Gainers.
-func FirstFilter(ctx context.Context, client graphql.Client, datetime int, marketMomentum float64) (pairsOnTheMove []shared.Gainers, err error) {
+// Modified FirstFilter that uses in-memory enrichment instead of DB fetches
+func FirstFilter(currentPrices []model.Pair, marketMomentum float64) ([]shared.Gainers, error) {
+	var pairsOnTheMoveList []shared.Gainers
 
-	log.Debug().Int("datetime", datetime).Float64("market momentum", marketMomentum).Msg("Loading current Prices ...")
-	currentPrices, err := GetPriceData(ctx, client, datetime, "Baz")
-	if err != nil {
-		log.Error().Msgf("Failed to get comparison prices!")
-		return nil, err
+	for _, pair := range currentPrices {
+		if pair.PercentageChange == nil {
+			continue
+		}
+		change, err := strconv.ParseFloat(*pair.PercentageChange, 64)
+		if err != nil {
+			continue
+		}
+		if change >= marketMomentum {
+			pairsOnTheMoveList = append(pairsOnTheMoveList, shared.Gainers{
+				Symbol:             pair.Symbol,
+				IncrementPriceGain: change,
+			})
+		}
 	}
-	var previousTime int
-
-	returnedPreviousTime, err := shared.GetPreviousTime(datetime, 5)
-	if err != nil {
-		log.Error().Msgf("Failed to get previous time!")
-		return nil, err
-	}
-	previousTime = int(returnedPreviousTime)
-
-	log.Debug().Int("Previous", previousTime).Msg("Loading previous Prices ...")
-	previousPrices, err := GetPriceData(ctx, client, previousTime, "Gopher")
-	if err != nil {
-		log.Error().Msgf("Failed to get previous prices!")
-		return nil, err
-	}
-	log.Debug().Msg("Identifing Pairs on the move ...")
-
-	pairsOnTheMove, err = PairsOnTheMove(currentPrices, previousPrices, marketMomentum)
-	if err != nil {
-		log.Error().Msgf("Failed to get pairs on the move!")
-		return nil, err
-	}
-
-	return pairsOnTheMove, nil
+	return pairsOnTheMoveList, nil
 }
 
 // GetPriceData function retrieves price data from MongoDB using a GraphQL client
