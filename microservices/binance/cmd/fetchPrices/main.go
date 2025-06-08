@@ -10,6 +10,7 @@ import (
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	backTesting "cryptobotmanager.com/cbm-backend/microservices/backTesting/functions"
 	"cryptobotmanager.com/cbm-backend/microservices/binance"
+	filter "cryptobotmanager.com/cbm-backend/microservices/filters/functions"
 	"cryptobotmanager.com/cbm-backend/shared"
 	"github.com/Khan/genqlient/graphql"
 	"github.com/joho/godotenv"
@@ -69,12 +70,24 @@ func BinancePrices(backend string) error {
 	// Create Client & Context
 	client := graphql.NewClient(backend, &http.Client{})
 	ctx := context.Background()
-	var market []model.Pair
+	var currentPrices []model.Pair
 	var err error
 
-	market, err = FetchPricesFromBinanceAPI()
+	currentPrices, err = FetchPricesFromBinanceAPI()
 	if err != nil {
 		log.Error().Err(err).Msgf("Failed to get price data from Binance!")
+	}
+
+	previousPrices, err := filter.GetPriceData(ctx, client, roundedEpoch, "Gopher")
+	if err != nil {
+		log.Error().Err(err).Msgf("Failed to get previous price data!")
+		return err
+	}
+
+	market, err := filter.EnrichWithPercentageChange(currentPrices, previousPrices)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to enrich prices with % change")
+		return err
 	}
 
 	err = shared.SavePriceDataAsJSON(market, int64(roundedEpoch))

@@ -402,13 +402,25 @@ func SaveWithChunks[T any](ctx context.Context, client graphql.Client, items []T
 	return nil
 }
 
+func safeDereference(s *string, fallback string) string {
+	if s != nil {
+		return *s
+	}
+	return fallback
+}
+
 func SavePriceData(ctx context.Context, client graphql.Client, market []model.Pair, datetime int) error {
 	pairsInput := make([]graph.PairInput, 0, len(market))
 	for _, p := range market {
 		pairsInput = append(pairsInput, graph.PairInput{
-			Symbol: p.Symbol,
-			Price:  p.Price,
+			Symbol:           p.Symbol,
+			Price:            p.Price,
+			PercentageChange: safeDereference(p.PercentageChange, "0"),
 		})
+		// if p.PercentageChange == nil {
+		// 	log.Warn().Str("symbol", p.Symbol).Msg("Missing PercentageChange")
+		// }
+
 	}
 
 	return SaveWithChunks(ctx, client, pairsInput, 250, 3, func(ctx context.Context, client graphql.Client, chunk []graph.PairInput, timestamp int) error {

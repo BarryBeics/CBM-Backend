@@ -20,7 +20,7 @@ func LetsTrade(ctx context.Context, client graphql.Client, market []model.Pair, 
 	cfg := shared.GetDefaultCfg()
 
 	// Report on the market activity
-	PairsOnTheMove, err := filter.FirstFilter(ctx, client, datetime, cfg.ActiveMarketThreshold)
+	PairsOnTheMove, err := filter.FirstFilter(market, cfg.ActiveMarketThreshold)
 	if err != nil {
 		log.Error().Msgf("Pairs on the move!")
 	}

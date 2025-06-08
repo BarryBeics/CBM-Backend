@@ -994,8 +994,9 @@ func (v *NewHistoricTickerStatsInput) GetTimestamp() int { return v.Timestamp }
 func (v *NewHistoricTickerStatsInput) GetStats() []TickerStatsInput { return v.Stats }
 
 type PairInput struct {
-	Symbol string `json:"Symbol"`
-	Price  string `json:"Price"`
+	Symbol           string `json:"Symbol"`
+	Price            string `json:"Price"`
+	PercentageChange string `json:"PercentageChange"`
 }
 
 // GetSymbol returns PairInput.Symbol, and is useful for accessing the field via an interface.
@@ -1003,6 +1004,9 @@ func (v *PairInput) GetSymbol() string { return v.Symbol }
 
 // GetPrice returns PairInput.Price, and is useful for accessing the field via an interface.
 func (v *PairInput) GetPrice() string { return v.Price }
+
+// GetPercentageChange returns PairInput.PercentageChange, and is useful for accessing the field via an interface.
+func (v *PairInput) GetPercentageChange() string { return v.PercentageChange }
 
 type TickerStatsInput struct {
 	Symbol            string `json:"Symbol"`

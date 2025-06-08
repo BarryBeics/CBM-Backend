@@ -116,8 +116,9 @@ type ComplexityRoot struct {
 	}
 
 	Pair struct {
-		Price  func(childComplexity int) int
-		Symbol func(childComplexity int) int
+		PercentageChange func(childComplexity int) int
+		Price            func(childComplexity int) int
+		Symbol           func(childComplexity int) int
 	}
 
 	Project struct {
@@ -765,6 +766,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.OHLC.TradeVolume(childComplexity), true
+
+	case "Pair.PercentageChange":
+		if e.complexity.Pair.PercentageChange == nil {
+			break
+		}
+
+		return e.complexity.Pair.PercentageChange(childComplexity), true
 
 	case "Pair.Price":
 		if e.complexity.Pair.Price == nil {
@@ -1951,11 +1959,13 @@ extend type Mutation {
 	{Name: "../schema/priceData.graphqls", Input: `type Pair {
 	Symbol: String!
 	Price: String!
+	PercentageChange: String
   }
   
   input PairInput {
 	Symbol: String!
 	Price: String!
+	PercentageChange: String
   }
   
   type HistoricPrices {
@@ -4146,6 +4156,8 @@ func (ec *executionContext) fieldContext_HistoricPrices_Pair(_ context.Context, 
 				return ec.fieldContext_Pair_Symbol(ctx, field)
 			case "Price":
 				return ec.fieldContext_Pair_Price(ctx, field)
+			case "PercentageChange":
+				return ec.fieldContext_Pair_PercentageChange(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Pair", field.Name)
 		},
@@ -6426,6 +6438,47 @@ func (ec *executionContext) _Pair_Price(ctx context.Context, field graphql.Colle
 }
 
 func (ec *executionContext) fieldContext_Pair_Price(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Pair",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Pair_PercentageChange(ctx context.Context, field graphql.CollectedField, obj *model.Pair) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Pair_PercentageChange(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PercentageChange, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Pair_PercentageChange(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Pair",
 		Field:      field,
@@ -14546,7 +14599,7 @@ func (ec *executionContext) unmarshalInputPairInput(ctx context.Context, obj any
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"Symbol", "Price"}
+	fieldsInOrder := [...]string{"Symbol", "Price", "PercentageChange"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -14567,6 +14620,13 @@ func (ec *executionContext) unmarshalInputPairInput(ctx context.Context, obj any
 				return it, err
 			}
 			it.Price = data
+		case "PercentageChange":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("PercentageChange"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PercentageChange = data
 		}
 	}
 
@@ -15747,6 +15807,8 @@ func (ec *executionContext) _Pair(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "PercentageChange":
+			out.Values[i] = ec._Pair_PercentageChange(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
