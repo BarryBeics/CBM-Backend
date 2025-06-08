@@ -34,6 +34,17 @@ func (r *mutationResolver) DeleteOutcomeReports(ctx context.Context, timestamp i
 	return success, nil
 }
 
+// UpsertSymbolStats is the resolver for the upsertSymbolStats field.
+func (r *mutationResolver) UpsertSymbolStats(ctx context.Context, input *model.UpsertSymbolStatsInput) (*model.SymbolStats, error) {
+	return db.UpsertSymbolStats(input), nil
+}
+
+// DeleteSymbolStats is the resolver for the deleteSymbolStats field.
+func (r *mutationResolver) DeleteSymbolStats(ctx context.Context, symbol string) (bool, error) {
+	success, err := db.DeleteSymbolStats(ctx, symbol)
+	return success, err
+}
+
 // ActivityReport is the resolver for the ActivityReport field.
 func (r *queryResolver) ActivityReport(ctx context.Context, id string) (*model.ActivityReport, error) {
 	return db.FindActivityReportByID(id), nil
@@ -64,6 +75,16 @@ func (r *queryResolver) TradeOutcomeReports(ctx context.Context) ([]*model.Trade
 	return db.AllTradeOutcomeReports(), nil
 }
 
+// SymbolStatsReports is the resolver for the SymbolStatsReports field.
+func (r *queryResolver) SymbolStatsReports(ctx context.Context) ([]*model.SymbolStats, error) {
+	return db.AllSymbolStats(), nil
+}
+
+// SymbolStatsBySymbol is the resolver for the SymbolStatsBySymbol field.
+func (r *queryResolver) SymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error) {
+	return db.FindSymbolStatsBySymbol(ctx, symbol), nil
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
@@ -72,3 +93,10 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.

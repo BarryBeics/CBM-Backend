@@ -33,6 +33,40 @@ func (db *DB) SaveActivityReport(input *model.NewActivityReport) *model.Activity
 	}
 }
 
+func (db *DB) UpsertSymbolStats(input *model.UpsertSymbolStatsInput) *model.SymbolStats {
+	collection := db.client.Database("go_trading_db").Collection("SymbolStats")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"symbol": input.Symbol}
+
+	update := bson.M{
+		"$set": bson.M{
+			"symbol":               input.Symbol,
+			"positionCounts":       input.PositionCounts,
+			"avgLiquidityEstimate": input.AvgLiquidityEstimate,
+			"maxLiquidityEstimate": input.MaxLiquidityEstimate,
+			"minLiquidityEstimate": input.MinLiquidityEstimate,
+		},
+	}
+
+	opts := options.Update().SetUpsert(true)
+
+	_, err := collection.UpdateOne(ctx, filter, update, opts)
+	if err != nil {
+		log.Error().Err(err).Msg("Error in upsert")
+		return nil
+	}
+
+	return &model.SymbolStats{
+		Symbol:               input.Symbol,
+		PositionCounts:       input.PositionCounts,
+		AvgLiquidityEstimate: input.AvgLiquidityEstimate,
+		MaxLiquidityEstimate: input.MaxLiquidityEstimate,
+		MinLiquidityEstimate: input.MinLiquidityEstimate,
+	}
+}
+
 func (db *DB) FindActivityReportByID(ID string) *model.ActivityReport {
 	ObjectID, err := primitive.ObjectIDFromHex(ID)
 	if err != nil {
@@ -128,6 +162,39 @@ func (db *DB) AllTradeOutcomeReports() []*model.TradeOutcomeReport {
 	return TradeOutcomeReports
 }
 
+func (db *DB) FindSymbolStatsBySymbol(ctx context.Context, symbol string) *model.SymbolStats {
+	collection := db.client.Database("go_trading_db").Collection("SymbolStats")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	res := collection.FindOne(ctx, bson.M{"symbol": symbol})
+	symbolStats := model.SymbolStats{}
+	res.Decode(&symbolStats)
+	return &symbolStats
+}
+
+func (db *DB) AllSymbolStats() []*model.SymbolStats {
+	collection := db.client.Database("go_trading_db").Collection("SymbolStats")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	cur, err := collection.Find(ctx, bson.D{})
+	if err != nil {
+		log.Error().Err(err).Msg("Error All func:")
+	}
+
+	var symbolStats []*model.SymbolStats
+	for cur.Next(ctx) {
+		var stat model.SymbolStats
+		err := cur.Decode(&stat)
+		if err != nil {
+			log.Error().Err(err).Msg("Error decoding document:")
+		}
+		symbolStats = append(symbolStats, &stat)
+	}
+
+	return symbolStats
+}
+
 // TradeOutcomeReportsByBot retrieves trade outcome reports based on the BotName.
 func (db *DB) TradeOutcomeReportsByBotName(ctx context.Context, botName string) ([]*model.TradeOutcomeReport, error) {
 	collection := db.client.Database("go_trading_db").Collection("TradeOutcomeReports")
@@ -190,6 +257,21 @@ func (db *DB) TradeOutcomeReportsByBotNameAndMarketStatus(ctx context.Context, b
 	}
 
 	return tradeOutcomeReports, nil
+}
+
+func (db *DB) DeleteSymbolStats(ctx context.Context, symbol string) (bool, error) {
+	collection := db.client.Database("go_trading_db").Collection("SymbolStats")
+
+	// Define a filter to match documents with the specified symbol
+	filter := bson.D{{"symbol", symbol}}
+
+	result, err := collection.DeleteOne(ctx, filter)
+	if err != nil {
+		log.Error().Err(err).Msg("Error deleting symbol stats from the database:")
+		return false, err
+	}
+
+	return result.DeletedCount > 0, nil
 }
 
 // DeleteStrategy deletes a strategy from the database.

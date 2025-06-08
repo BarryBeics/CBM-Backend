@@ -226,6 +226,14 @@ type StrategyInput struct {
 	CreatedOn            int      `json:"CreatedOn"`
 }
 
+type SymbolStats struct {
+	Symbol               string   `json:"Symbol"`
+	PositionCounts       []int    `json:"PositionCounts"`
+	AvgLiquidityEstimate *float64 `json:"AvgLiquidityEstimate,omitempty"`
+	MaxLiquidityEstimate *float64 `json:"MaxLiquidityEstimate,omitempty"`
+	MinLiquidityEstimate *float64 `json:"MinLiquidityEstimate,omitempty"`
+}
+
 type Task struct {
 	ID          string    `json:"id"`
 	Title       string    `json:"title"`
@@ -338,6 +346,14 @@ type UpdateUserInput struct {
 	InvitedBy              *string `json:"invitedBy,omitempty"`
 	JoinedBallot           *bool   `json:"joinedBallot,omitempty"`
 	IsPaidMember           *bool   `json:"isPaidMember,omitempty"`
+}
+
+type UpsertSymbolStatsInput struct {
+	Symbol               string   `json:"Symbol"`
+	PositionCounts       []int    `json:"PositionCounts,omitempty"`
+	AvgLiquidityEstimate *float64 `json:"AvgLiquidityEstimate,omitempty"`
+	MaxLiquidityEstimate *float64 `json:"MaxLiquidityEstimate,omitempty"`
+	MinLiquidityEstimate *float64 `json:"MinLiquidityEstimate,omitempty"`
 }
 
 type User struct {

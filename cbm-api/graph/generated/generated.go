@@ -95,6 +95,7 @@ type ComplexityRoot struct {
 		DeleteOutcomeReports      func(childComplexity int, timestamp int) int
 		DeleteProject             func(childComplexity int, id string) int
 		DeleteStrategy            func(childComplexity int, botInstanceName string) int
+		DeleteSymbolStats         func(childComplexity int, symbol string) int
 		DeleteTask                func(childComplexity int, id string) int
 		DeleteUser                func(childComplexity int, email string) int
 		Login                     func(childComplexity int, input model.LoginInput) int
@@ -104,6 +105,7 @@ type ComplexityRoot struct {
 		UpdateStrategy            func(childComplexity int, botInstanceName string, input model.StrategyInput) int
 		UpdateTask                func(childComplexity int, input model.UpdateTaskInput) int
 		UpdateUser                func(childComplexity int, input model.UpdateUserInput) int
+		UpsertSymbolStats         func(childComplexity int, input *model.UpsertSymbolStatsInput) int
 	}
 
 	OHLC struct {
@@ -155,6 +157,8 @@ type ComplexityRoot struct {
 		GetUserByEmail                    func(childComplexity int, email string) int
 		GetUsersByRole                    func(childComplexity int, role string) int
 		ProjectByID                       func(childComplexity int, id string) int
+		SymbolStatsBySymbol               func(childComplexity int, symbol string) int
+		SymbolStatsReports                func(childComplexity int) int
 		TaskByID                          func(childComplexity int, id string) int
 		TradeOutcomeReport                func(childComplexity int, id string) int
 		TradeOutcomeReports               func(childComplexity int) int
@@ -183,6 +187,14 @@ type ComplexityRoot struct {
 		Tested               func(childComplexity int) int
 		TradeDuration        func(childComplexity int) int
 		WINCounter           func(childComplexity int) int
+	}
+
+	SymbolStats struct {
+		AvgLiquidityEstimate func(childComplexity int) int
+		MaxLiquidityEstimate func(childComplexity int) int
+		MinLiquidityEstimate func(childComplexity int) int
+		PositionCounts       func(childComplexity int) int
+		Symbol               func(childComplexity int) int
 	}
 
 	Task struct {
@@ -256,6 +268,8 @@ type MutationResolver interface {
 	CreateActivityReport(ctx context.Context, input *model.NewActivityReport) (*model.ActivityReport, error)
 	CreateTradeOutcomeReport(ctx context.Context, input *model.NewTradeOutcomeReport) (*model.TradeOutcomeReport, error)
 	DeleteOutcomeReports(ctx context.Context, timestamp int) (bool, error)
+	UpsertSymbolStats(ctx context.Context, input *model.UpsertSymbolStatsInput) (*model.SymbolStats, error)
+	DeleteSymbolStats(ctx context.Context, symbol string) (bool, error)
 	CreateStrategy(ctx context.Context, input model.StrategyInput) (*model.Strategy, error)
 	UpdateStrategy(ctx context.Context, botInstanceName string, input model.StrategyInput) (*model.Strategy, error)
 	DeleteStrategy(ctx context.Context, botInstanceName string) (*bool, error)
@@ -284,6 +298,8 @@ type QueryResolver interface {
 	TradeOutcomes(ctx context.Context, botName string) ([]*model.TradeOutcomeReport, error)
 	TradeOutcomesInFocus(ctx context.Context, botName string, marketStatus string, limit *int) ([]*model.TradeOutcomeReport, error)
 	TradeOutcomeReports(ctx context.Context) ([]*model.TradeOutcomeReport, error)
+	SymbolStatsReports(ctx context.Context) ([]*model.SymbolStats, error)
+	SymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error)
 	GetStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error)
 	GetAllStrategies(ctx context.Context) ([]*model.Strategy, error)
 	GetUserByEmail(ctx context.Context, email string) (*model.User, error)
@@ -617,6 +633,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.DeleteStrategy(childComplexity, args["BotInstanceName"].(string)), true
 
+	case "Mutation.deleteSymbolStats":
+		if e.complexity.Mutation.DeleteSymbolStats == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteSymbolStats_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteSymbolStats(childComplexity, args["Symbol"].(string)), true
+
 	case "Mutation.deleteTask":
 		if e.complexity.Mutation.DeleteTask == nil {
 			break
@@ -724,6 +752,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["input"].(model.UpdateUserInput)), true
+
+	case "Mutation.upsertSymbolStats":
+		if e.complexity.Mutation.UpsertSymbolStats == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_upsertSymbolStats_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpsertSymbolStats(childComplexity, args["input"].(*model.UpsertSymbolStatsInput)), true
 
 	case "OHLC.ClosePrice":
 		if e.complexity.OHLC.ClosePrice == nil {
@@ -1053,6 +1093,25 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.ProjectByID(childComplexity, args["id"].(string)), true
 
+	case "Query.SymbolStatsBySymbol":
+		if e.complexity.Query.SymbolStatsBySymbol == nil {
+			break
+		}
+
+		args, err := ec.field_Query_SymbolStatsBySymbol_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.SymbolStatsBySymbol(childComplexity, args["Symbol"].(string)), true
+
+	case "Query.SymbolStatsReports":
+		if e.complexity.Query.SymbolStatsReports == nil {
+			break
+		}
+
+		return e.complexity.Query.SymbolStatsReports(childComplexity), true
+
 	case "Query.taskById":
 		if e.complexity.Query.TaskByID == nil {
 			break
@@ -1247,6 +1306,41 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Strategy.WINCounter(childComplexity), true
+
+	case "SymbolStats.AvgLiquidityEstimate":
+		if e.complexity.SymbolStats.AvgLiquidityEstimate == nil {
+			break
+		}
+
+		return e.complexity.SymbolStats.AvgLiquidityEstimate(childComplexity), true
+
+	case "SymbolStats.MaxLiquidityEstimate":
+		if e.complexity.SymbolStats.MaxLiquidityEstimate == nil {
+			break
+		}
+
+		return e.complexity.SymbolStats.MaxLiquidityEstimate(childComplexity), true
+
+	case "SymbolStats.MinLiquidityEstimate":
+		if e.complexity.SymbolStats.MinLiquidityEstimate == nil {
+			break
+		}
+
+		return e.complexity.SymbolStats.MinLiquidityEstimate(childComplexity), true
+
+	case "SymbolStats.PositionCounts":
+		if e.complexity.SymbolStats.PositionCounts == nil {
+			break
+		}
+
+		return e.complexity.SymbolStats.PositionCounts(childComplexity), true
+
+	case "SymbolStats.Symbol":
+		if e.complexity.SymbolStats.Symbol == nil {
+			break
+		}
+
+		return e.complexity.SymbolStats.Symbol(childComplexity), true
 
 	case "Task.assignedTo":
 		if e.complexity.Task.AssignedTo == nil {
@@ -1653,6 +1747,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateProjectInput,
 		ec.unmarshalInputUpdateTaskInput,
 		ec.unmarshalInputUpdateUserInput,
+		ec.unmarshalInputUpsertSymbolStatsInput,
 	)
 	first := true
 
@@ -2092,7 +2187,8 @@ input NewHistoricTickerStatsInput {
 	"Returns a count of stored timestamps (like snapshots)"
 	getTickerStatsSnapshotCount: Int!
   }`, BuiltIn: false},
-	{Name: "../schema/reports.graphqls", Input: `type ActivityReport {
+	{Name: "../schema/reports.graphqls", Input: `# === Activity Domain ===
+type ActivityReport {
   _id: ID!
   Timestamp: Int!
   Qty: Int!
@@ -2103,14 +2199,12 @@ input NewHistoricTickerStatsInput {
   FearGreedIndex: Int!
 }
 
-input NewActivityReport {
-  Timestamp: Int!
-  Qty: Int!
-  AvgGain: Float!
-  TopAGain: Float
-  TopBGain: Float
-  TopCGain: Float
-  FearGreedIndex: Int!
+type SymbolStats {
+  Symbol: String!
+  PositionCounts: [Int!]!
+  AvgLiquidityEstimate: Float
+  MaxLiquidityEstimate: Float
+  MinLiquidityEstimate: Float
 }
 
 type TradeOutcomeReport {
@@ -2128,6 +2222,28 @@ type TradeOutcomeReport {
   MarketStatus: String!
 }
 
+
+# Inputs for SymbolStats
+input UpsertSymbolStatsInput {
+  Symbol: String!
+  PositionCounts: [Int!]
+  AvgLiquidityEstimate: Float
+  MaxLiquidityEstimate: Float
+  MinLiquidityEstimate: Float
+}
+
+# Input for ActivityReport
+input NewActivityReport {
+  Timestamp: Int!
+  Qty: Int!
+  AvgGain: Float!
+  TopAGain: Float
+  TopBGain: Float
+  TopCGain: Float
+  FearGreedIndex: Int!
+}
+
+# Input for TradeOutcomeReport
 input NewTradeOutcomeReport {
   Timestamp: Int!
   BotName: String!
@@ -2144,35 +2260,55 @@ input NewTradeOutcomeReport {
 
 
 type Mutation {
+  # === Activity Reports ===
   "Creates a new market Activity Report"
   createActivityReport(input: NewActivityReport): ActivityReport!
 
+  # === Trade Outcomes ===
   "Creates a new Trade Outcome Report"
   createTradeOutcomeReport(input: NewTradeOutcomeReport): TradeOutcomeReport!
 
   "Deletes outcome reports for the matching given timestamp"
   deleteOutcomeReports(Timestamp: Int!): Boolean!
+
+  # === Symbol Stats ===
+  "If the symbol exists, update it. If not, create it"
+  upsertSymbolStats(input: UpsertSymbolStatsInput): SymbolStats!
+
+  "Deletes Symbol Stats by Symbol"
+  deleteSymbolStats(Symbol: String!): Boolean!
 }
 
+
 type Query {
+  # === Activity Reports ===
   "Get activity reports by ID"
   ActivityReport(_id: ID!): ActivityReport!
-
+  
   "Get All activity reports"
   ActivityReports: [ActivityReport!]!
 
+  # === Trade Outcome Reports ===
   "Get Trade Outcome reports by ID"
   TradeOutcomeReport(_id: ID!): TradeOutcomeReport!
 
   "Get Trade Outcome reports by Bot Name"
   TradeOutcomes(BotName: String!): [TradeOutcomeReport!]!
 
-  "Get Trade Outcome reports by giving Bot Name, Market Status & a given limit"
+  "Get Trade Outcome reports by Bot Name & Market Status"
   TradeOutcomesInFocus(BotName: String!, MarketStatus: String!, limit: Int): [TradeOutcomeReport!]!
 
-  "Get All Trade Outcome reports"
+"Get All Trade Outcome reports"
   TradeOutcomeReports: [TradeOutcomeReport!]!
+
+  # === Symbol Stats ===
+  "Get All Symbol Stats"
+  SymbolStatsReports: [SymbolStats!]!
+
+  "Get Symbol Stats by Symbol"
+  SymbolStatsBySymbol(Symbol: String!): SymbolStats!
 }
+
 
 
 `, BuiltIn: false},
@@ -2713,6 +2849,34 @@ func (ec *executionContext) field_Mutation_deleteStrategy_argsBotInstanceName(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteSymbolStats_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_deleteSymbolStats_argsSymbol(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["Symbol"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_deleteSymbolStats_argsSymbol(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	if _, ok := rawArgs["Symbol"]; !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("Symbol"))
+	if tmp, ok := rawArgs["Symbol"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteTask_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -2988,6 +3152,34 @@ func (ec *executionContext) field_Mutation_updateUser_argsInput(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_upsertSymbolStats_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_upsertSymbolStats_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_upsertSymbolStats_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*model.UpsertSymbolStatsInput, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal *model.UpsertSymbolStatsInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalOUpsertSymbolStatsInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUpsertSymbolStatsInput(ctx, tmp)
+	}
+
+	var zeroVal *model.UpsertSymbolStatsInput
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Query_ActivityReport_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -3010,6 +3202,34 @@ func (ec *executionContext) field_Query_ActivityReport_argsID(
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("_id"))
 	if tmp, ok := rawArgs["_id"]; ok {
 		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_SymbolStatsBySymbol_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_SymbolStatsBySymbol_argsSymbol(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["Symbol"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_SymbolStatsBySymbol_argsSymbol(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	if _, ok := rawArgs["Symbol"]; !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("Symbol"))
+	if tmp, ok := rawArgs["Symbol"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
 	}
 
 	var zeroVal string
@@ -4738,6 +4958,128 @@ func (ec *executionContext) fieldContext_Mutation_deleteOutcomeReports(ctx conte
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteOutcomeReports_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_upsertSymbolStats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_upsertSymbolStats(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpsertSymbolStats(rctx, fc.Args["input"].(*model.UpsertSymbolStatsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SymbolStats)
+	fc.Result = res
+	return ec.marshalNSymbolStats2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐSymbolStats(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_upsertSymbolStats(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Symbol":
+				return ec.fieldContext_SymbolStats_Symbol(ctx, field)
+			case "PositionCounts":
+				return ec.fieldContext_SymbolStats_PositionCounts(ctx, field)
+			case "AvgLiquidityEstimate":
+				return ec.fieldContext_SymbolStats_AvgLiquidityEstimate(ctx, field)
+			case "MaxLiquidityEstimate":
+				return ec.fieldContext_SymbolStats_MaxLiquidityEstimate(ctx, field)
+			case "MinLiquidityEstimate":
+				return ec.fieldContext_SymbolStats_MinLiquidityEstimate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SymbolStats", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_upsertSymbolStats_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteSymbolStats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteSymbolStats(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteSymbolStats(rctx, fc.Args["Symbol"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteSymbolStats(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteSymbolStats_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -7436,6 +7778,129 @@ func (ec *executionContext) fieldContext_Query_TradeOutcomeReports(_ context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_SymbolStatsReports(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_SymbolStatsReports(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SymbolStatsReports(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.SymbolStats)
+	fc.Result = res
+	return ec.marshalNSymbolStats2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐSymbolStatsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_SymbolStatsReports(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Symbol":
+				return ec.fieldContext_SymbolStats_Symbol(ctx, field)
+			case "PositionCounts":
+				return ec.fieldContext_SymbolStats_PositionCounts(ctx, field)
+			case "AvgLiquidityEstimate":
+				return ec.fieldContext_SymbolStats_AvgLiquidityEstimate(ctx, field)
+			case "MaxLiquidityEstimate":
+				return ec.fieldContext_SymbolStats_MaxLiquidityEstimate(ctx, field)
+			case "MinLiquidityEstimate":
+				return ec.fieldContext_SymbolStats_MinLiquidityEstimate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SymbolStats", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_SymbolStatsBySymbol(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_SymbolStatsBySymbol(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SymbolStatsBySymbol(rctx, fc.Args["Symbol"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SymbolStats)
+	fc.Result = res
+	return ec.marshalNSymbolStats2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐSymbolStats(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_SymbolStatsBySymbol(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Symbol":
+				return ec.fieldContext_SymbolStats_Symbol(ctx, field)
+			case "PositionCounts":
+				return ec.fieldContext_SymbolStats_PositionCounts(ctx, field)
+			case "AvgLiquidityEstimate":
+				return ec.fieldContext_SymbolStats_AvgLiquidityEstimate(ctx, field)
+			case "MaxLiquidityEstimate":
+				return ec.fieldContext_SymbolStats_MaxLiquidityEstimate(ctx, field)
+			case "MinLiquidityEstimate":
+				return ec.fieldContext_SymbolStats_MinLiquidityEstimate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SymbolStats", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_SymbolStatsBySymbol_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_getStrategyByName(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_getStrategyByName(ctx, field)
 	if err != nil {
@@ -9661,6 +10126,217 @@ func (ec *executionContext) fieldContext_Strategy_CreatedOn(_ context.Context, f
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SymbolStats_Symbol(ctx context.Context, field graphql.CollectedField, obj *model.SymbolStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SymbolStats_Symbol(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Symbol, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SymbolStats_Symbol(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SymbolStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SymbolStats_PositionCounts(ctx context.Context, field graphql.CollectedField, obj *model.SymbolStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SymbolStats_PositionCounts(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PositionCounts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]int)
+	fc.Result = res
+	return ec.marshalNInt2ᚕintᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SymbolStats_PositionCounts(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SymbolStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SymbolStats_AvgLiquidityEstimate(ctx context.Context, field graphql.CollectedField, obj *model.SymbolStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SymbolStats_AvgLiquidityEstimate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AvgLiquidityEstimate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SymbolStats_AvgLiquidityEstimate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SymbolStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SymbolStats_MaxLiquidityEstimate(ctx context.Context, field graphql.CollectedField, obj *model.SymbolStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SymbolStats_MaxLiquidityEstimate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MaxLiquidityEstimate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SymbolStats_MaxLiquidityEstimate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SymbolStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SymbolStats_MinLiquidityEstimate(ctx context.Context, field graphql.CollectedField, obj *model.SymbolStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SymbolStats_MinLiquidityEstimate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MinLiquidityEstimate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SymbolStats_MinLiquidityEstimate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SymbolStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -15305,6 +15981,61 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpsertSymbolStatsInput(ctx context.Context, obj any) (model.UpsertSymbolStatsInput, error) {
+	var it model.UpsertSymbolStatsInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"Symbol", "PositionCounts", "AvgLiquidityEstimate", "MaxLiquidityEstimate", "MinLiquidityEstimate"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "Symbol":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Symbol"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Symbol = data
+		case "PositionCounts":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("PositionCounts"))
+			data, err := ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PositionCounts = data
+		case "AvgLiquidityEstimate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("AvgLiquidityEstimate"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvgLiquidityEstimate = data
+		case "MaxLiquidityEstimate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("MaxLiquidityEstimate"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MaxLiquidityEstimate = data
+		case "MinLiquidityEstimate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("MinLiquidityEstimate"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MinLiquidityEstimate = data
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -15597,6 +16328,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deleteOutcomeReports":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteOutcomeReports(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "upsertSymbolStats":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_upsertSymbolStats(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteSymbolStats":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteSymbolStats(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -16045,6 +16790,50 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_TradeOutcomeReports(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "SymbolStatsReports":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_SymbolStatsReports(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "SymbolStatsBySymbol":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_SymbolStatsBySymbol(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -16541,6 +17330,56 @@ func (ec *executionContext) _Strategy(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var symbolStatsImplementors = []string{"SymbolStats"}
+
+func (ec *executionContext) _SymbolStats(ctx context.Context, sel ast.SelectionSet, obj *model.SymbolStats) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, symbolStatsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SymbolStats")
+		case "Symbol":
+			out.Values[i] = ec._SymbolStats_Symbol(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "PositionCounts":
+			out.Values[i] = ec._SymbolStats_PositionCounts(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "AvgLiquidityEstimate":
+			out.Values[i] = ec._SymbolStats_AvgLiquidityEstimate(ctx, field, obj)
+		case "MaxLiquidityEstimate":
+			out.Values[i] = ec._SymbolStats_MaxLiquidityEstimate(ctx, field, obj)
+		case "MinLiquidityEstimate":
+			out.Values[i] = ec._SymbolStats_MinLiquidityEstimate(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -17570,6 +18409,36 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
+func (ec *executionContext) unmarshalNInt2ᚕintᚄ(ctx context.Context, v any) ([]int, error) {
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]int, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNInt2int(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNInt2ᚕintᚄ(ctx context.Context, sel ast.SelectionSet, v []int) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNInt2int(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) unmarshalNLoginInput2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐLoginInput(ctx context.Context, v any) (model.LoginInput, error) {
 	res, err := ec.unmarshalInputLoginInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -17805,6 +18674,64 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	}
 
 	return ret
+}
+
+func (ec *executionContext) marshalNSymbolStats2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐSymbolStats(ctx context.Context, sel ast.SelectionSet, v model.SymbolStats) graphql.Marshaler {
+	return ec._SymbolStats(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSymbolStats2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐSymbolStatsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.SymbolStats) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSymbolStats2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐSymbolStats(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNSymbolStats2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐSymbolStats(ctx context.Context, sel ast.SelectionSet, v *model.SymbolStats) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SymbolStats(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNTickerStats2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐTickerStatsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.TickerStats) graphql.Marshaler {
@@ -18306,6 +19233,42 @@ func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel as
 	return graphql.WrapContextMarshaler(ctx, res)
 }
 
+func (ec *executionContext) unmarshalOInt2ᚕintᚄ(ctx context.Context, v any) ([]int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]int, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNInt2int(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOInt2ᚕintᚄ(ctx context.Context, sel ast.SelectionSet, v []int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNInt2int(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v any) (*int, error) {
 	if v == nil {
 		return nil, nil
@@ -18556,6 +19519,14 @@ func (ec *executionContext) marshalOTask2ᚖcryptobotmanagerᚗcomᚋcbmᚑbacke
 		return graphql.Null
 	}
 	return ec._Task(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOUpsertSymbolStatsInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUpsertSymbolStatsInput(ctx context.Context, v any) (*model.UpsertSymbolStatsInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputUpsertSymbolStatsInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOUser2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {

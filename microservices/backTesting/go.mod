@@ -18,10 +18,10 @@ replace cryptobotmanager.com/cbm-backend/cbm-api => ../../cbm-api
 
 require (
 	cryptobotmanager.com/cbm-backend/cbm-api v0.0.0-00010101000000-000000000000
+	cryptobotmanager.com/cbm-backend/microservices/binance v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/microservices/filters v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/microservices/reports v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/microservices/tradingBots v0.0.0-00010101000000-000000000000
-	cryptobotmanager.com/cbm-backend/microservices/binance v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/shared v0.0.0-00010101000000-000000000000
 	github.com/Khan/genqlient v0.8.0
 	github.com/joho/godotenv v1.5.1

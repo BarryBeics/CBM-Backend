@@ -9,30 +9,21 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type MutationActivityReport struct {
-	CreateActivityReport struct {
-		ID             string  `json:"_id"`
-		Timestamp      int     `json:"Timestamp"`
-		Qty            int     `json:"Qty"`
-		AvgGain        float64 `json:"AvgGain"`
-		TopAGain       float64 `json:"TopAGain"`
-		TopBGain       float64 `json:"TopBGain"`
-		TopCGain       float64 `json:"TopCGain"`
-		FearGreedIndex int     `json:"FearGreedIndex"`
-	} `json:"createActivityReport"`
-}
-
-type NewActivityReport struct {
-	Timestamp      int     `json:"Timestamp"`
-	Qty            int     `json:"Qty"`
-	AvgGain        float64 `json:"AvgGain"`
-	TopAGain       float64 `json:"TopAGain"`
-	TopBGain       float64 `json:"TopBGain"`
-	TopCGain       float64 `json:"TopCGain"`
-	FearGreedIndex int     `json:"FearGreedIndex"`
-}
-
 func MarketActivityReport(client graphql.Client, TopAverages []int, pairsOnTheMove []shared.Gainers, now int) {
+	if len(pairsOnTheMove) == 0 {
+		log.Warn().Msg("No pairs on the move, skipping market activity report")
+		return
+	}
+
+	// Log the number of pairs on the move
+	log.Debug().Int("pairs_count", len(pairsOnTheMove)).Msg("the market activity report")
+
+	// Call the ActivityReport function to handle the report creation
+	ActivityReport(client, TopAverages, pairsOnTheMove, now)
+
+}
+
+func ActivityReport(client graphql.Client, TopAverages []int, pairsOnTheMove []shared.Gainers, now int) {
 	allPairs := len(pairsOnTheMove)
 	allMovers := AverageGain(&pairsOnTheMove, allPairs)
 
@@ -79,4 +70,8 @@ func MarketActivityReport(client graphql.Client, TopAverages []int, pairsOnTheMo
 			log.Error().Err(err).Msg("failed to add activity report")
 		}
 	}
+}
+
+func ManageSymbolStats() {
+
 }
