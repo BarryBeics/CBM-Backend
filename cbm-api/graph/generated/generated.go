@@ -80,6 +80,11 @@ type ComplexityRoot struct {
 		User  func(childComplexity int) int
 	}
 
+	Mean struct {
+		Avg   func(childComplexity int) int
+		Count func(childComplexity int) int
+	}
+
 	Mutation struct {
 		CreateActivityReport      func(childComplexity int, input *model.NewActivityReport) int
 		CreateHistoricKline       func(childComplexity int, input *model.NewHistoricKlineDataInput) int
@@ -190,7 +195,7 @@ type ComplexityRoot struct {
 	}
 
 	SymbolStats struct {
-		AvgLiquidityEstimate func(childComplexity int) int
+		LiquidityEstimate    func(childComplexity int) int
 		MaxLiquidityEstimate func(childComplexity int) int
 		MinLiquidityEstimate func(childComplexity int) int
 		PositionCounts       func(childComplexity int) int
@@ -464,6 +469,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.LoginResponse.User(childComplexity), true
+
+	case "Mean.Avg":
+		if e.complexity.Mean.Avg == nil {
+			break
+		}
+
+		return e.complexity.Mean.Avg(childComplexity), true
+
+	case "Mean.Count":
+		if e.complexity.Mean.Count == nil {
+			break
+		}
+
+		return e.complexity.Mean.Count(childComplexity), true
 
 	case "Mutation.createActivityReport":
 		if e.complexity.Mutation.CreateActivityReport == nil {
@@ -1307,12 +1326,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Strategy.WINCounter(childComplexity), true
 
-	case "SymbolStats.AvgLiquidityEstimate":
-		if e.complexity.SymbolStats.AvgLiquidityEstimate == nil {
+	case "SymbolStats.LiquidityEstimate":
+		if e.complexity.SymbolStats.LiquidityEstimate == nil {
 			break
 		}
 
-		return e.complexity.SymbolStats.AvgLiquidityEstimate(childComplexity), true
+		return e.complexity.SymbolStats.LiquidityEstimate(childComplexity), true
 
 	case "SymbolStats.MaxLiquidityEstimate":
 		if e.complexity.SymbolStats.MaxLiquidityEstimate == nil {
@@ -1733,6 +1752,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputLoginInput,
 		ec.unmarshalInputMarkAsTestedInput,
+		ec.unmarshalInputMeanInput,
 		ec.unmarshalInputNewActivityReport,
 		ec.unmarshalInputNewHistoricKlineDataInput,
 		ec.unmarshalInputNewHistoricPriceInput,
@@ -2187,7 +2207,19 @@ input NewHistoricTickerStatsInput {
 	"Returns a count of stored timestamps (like snapshots)"
 	getTickerStatsSnapshotCount: Int!
   }`, BuiltIn: false},
-	{Name: "../schema/reports.graphqls", Input: `# === Activity Domain ===
+	{Name: "../schema/reports.graphqls", Input: `# === Reusable Types ===
+type Mean {
+  Avg: Float!
+  Count: Int!
+}
+
+input MeanInput {
+  Avg: Float!
+  Count: Int!
+}
+
+
+# === Activity Domain ===
 type ActivityReport {
   _id: ID!
   Timestamp: Int!
@@ -2201,8 +2233,8 @@ type ActivityReport {
 
 type SymbolStats {
   Symbol: String!
-  PositionCounts: [Int!]!
-  AvgLiquidityEstimate: Float
+  PositionCounts: [Mean!]!
+  LiquidityEstimate: Mean
   MaxLiquidityEstimate: Float
   MinLiquidityEstimate: Float
 }
@@ -2226,11 +2258,12 @@ type TradeOutcomeReport {
 # Inputs for SymbolStats
 input UpsertSymbolStatsInput {
   Symbol: String!
-  PositionCounts: [Int!]
-  AvgLiquidityEstimate: Float
+  PositionCounts: [MeanInput]
+  LiquidityEstimate: MeanInput
   MaxLiquidityEstimate: Float
   MinLiquidityEstimate: Float
 }
+
 
 # Input for ActivityReport
 input NewActivityReport {
@@ -4755,6 +4788,94 @@ func (ec *executionContext) fieldContext_LoginResponse_user(_ context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Mean_Avg(ctx context.Context, field graphql.CollectedField, obj *model.Mean) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mean_Avg(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Avg, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mean_Avg(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mean",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mean_Count(ctx context.Context, field graphql.CollectedField, obj *model.Mean) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mean_Count(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Count, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mean_Count(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mean",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createActivityReport(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createActivityReport(ctx, field)
 	if err != nil {
@@ -5007,8 +5128,8 @@ func (ec *executionContext) fieldContext_Mutation_upsertSymbolStats(ctx context.
 				return ec.fieldContext_SymbolStats_Symbol(ctx, field)
 			case "PositionCounts":
 				return ec.fieldContext_SymbolStats_PositionCounts(ctx, field)
-			case "AvgLiquidityEstimate":
-				return ec.fieldContext_SymbolStats_AvgLiquidityEstimate(ctx, field)
+			case "LiquidityEstimate":
+				return ec.fieldContext_SymbolStats_LiquidityEstimate(ctx, field)
 			case "MaxLiquidityEstimate":
 				return ec.fieldContext_SymbolStats_MaxLiquidityEstimate(ctx, field)
 			case "MinLiquidityEstimate":
@@ -7821,8 +7942,8 @@ func (ec *executionContext) fieldContext_Query_SymbolStatsReports(_ context.Cont
 				return ec.fieldContext_SymbolStats_Symbol(ctx, field)
 			case "PositionCounts":
 				return ec.fieldContext_SymbolStats_PositionCounts(ctx, field)
-			case "AvgLiquidityEstimate":
-				return ec.fieldContext_SymbolStats_AvgLiquidityEstimate(ctx, field)
+			case "LiquidityEstimate":
+				return ec.fieldContext_SymbolStats_LiquidityEstimate(ctx, field)
 			case "MaxLiquidityEstimate":
 				return ec.fieldContext_SymbolStats_MaxLiquidityEstimate(ctx, field)
 			case "MinLiquidityEstimate":
@@ -7877,8 +7998,8 @@ func (ec *executionContext) fieldContext_Query_SymbolStatsBySymbol(ctx context.C
 				return ec.fieldContext_SymbolStats_Symbol(ctx, field)
 			case "PositionCounts":
 				return ec.fieldContext_SymbolStats_PositionCounts(ctx, field)
-			case "AvgLiquidityEstimate":
-				return ec.fieldContext_SymbolStats_AvgLiquidityEstimate(ctx, field)
+			case "LiquidityEstimate":
+				return ec.fieldContext_SymbolStats_LiquidityEstimate(ctx, field)
 			case "MaxLiquidityEstimate":
 				return ec.fieldContext_SymbolStats_MaxLiquidityEstimate(ctx, field)
 			case "MinLiquidityEstimate":
@@ -10201,9 +10322,9 @@ func (ec *executionContext) _SymbolStats_PositionCounts(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]int)
+	res := resTmp.([]*model.Mean)
 	fc.Result = res
-	return ec.marshalNInt2ᚕintᚄ(ctx, field.Selections, res)
+	return ec.marshalNMean2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐMeanᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_SymbolStats_PositionCounts(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10213,14 +10334,20 @@ func (ec *executionContext) fieldContext_SymbolStats_PositionCounts(_ context.Co
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
+			switch field.Name {
+			case "Avg":
+				return ec.fieldContext_Mean_Avg(ctx, field)
+			case "Count":
+				return ec.fieldContext_Mean_Count(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Mean", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _SymbolStats_AvgLiquidityEstimate(ctx context.Context, field graphql.CollectedField, obj *model.SymbolStats) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SymbolStats_AvgLiquidityEstimate(ctx, field)
+func (ec *executionContext) _SymbolStats_LiquidityEstimate(ctx context.Context, field graphql.CollectedField, obj *model.SymbolStats) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SymbolStats_LiquidityEstimate(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10233,7 +10360,7 @@ func (ec *executionContext) _SymbolStats_AvgLiquidityEstimate(ctx context.Contex
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.AvgLiquidityEstimate, nil
+		return obj.LiquidityEstimate, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10242,19 +10369,25 @@ func (ec *executionContext) _SymbolStats_AvgLiquidityEstimate(ctx context.Contex
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*float64)
+	res := resTmp.(*model.Mean)
 	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+	return ec.marshalOMean2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐMean(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SymbolStats_AvgLiquidityEstimate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SymbolStats_LiquidityEstimate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "SymbolStats",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Float does not have child fields")
+			switch field.Name {
+			case "Avg":
+				return ec.fieldContext_Mean_Avg(ctx, field)
+			case "Count":
+				return ec.fieldContext_Mean_Count(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Mean", field.Name)
 		},
 	}
 	return fc, nil
@@ -14938,6 +15071,40 @@ func (ec *executionContext) unmarshalInputMarkAsTestedInput(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputMeanInput(ctx context.Context, obj any) (model.MeanInput, error) {
+	var it model.MeanInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"Avg", "Count"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "Avg":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Avg"))
+			data, err := ec.unmarshalNFloat2float64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Avg = data
+		case "Count":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Count"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Count = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewActivityReport(ctx context.Context, obj any) (model.NewActivityReport, error) {
 	var it model.NewActivityReport
 	asMap := map[string]any{}
@@ -15988,7 +16155,7 @@ func (ec *executionContext) unmarshalInputUpsertSymbolStatsInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"Symbol", "PositionCounts", "AvgLiquidityEstimate", "MaxLiquidityEstimate", "MinLiquidityEstimate"}
+	fieldsInOrder := [...]string{"Symbol", "PositionCounts", "LiquidityEstimate", "MaxLiquidityEstimate", "MinLiquidityEstimate"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -16004,18 +16171,18 @@ func (ec *executionContext) unmarshalInputUpsertSymbolStatsInput(ctx context.Con
 			it.Symbol = data
 		case "PositionCounts":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("PositionCounts"))
-			data, err := ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			data, err := ec.unmarshalOMeanInput2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐMeanInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.PositionCounts = data
-		case "AvgLiquidityEstimate":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("AvgLiquidityEstimate"))
-			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+		case "LiquidityEstimate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("LiquidityEstimate"))
+			data, err := ec.unmarshalOMeanInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐMeanInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvgLiquidityEstimate = data
+			it.LiquidityEstimate = data
 		case "MaxLiquidityEstimate":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("MaxLiquidityEstimate"))
 			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
@@ -16266,6 +16433,50 @@ func (ec *executionContext) _LoginResponse(ctx context.Context, sel ast.Selectio
 			}
 		case "user":
 			out.Values[i] = ec._LoginResponse_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var meanImplementors = []string{"Mean"}
+
+func (ec *executionContext) _Mean(ctx context.Context, sel ast.SelectionSet, obj *model.Mean) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, meanImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Mean")
+		case "Avg":
+			out.Values[i] = ec._Mean_Avg(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "Count":
+			out.Values[i] = ec._Mean_Count(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -17374,8 +17585,8 @@ func (ec *executionContext) _SymbolStats(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "AvgLiquidityEstimate":
-			out.Values[i] = ec._SymbolStats_AvgLiquidityEstimate(ctx, field, obj)
+		case "LiquidityEstimate":
+			out.Values[i] = ec._SymbolStats_LiquidityEstimate(ctx, field, obj)
 		case "MaxLiquidityEstimate":
 			out.Values[i] = ec._SymbolStats_MaxLiquidityEstimate(ctx, field, obj)
 		case "MinLiquidityEstimate":
@@ -18409,36 +18620,6 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) unmarshalNInt2ᚕintᚄ(ctx context.Context, v any) ([]int, error) {
-	var vSlice []any
-	vSlice = graphql.CoerceList(v)
-	var err error
-	res := make([]int, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNInt2int(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalNInt2ᚕintᚄ(ctx context.Context, sel ast.SelectionSet, v []int) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalNInt2int(ctx, sel, v[i])
-	}
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) unmarshalNLoginInput2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐLoginInput(ctx context.Context, v any) (model.LoginInput, error) {
 	res, err := ec.unmarshalInputLoginInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -18461,6 +18642,60 @@ func (ec *executionContext) marshalNLoginResponse2ᚖcryptobotmanagerᚗcomᚋcb
 func (ec *executionContext) unmarshalNMarkAsTestedInput2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐMarkAsTestedInput(ctx context.Context, v any) (model.MarkAsTestedInput, error) {
 	res, err := ec.unmarshalInputMarkAsTestedInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNMean2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐMeanᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Mean) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNMean2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐMean(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNMean2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐMean(ctx context.Context, sel ast.SelectionSet, v *model.Mean) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Mean(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNNewHistoricTickerStatsInput2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐNewHistoricTickerStatsInput(ctx context.Context, v any) (model.NewHistoricTickerStatsInput, error) {
@@ -19233,42 +19468,6 @@ func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel as
 	return graphql.WrapContextMarshaler(ctx, res)
 }
 
-func (ec *executionContext) unmarshalOInt2ᚕintᚄ(ctx context.Context, v any) ([]int, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []any
-	vSlice = graphql.CoerceList(v)
-	var err error
-	res := make([]int, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNInt2int(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalOInt2ᚕintᚄ(ctx context.Context, sel ast.SelectionSet, v []int) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalNInt2int(ctx, sel, v[i])
-	}
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v any) (*int, error) {
 	if v == nil {
 		return nil, nil
@@ -19283,6 +19482,39 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	}
 	res := graphql.MarshalInt(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOMean2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐMean(ctx context.Context, sel ast.SelectionSet, v *model.Mean) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Mean(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOMeanInput2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐMeanInput(ctx context.Context, v any) ([]*model.MeanInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]*model.MeanInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOMeanInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐMeanInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOMeanInput2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐMeanInput(ctx context.Context, v any) (*model.MeanInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputMeanInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalONewActivityReport2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐNewActivityReport(ctx context.Context, v any) (*model.NewActivityReport, error) {

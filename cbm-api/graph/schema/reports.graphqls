@@ -1,3 +1,15 @@
+# === Reusable Types ===
+type Mean {
+  Avg: Float!
+  Count: Int!
+}
+
+input MeanInput {
+  Avg: Float!
+  Count: Int!
+}
+
+
 # === Activity Domain ===
 type ActivityReport {
   _id: ID!
@@ -12,8 +24,8 @@ type ActivityReport {
 
 type SymbolStats {
   Symbol: String!
-  PositionCounts: [Int!]!
-  AvgLiquidityEstimate: Float
+  PositionCounts: [Mean!]!
+  LiquidityEstimate: Mean
   MaxLiquidityEstimate: Float
   MinLiquidityEstimate: Float
 }
@@ -37,11 +49,12 @@ type TradeOutcomeReport {
 # Inputs for SymbolStats
 input UpsertSymbolStatsInput {
   Symbol: String!
-  PositionCounts: [Int!]
-  AvgLiquidityEstimate: Float
+  PositionCounts: [MeanInput]
+  LiquidityEstimate: MeanInput
   MaxLiquidityEstimate: Float
   MinLiquidityEstimate: Float
 }
+
 
 # Input for ActivityReport
 input NewActivityReport {

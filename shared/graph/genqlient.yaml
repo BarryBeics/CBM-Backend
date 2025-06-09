@@ -10,3 +10,7 @@ generated: ./genqlient_gen.go
 bindings:
   DateTime:
     type: string
+  MeanInput:
+    type: cryptobotmanager.com/cbm-backend/shared/model.MeanInput
+  Mean:
+    type: cryptobotmanager.com/cbm-backend/shared/model.Mean

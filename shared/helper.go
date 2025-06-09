@@ -95,6 +95,13 @@ func Round(x, decimal float64) float64 {
 	return math.Round(x*unit) / unit
 }
 
+func IncrementMean(m model.Mean, value float64) model.Mean {
+	return model.Mean{
+		Avg:   ((m.Avg * float64(m.Count)) + value) / float64(m.Count+1),
+		Count: m.Count + 1,
+	}
+}
+
 // RoundFloatToDecimal rounds the given floating-point number 'x'
 // to the specified number of decimal places.
 func RoundFloatToDecimal(x, decimal float64) float64 {

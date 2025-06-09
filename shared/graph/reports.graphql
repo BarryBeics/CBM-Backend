@@ -72,3 +72,61 @@ mutation CreateActivityReport(
     FearGreedIndex
   }
 }
+
+mutation UpsertPositionCounts(
+  $symbol: String!
+  $positionCounts: [MeanInput]){
+  upsertSymbolStats(
+    input: {
+      Symbol: $symbol
+      PositionCounts: $positionCounts
+    }
+  ) {
+    Symbol
+    PositionCounts {
+      Avg
+      Count
+    }
+  }
+}
+
+mutation UpsertLiquidityEstimate(
+  $symbol: String!
+  $liquidityEstimate: MeanInput!
+  $maxLiquidityEstimate: Float!
+  $minLiquidityEstimate: Float!
+) {
+  upsertSymbolStats(
+    input: {
+      Symbol: $symbol
+      LiquidityEstimate: $liquidityEstimate
+      MaxLiquidityEstimate: $maxLiquidityEstimate
+      MinLiquidityEstimate: $minLiquidityEstimate
+    }
+  ) {
+    Symbol
+    LiquidityEstimate {
+      Avg
+      Count
+    }
+    MaxLiquidityEstimate
+    MinLiquidityEstimate
+  }
+}
+
+
+query GetSymbolStatsBySymbol($symbol: String!) {
+  SymbolStatsBySymbol(Symbol: $symbol) {
+    Symbol
+    PositionCounts {
+      Avg
+      Count
+    }
+    LiquidityEstimate {
+      Avg
+      Count
+    }
+    MaxLiquidityEstimate
+    MinLiquidityEstimate
+  }
+}

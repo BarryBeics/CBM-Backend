@@ -10,6 +10,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -40,28 +41,82 @@ func (db *DB) UpsertSymbolStats(input *model.UpsertSymbolStatsInput) *model.Symb
 
 	filter := bson.M{"symbol": input.Symbol}
 
+	// Fetch current document
+	var existing model.SymbolStats
+	err := collection.FindOne(ctx, filter).Decode(&existing)
+	if err != nil && err != mongo.ErrNoDocuments {
+		log.Error().Err(err).Msg("Failed to fetch existing symbol stats")
+		return nil
+	}
+
+	// Merge PositionCounts averages
+	mergedCounts := input.PositionCounts
+	if len(existing.PositionCounts) == len(input.PositionCounts) {
+		for i := range input.PositionCounts {
+			old := existing.PositionCounts[i]
+			new := input.PositionCounts[i]
+			totalCount := old.Count + new.Count
+			if totalCount > 0 {
+				mergedCounts[i].Avg = ((old.Avg * float64(old.Count)) + (new.Avg * float64(new.Count))) / float64(totalCount)
+				mergedCounts[i].Count = totalCount
+			}
+		}
+	}
+
+	// Merge LiquidityEstimate
+	var mergedLiquidity *model.Mean
+	if input.LiquidityEstimate != nil {
+		mergedLiquidity = &model.Mean{
+			Avg:   input.LiquidityEstimate.Avg,
+			Count: input.LiquidityEstimate.Count,
+		}
+	}
+	if existing.LiquidityEstimate != nil && mergedLiquidity != nil {
+		old := existing.LiquidityEstimate
+		new := mergedLiquidity
+		totalCount := old.Count + new.Count
+		if totalCount > 0 {
+			mergedLiquidity = &model.Mean{
+				Avg:   ((old.Avg * float64(old.Count)) + (new.Avg * float64(new.Count))) / float64(totalCount),
+				Count: totalCount,
+			}
+		}
+	}
+
 	update := bson.M{
 		"$set": bson.M{
 			"symbol":               input.Symbol,
-			"positionCounts":       input.PositionCounts,
-			"avgLiquidityEstimate": input.AvgLiquidityEstimate,
+			"positionCounts":       mergedCounts,
+			"avgLiquidityEstimate": mergedLiquidity,
 			"maxLiquidityEstimate": input.MaxLiquidityEstimate,
 			"minLiquidityEstimate": input.MinLiquidityEstimate,
 		},
 	}
 
 	opts := options.Update().SetUpsert(true)
-
-	_, err := collection.UpdateOne(ctx, filter, update, opts)
+	_, err = collection.UpdateOne(ctx, filter, update, opts)
 	if err != nil {
 		log.Error().Err(err).Msg("Error in upsert")
 		return nil
 	}
 
+	// Convert []*model.MeanInput to []*model.Mean
+	var positionCounts []*model.Mean
+	for _, m := range mergedCounts {
+		if m != nil {
+			positionCounts = append(positionCounts, &model.Mean{
+				Avg:   m.Avg,
+				Count: m.Count,
+			})
+		} else {
+			positionCounts = append(positionCounts, nil)
+		}
+	}
+
 	return &model.SymbolStats{
 		Symbol:               input.Symbol,
-		PositionCounts:       input.PositionCounts,
-		AvgLiquidityEstimate: input.AvgLiquidityEstimate,
+		PositionCounts:       positionCounts,
+		LiquidityEstimate:    mergedLiquidity,
 		MaxLiquidityEstimate: input.MaxLiquidityEstimate,
 		MinLiquidityEstimate: input.MinLiquidityEstimate,
 	}

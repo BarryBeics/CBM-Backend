@@ -10,7 +10,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/rs/zerolog v1.34.0
 	github.com/vektah/gqlparser/v2 v2.5.25
-	go.mongodb.org/mongo-driver v1.17.3
+	go.mongodb.org/mongo-driver v1.17.4
 	golang.org/x/crypto v0.26.0
 )
 
