@@ -1,11 +1,11 @@
 package model
 
-type MeanInput struct {
+type MeanStat struct {
 	Avg   float64 `json:"Avg"`
 	Count int     `json:"Count"`
 }
 
-type Mean struct {
+type MeanStatInput struct {
 	Avg   float64 `json:"Avg"`
 	Count int     `json:"Count"`
 }

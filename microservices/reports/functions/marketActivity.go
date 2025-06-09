@@ -6,6 +6,7 @@ import (
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	"cryptobotmanager.com/cbm-backend/shared"
 	"cryptobotmanager.com/cbm-backend/shared/graph"
+	sharedmodel "cryptobotmanager.com/cbm-backend/shared/model"
 	"github.com/Khan/genqlient/graphql"
 	"github.com/rs/zerolog/log"
 )
@@ -85,50 +86,66 @@ func ManageSymbolStats(client graphql.Client, top10 []shared.Gainers) {
 	ctx := context.Background()
 
 	for i, pair := range top10 {
-		// Fetch existing stats (if any)
-		res, err := graph.SymbolStatsBySymbol(ctx, client, pair.Symbol)
-		if err != nil {
+		res, err := graph.GetSymbolStatsBySymbol(ctx, client, pair.Symbol)
+		if err != nil || res == nil || res.SymbolStatsBySymbol.Symbol == "" {
 			log.Warn().Str("symbol", pair.Symbol).Msg("No existing stats found, creating new entry")
 
-			// Create default PositionCounts with zeros
-			positionCounts := make([]int, 10)
+			// Create 10 entries of MeanStatInput
+			positionCounts := make([]*sharedmodel.MeanStatInput, 10)
+			for j := 0; j < 10; j++ {
+				positionCounts[j] = &sharedmodel.MeanStatInput{Avg: 0, Count: 0}
+			}
 			if i < 10 {
-				positionCounts[i] = 1
+				positionCounts[i] = &sharedmodel.MeanStatInput{Avg: pair.IncrementPriceGain, Count: 1}
 			}
 
-			// Create new SymbolStats entry
-			_, err := graph.CreateSymbolStats(ctx, client, graph.CreateSymbolStatsInput{
-				Symbol:         pair.Symbol,
-				PositionCounts: positionCounts,
-			})
-			if err != nil {
-				log.Error().Err(err).Str("symbol", pair.Symbol).Msg("Failed to create SymbolStats")
+			// Convert to sharedmodel.MeanStatInput
+			sharedModelPositionCounts := make([]model.MeanInput, len(positionCounts))
+			for idx, v := range positionCounts {
+				sharedModelPositionCounts[idx] = model.MeanInput{
+					Avg:   v.Avg,
+					Count: v.Count,
+				}
 			}
+
+			// _, err := graph.UpsertPositionCounts(ctx, client, pair.Symbol, sharedModelPositionCounts)
+			// if err != nil {
+			// 	log.Error().Err(err).Str("symbol", pair.Symbol).Msg("Failed to create SymbolStats")
+			// }
 			continue
 		}
 
-		// Update PositionCounts
-		newCounts := append([]int(nil), res.PositionCounts...) // copy to avoid mutation
-		if i < len(newCounts) {
-			newCounts[i]++
-		} else {
-			// Extend the slice if needed (shouldn't happen if fixed at 10)
-			for len(newCounts) <= i {
-				newCounts = append(newCounts, 0)
+		// Mutate existing counts
+		existingCounts := res.SymbolStatsBySymbol.PositionCounts
+		if len(existingCounts) < 10 {
+			for len(existingCounts) < 10 {
+				existingCounts = append(existingCounts, &sharedmodel.MeanStat{
+					Avg:   0,
+					Count: 0,
+				})
 			}
-			newCounts[i] = 1
 		}
 
-		// Upsert
-		_, err = graph.UpsertSymbolStats(ctx, client, model.UpsertSymbolStatsInput{
-			Symbol:               pair.Symbol,
-			PositionCounts:       newCounts,
-			AvgLiquidityEstimate: newAvg,
-			MaxLiquidityEstimate: newMax,
-			MinLiquidityEstimate: newMin,
-		})
-		if err != nil {
-			log.Error().Err(err).Str("symbol", pair.Symbol).Msg("Failed to update SymbolStats")
+		// Update target index
+		if i < len(existingCounts) {
+			old := existingCounts[i]
+			newCount := old.Count + 1
+			newAvg := ((old.Avg * float64(old.Count)) + pair.IncrementPriceGain) / float64(newCount)
+			existingCounts[i] = &sharedmodel.MeanStat{Avg: newAvg, Count: newCount}
 		}
+
+		// Convert to sharedmodel
+		sharedModelPositionCounts := make([]sharedmodel.MeanStatInput, len(existingCounts))
+		for idx, v := range existingCounts {
+			sharedModelPositionCounts[idx] = sharedmodel.MeanStatInput{
+				Avg:   v.Avg,
+				Count: v.Count,
+			}
+		}
+
+		// _, err = graph.UpsertPositionCounts(ctx, client, pair.Symbol, sharedModelPositionCounts)
+		// if err != nil {
+		// 	log.Error().Err(err).Str("symbol", pair.Symbol).Msg("Failed to update SymbolStats")
+		// }
 	}
 }

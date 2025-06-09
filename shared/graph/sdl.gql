@@ -618,7 +618,7 @@ input UpdateUserInput {
 
 input UpsertSymbolStatsInput {
   Symbol: String!
-  PositionCounts: [MeanInput!]!
+  PositionCounts: [MeanInput]
   LiquidityEstimate: MeanInput
   MaxLiquidityEstimate: Float
   MinLiquidityEstimate: Float
