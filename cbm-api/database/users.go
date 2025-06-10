@@ -51,23 +51,8 @@ func (db *DB) CreateUser(ctx context.Context, input model.CreateUserInput) (*mod
 	return user, nil
 }
 
-// DeleteUserByEmail removes a user from the database using their email.
-func (db *DB) DeleteUserByEmail(ctx context.Context, email string) (bool, error) {
-	collection := db.client.Database("go_trading_db").Collection("Customers")
-
-	filter := bson.D{{"email", email}}
-
-	result, err := collection.DeleteOne(ctx, filter)
-	if err != nil {
-		log.Error().Err(err).Msg("Error deleting user from the database:")
-		return false, err
-	}
-
-	return result.DeletedCount > 0, nil
-}
-
-// GetUserByEmail retrieves a user by their email address.
-func (db *DB) GetUserByEmail(ctx context.Context, email string) (*model.User, error) {
+// ReadUserByEmail retrieves a user by their email address.
+func (db *DB) ReadUserByEmail(ctx context.Context, email string) (*model.User, error) {
 	collection := db.client.Database("go_trading_db").Collection("Customers")
 
 	filter := bson.D{{"email", email}}
@@ -82,8 +67,8 @@ func (db *DB) GetUserByEmail(ctx context.Context, email string) (*model.User, er
 	return &user, nil
 }
 
-// GetUserByRole retrieves a group of users by their role.
-func (db *DB) GetUserByRole(ctx context.Context, role string) ([]*model.User, error) {
+// ReadUserByRole retrieves a group of users by their role.
+func (db *DB) ReadUserByRole(ctx context.Context, role string) ([]*model.User, error) {
 	collection := db.client.Database("go_trading_db").Collection("Customers")
 
 	filter := bson.D{{"role", role}}
@@ -104,8 +89,8 @@ func (db *DB) GetUserByRole(ctx context.Context, role string) ([]*model.User, er
 	return users, nil
 }
 
-// GetAllUsers fetches all users from the Customers collection.
-func (db *DB) GetAllUsers(ctx context.Context) ([]*model.User, error) {
+// ReadAllUsers fetches all users from the Customers collection.
+func (db *DB) ReadAllUsers(ctx context.Context) ([]*model.User, error) {
 	collection := db.client.Database("go_trading_db").Collection("Customers")
 
 	cursor, err := collection.Find(ctx, bson.D{}, options.Find())
@@ -124,6 +109,7 @@ func (db *DB) GetAllUsers(ctx context.Context) ([]*model.User, error) {
 	return users, nil
 }
 
+// UpdateUser modifies an existing user's details in the Customers collection.
 func (db *DB) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*model.User, error) {
 	collection := db.client.Database("go_trading_db").Collection("Customers")
 
@@ -202,4 +188,19 @@ func (db *DB) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*mod
 	}
 
 	return &updated, nil
+}
+
+// DeleteUserByEmail removes a user from the database using their email.
+func (db *DB) DeleteUserByEmail(ctx context.Context, email string) (bool, error) {
+	collection := db.client.Database("go_trading_db").Collection("Customers")
+
+	filter := bson.D{{"email", email}}
+
+	result, err := collection.DeleteOne(ctx, filter)
+	if err != nil {
+		log.Error().Err(err).Msg("Error deleting user from the database:")
+		return false, err
+	}
+
+	return result.DeletedCount > 0, nil
 }

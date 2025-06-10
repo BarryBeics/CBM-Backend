@@ -378,9 +378,9 @@ type Query {
   Get all strategies
   """
   getAllStrategies: [Strategy]
-  getUserByEmail(email: String!): User
-  getAllUsers: [User!]!
-  getUsersByRole(role: String!): [User!]!
+  readUserByEmail(email: String!): User
+  readAllUsers: [User!]!
+  readUsersByRole(role: String!): [User!]!
 
   """
   Fetches price data for a given symbol up to a given limit of records

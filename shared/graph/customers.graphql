@@ -8,8 +8,8 @@ mutation CreateUser($input: CreateUserInput!) {
   }
 }
 
-query GetUserByEmail($email: String!) {
-  getUserByEmail(email: $email) {
+query ReadUserByEmail($email: String!) {
+  readUserByEmail(email: $email) {
     id
     email
   }

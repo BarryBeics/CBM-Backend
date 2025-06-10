@@ -150,7 +150,6 @@ type ComplexityRoot struct {
 		AvailableTickerSymbols            func(childComplexity int) int
 		FilterProjects                    func(childComplexity int, filter *model.ProjectFilterInput) int
 		GetAllStrategies                  func(childComplexity int) int
-		GetAllUsers                       func(childComplexity int) int
 		GetHistoricKlineData              func(childComplexity int, symbol string, limit *int) int
 		GetHistoricPrice                  func(childComplexity int, symbol string, limit *int) int
 		GetHistoricPricesAtTimestamp      func(childComplexity int, timestamp int) int
@@ -159,9 +158,10 @@ type ComplexityRoot struct {
 		GetTickerStatsBySymbol            func(childComplexity int, symbol string, limit *int) int
 		GetTickerStatsSnapshotCount       func(childComplexity int) int
 		GetUniqueTimestampCount           func(childComplexity int) int
-		GetUserByEmail                    func(childComplexity int, email string) int
-		GetUsersByRole                    func(childComplexity int, role string) int
 		ProjectByID                       func(childComplexity int, id string) int
+		ReadAllUsers                      func(childComplexity int) int
+		ReadUserByEmail                   func(childComplexity int, email string) int
+		ReadUsersByRole                   func(childComplexity int, role string) int
 		SymbolStatsBySymbol               func(childComplexity int, symbol string) int
 		SymbolStatsReports                func(childComplexity int) int
 		TaskByID                          func(childComplexity int, id string) int
@@ -307,9 +307,9 @@ type QueryResolver interface {
 	SymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error)
 	GetStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error)
 	GetAllStrategies(ctx context.Context) ([]*model.Strategy, error)
-	GetUserByEmail(ctx context.Context, email string) (*model.User, error)
-	GetAllUsers(ctx context.Context) ([]*model.User, error)
-	GetUsersByRole(ctx context.Context, role string) ([]*model.User, error)
+	ReadUserByEmail(ctx context.Context, email string) (*model.User, error)
+	ReadAllUsers(ctx context.Context) ([]*model.User, error)
+	ReadUsersByRole(ctx context.Context, role string) ([]*model.User, error)
 	GetHistoricPrice(ctx context.Context, symbol string, limit *int) ([]*model.HistoricPrices, error)
 	GetHistoricPricesAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricPrices, error)
 	GetHistoricKlineData(ctx context.Context, symbol string, limit *int) ([]*model.HistoricKlineData, error)
@@ -983,13 +983,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.GetAllStrategies(childComplexity), true
 
-	case "Query.getAllUsers":
-		if e.complexity.Query.GetAllUsers == nil {
-			break
-		}
-
-		return e.complexity.Query.GetAllUsers(childComplexity), true
-
 	case "Query.getHistoricKlineData":
 		if e.complexity.Query.GetHistoricKlineData == nil {
 			break
@@ -1076,30 +1069,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.GetUniqueTimestampCount(childComplexity), true
 
-	case "Query.getUserByEmail":
-		if e.complexity.Query.GetUserByEmail == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getUserByEmail_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetUserByEmail(childComplexity, args["email"].(string)), true
-
-	case "Query.getUsersByRole":
-		if e.complexity.Query.GetUsersByRole == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getUsersByRole_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetUsersByRole(childComplexity, args["role"].(string)), true
-
 	case "Query.projectById":
 		if e.complexity.Query.ProjectByID == nil {
 			break
@@ -1111,6 +1080,37 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.ProjectByID(childComplexity, args["id"].(string)), true
+
+	case "Query.readAllUsers":
+		if e.complexity.Query.ReadAllUsers == nil {
+			break
+		}
+
+		return e.complexity.Query.ReadAllUsers(childComplexity), true
+
+	case "Query.readUserByEmail":
+		if e.complexity.Query.ReadUserByEmail == nil {
+			break
+		}
+
+		args, err := ec.field_Query_readUserByEmail_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ReadUserByEmail(childComplexity, args["email"].(string)), true
+
+	case "Query.readUsersByRole":
+		if e.complexity.Query.ReadUsersByRole == nil {
+			break
+		}
+
+		args, err := ec.field_Query_readUsersByRole_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ReadUsersByRole(childComplexity, args["role"].(string)), true
 
 	case "Query.SymbolStatsBySymbol":
 		if e.complexity.Query.SymbolStatsBySymbol == nil {
@@ -2038,9 +2038,9 @@ extend type Mutation {
 
 
 extend type Query {
-  getUserByEmail(email: String!): User
-  getAllUsers: [User!]!
-  getUsersByRole(role: String!): [User!]!
+  readUserByEmail(email: String!): User
+  readAllUsers: [User!]!
+  readUsersByRole(role: String!): [User!]!
 }
 
 
@@ -3692,62 +3692,6 @@ func (ec *executionContext) field_Query_getTickerStatsBySymbol_argsLimit(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Query_getUserByEmail_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := ec.field_Query_getUserByEmail_argsEmail(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["email"] = arg0
-	return args, nil
-}
-func (ec *executionContext) field_Query_getUserByEmail_argsEmail(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (string, error) {
-	if _, ok := rawArgs["email"]; !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
-	if tmp, ok := rawArgs["email"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Query_getUsersByRole_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := ec.field_Query_getUsersByRole_argsRole(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["role"] = arg0
-	return args, nil
-}
-func (ec *executionContext) field_Query_getUsersByRole_argsRole(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (string, error) {
-	if _, ok := rawArgs["role"]; !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
-	if tmp, ok := rawArgs["role"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
 func (ec *executionContext) field_Query_projectById_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -3770,6 +3714,62 @@ func (ec *executionContext) field_Query_projectById_argsID(
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 	if tmp, ok := rawArgs["id"]; ok {
 		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_readUserByEmail_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_readUserByEmail_argsEmail(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["email"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_readUserByEmail_argsEmail(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	if _, ok := rawArgs["email"]; !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+	if tmp, ok := rawArgs["email"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_readUsersByRole_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_readUsersByRole_argsRole(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["role"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_readUsersByRole_argsRole(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	if _, ok := rawArgs["role"]; !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+	if tmp, ok := rawArgs["role"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
 	}
 
 	var zeroVal string
@@ -8199,8 +8199,8 @@ func (ec *executionContext) fieldContext_Query_getAllStrategies(_ context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getUserByEmail(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getUserByEmail(ctx, field)
+func (ec *executionContext) _Query_readUserByEmail(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_readUserByEmail(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -8213,7 +8213,7 @@ func (ec *executionContext) _Query_getUserByEmail(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetUserByEmail(rctx, fc.Args["email"].(string))
+		return ec.resolvers.Query().ReadUserByEmail(rctx, fc.Args["email"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8227,7 +8227,7 @@ func (ec *executionContext) _Query_getUserByEmail(ctx context.Context, field gra
 	return ec.marshalOUser2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getUserByEmail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_readUserByEmail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -8284,15 +8284,15 @@ func (ec *executionContext) fieldContext_Query_getUserByEmail(ctx context.Contex
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getUserByEmail_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_readUserByEmail_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getAllUsers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getAllUsers(ctx, field)
+func (ec *executionContext) _Query_readAllUsers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_readAllUsers(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -8305,7 +8305,7 @@ func (ec *executionContext) _Query_getAllUsers(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetAllUsers(rctx)
+		return ec.resolvers.Query().ReadAllUsers(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8322,7 +8322,7 @@ func (ec *executionContext) _Query_getAllUsers(ctx context.Context, field graphq
 	return ec.marshalNUser2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getAllUsers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_readAllUsers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -8375,8 +8375,8 @@ func (ec *executionContext) fieldContext_Query_getAllUsers(_ context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getUsersByRole(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getUsersByRole(ctx, field)
+func (ec *executionContext) _Query_readUsersByRole(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_readUsersByRole(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -8389,7 +8389,7 @@ func (ec *executionContext) _Query_getUsersByRole(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetUsersByRole(rctx, fc.Args["role"].(string))
+		return ec.resolvers.Query().ReadUsersByRole(rctx, fc.Args["role"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8406,7 +8406,7 @@ func (ec *executionContext) _Query_getUsersByRole(ctx context.Context, field gra
 	return ec.marshalNUser2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getUsersByRole(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_readUsersByRole(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -8463,7 +8463,7 @@ func (ec *executionContext) fieldContext_Query_getUsersByRole(ctx context.Contex
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getUsersByRole_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_readUsersByRole_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -17095,7 +17095,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getUserByEmail":
+		case "readUserByEmail":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -17104,7 +17104,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getUserByEmail(ctx, field)
+				res = ec._Query_readUserByEmail(ctx, field)
 				return res
 			}
 
@@ -17114,7 +17114,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getAllUsers":
+		case "readAllUsers":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -17123,7 +17123,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getAllUsers(ctx, field)
+				res = ec._Query_readAllUsers(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -17136,7 +17136,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getUsersByRole":
+		case "readUsersByRole":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -17145,7 +17145,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getUsersByRole(ctx, field)
+				res = ec._Query_readUsersByRole(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

@@ -993,28 +993,6 @@ func (v *GetTickerLiquidityEstimateResponse) GetGetTickerStatsBySymbol() []GetTi
 	return v.GetTickerStatsBySymbol
 }
 
-// GetUserByEmailGetUserByEmailUser includes the requested fields of the GraphQL type User.
-type GetUserByEmailGetUserByEmailUser struct {
-	Id    string `json:"id"`
-	Email string `json:"email"`
-}
-
-// GetId returns GetUserByEmailGetUserByEmailUser.Id, and is useful for accessing the field via an interface.
-func (v *GetUserByEmailGetUserByEmailUser) GetId() string { return v.Id }
-
-// GetEmail returns GetUserByEmailGetUserByEmailUser.Email, and is useful for accessing the field via an interface.
-func (v *GetUserByEmailGetUserByEmailUser) GetEmail() string { return v.Email }
-
-// GetUserByEmailResponse is returned by GetUserByEmail on success.
-type GetUserByEmailResponse struct {
-	GetUserByEmail GetUserByEmailGetUserByEmailUser `json:"getUserByEmail"`
-}
-
-// GetGetUserByEmail returns GetUserByEmailResponse.GetUserByEmail, and is useful for accessing the field via an interface.
-func (v *GetUserByEmailResponse) GetGetUserByEmail() GetUserByEmailGetUserByEmailUser {
-	return v.GetUserByEmail
-}
-
 type NewHistoricPriceInput struct {
 	Pairs     []PairInput `json:"Pairs"`
 	Timestamp int         `json:"Timestamp"`
@@ -1051,6 +1029,28 @@ func (v *PairInput) GetPrice() string { return v.Price }
 
 // GetPercentageChange returns PairInput.PercentageChange, and is useful for accessing the field via an interface.
 func (v *PairInput) GetPercentageChange() string { return v.PercentageChange }
+
+// ReadUserByEmailReadUserByEmailUser includes the requested fields of the GraphQL type User.
+type ReadUserByEmailReadUserByEmailUser struct {
+	Id    string `json:"id"`
+	Email string `json:"email"`
+}
+
+// GetId returns ReadUserByEmailReadUserByEmailUser.Id, and is useful for accessing the field via an interface.
+func (v *ReadUserByEmailReadUserByEmailUser) GetId() string { return v.Id }
+
+// GetEmail returns ReadUserByEmailReadUserByEmailUser.Email, and is useful for accessing the field via an interface.
+func (v *ReadUserByEmailReadUserByEmailUser) GetEmail() string { return v.Email }
+
+// ReadUserByEmailResponse is returned by ReadUserByEmail on success.
+type ReadUserByEmailResponse struct {
+	ReadUserByEmail ReadUserByEmailReadUserByEmailUser `json:"readUserByEmail"`
+}
+
+// GetReadUserByEmail returns ReadUserByEmailResponse.ReadUserByEmail, and is useful for accessing the field via an interface.
+func (v *ReadUserByEmailResponse) GetReadUserByEmail() ReadUserByEmailReadUserByEmailUser {
+	return v.ReadUserByEmail
+}
 
 type TickerStatsInput struct {
 	Symbol            string `json:"Symbol"`
@@ -1381,13 +1381,13 @@ func (v *__GetTickerLiquidityEstimateInput) GetSymbol() string { return v.Symbol
 // GetLimit returns __GetTickerLiquidityEstimateInput.Limit, and is useful for accessing the field via an interface.
 func (v *__GetTickerLiquidityEstimateInput) GetLimit() int { return v.Limit }
 
-// __GetUserByEmailInput is used internally by genqlient
-type __GetUserByEmailInput struct {
+// __ReadUserByEmailInput is used internally by genqlient
+type __ReadUserByEmailInput struct {
 	Email string `json:"email"`
 }
 
-// GetEmail returns __GetUserByEmailInput.Email, and is useful for accessing the field via an interface.
-func (v *__GetUserByEmailInput) GetEmail() string { return v.Email }
+// GetEmail returns __ReadUserByEmailInput.Email, and is useful for accessing the field via an interface.
+func (v *__ReadUserByEmailInput) GetEmail() string { return v.Email }
 
 // __UpdateCountersInput is used internally by genqlient
 type __UpdateCountersInput struct {
@@ -2105,30 +2105,30 @@ func GetTickerLiquidityEstimate(
 	return data_, err_
 }
 
-// The query executed by GetUserByEmail.
-const GetUserByEmail_Operation = `
-query GetUserByEmail ($email: String!) {
-	getUserByEmail(email: $email) {
+// The query executed by ReadUserByEmail.
+const ReadUserByEmail_Operation = `
+query ReadUserByEmail ($email: String!) {
+	readUserByEmail(email: $email) {
 		id
 		email
 	}
 }
 `
 
-func GetUserByEmail(
+func ReadUserByEmail(
 	ctx_ context.Context,
 	client_ graphql.Client,
 	email string,
-) (data_ *GetUserByEmailResponse, err_ error) {
+) (data_ *ReadUserByEmailResponse, err_ error) {
 	req_ := &graphql.Request{
-		OpName: "GetUserByEmail",
-		Query:  GetUserByEmail_Operation,
-		Variables: &__GetUserByEmailInput{
+		OpName: "ReadUserByEmail",
+		Query:  ReadUserByEmail_Operation,
+		Variables: &__ReadUserByEmailInput{
 			Email: email,
 		},
 	}
 
-	data_ = &GetUserByEmailResponse{}
+	data_ = &ReadUserByEmailResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
