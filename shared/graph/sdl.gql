@@ -102,6 +102,16 @@ input MarkAsTestedInput {
   Tested: Boolean!
 }
 
+type Mean {
+  Avg: Float!
+  Count: Int!
+}
+
+input MeanInput {
+  Avg: Float!
+  Count: Int!
+}
+
 type Mutation {
   """
   Creates a new market Activity Report
@@ -117,6 +127,16 @@ type Mutation {
   Deletes outcome reports for the matching given timestamp
   """
   deleteOutcomeReports(Timestamp: Int!): Boolean!
+
+  """
+  If the symbol exists, update it. If not, create it
+  """
+  upsertSymbolStats(input: UpsertSymbolStatsInput): SymbolStats!
+
+  """
+  Deletes Symbol Stats by Symbol
+  """
+  deleteSymbolStats(Symbol: String!): Boolean!
 
   """
   Creates a New strategy
@@ -326,7 +346,7 @@ type Query {
   TradeOutcomes(BotName: String!): [TradeOutcomeReport!]!
 
   """
-  Get Trade Outcome reports by giving Bot Name, Market Status & a given limit
+  Get Trade Outcome reports by Bot Name & Market Status
   """
   TradeOutcomesInFocus(
     BotName: String!
@@ -338,6 +358,16 @@ type Query {
   Get All Trade Outcome reports
   """
   TradeOutcomeReports: [TradeOutcomeReport!]!
+
+  """
+  Get All Symbol Stats
+  """
+  SymbolStatsReports: [SymbolStats!]!
+
+  """
+  Get Symbol Stats by Symbol
+  """
+  SymbolStatsBySymbol(Symbol: String!): SymbolStats!
 
   """
   Get Stategy by Bot Name
@@ -464,6 +494,14 @@ input StrategyInput {
   CreatedOn: Int!
 }
 
+type SymbolStats {
+  Symbol: String!
+  PositionCounts: [Mean!]!
+  LiquidityEstimate: Mean
+  MaxLiquidityEstimate: Float
+  MinLiquidityEstimate: Float
+}
+
 type Task {
   id: ID!
   title: String!
@@ -576,6 +614,14 @@ input UpdateUserInput {
   invitedBy: String
   joinedBallot: Boolean
   isPaidMember: Boolean
+}
+
+input UpsertSymbolStatsInput {
+  Symbol: String!
+  PositionCounts: [MeanInput]
+  LiquidityEstimate: MeanInput
+  MaxLiquidityEstimate: Float
+  MinLiquidityEstimate: Float
 }
 
 type User {

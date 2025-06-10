@@ -5,6 +5,7 @@ package graph
 import (
 	"context"
 
+	"cryptobotmanager.com/cbm-backend/shared/model"
 	"github.com/Khan/genqlient/graphql"
 )
 
@@ -928,6 +929,49 @@ func (v *GetPriceDataResponse) GetGetHistoricPrice() []GetPriceDataGetHistoricPr
 	return v.GetHistoricPrice
 }
 
+// GetSymbolStatsBySymbolResponse is returned by GetSymbolStatsBySymbol on success.
+type GetSymbolStatsBySymbolResponse struct {
+	// Get Symbol Stats by Symbol
+	SymbolStatsBySymbol GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats `json:"SymbolStatsBySymbol"`
+}
+
+// GetSymbolStatsBySymbol returns GetSymbolStatsBySymbolResponse.SymbolStatsBySymbol, and is useful for accessing the field via an interface.
+func (v *GetSymbolStatsBySymbolResponse) GetSymbolStatsBySymbol() GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats {
+	return v.SymbolStatsBySymbol
+}
+
+// GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats includes the requested fields of the GraphQL type SymbolStats.
+type GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats struct {
+	Symbol               string       `json:"Symbol"`
+	PositionCounts       []model.Mean `json:"PositionCounts"`
+	LiquidityEstimate    model.Mean   `json:"LiquidityEstimate"`
+	MaxLiquidityEstimate float64      `json:"MaxLiquidityEstimate"`
+	MinLiquidityEstimate float64      `json:"MinLiquidityEstimate"`
+}
+
+// GetSymbol returns GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats.Symbol, and is useful for accessing the field via an interface.
+func (v *GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats) GetSymbol() string { return v.Symbol }
+
+// GetPositionCounts returns GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats.PositionCounts, and is useful for accessing the field via an interface.
+func (v *GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats) GetPositionCounts() []model.Mean {
+	return v.PositionCounts
+}
+
+// GetLiquidityEstimate returns GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats.LiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats) GetLiquidityEstimate() model.Mean {
+	return v.LiquidityEstimate
+}
+
+// GetMaxLiquidityEstimate returns GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats.MaxLiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats) GetMaxLiquidityEstimate() float64 {
+	return v.MaxLiquidityEstimate
+}
+
+// GetMinLiquidityEstimate returns GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats.MinLiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats) GetMinLiquidityEstimate() float64 {
+	return v.MinLiquidityEstimate
+}
+
 // GetTickerLiquidityEstimateGetTickerStatsBySymbolTickerStats includes the requested fields of the GraphQL type TickerStats.
 type GetTickerLiquidityEstimateGetTickerStatsBySymbolTickerStats struct {
 	LiquidityEstimate string `json:"LiquidityEstimate"`
@@ -1099,6 +1143,68 @@ type UpdateCountersResponse struct {
 // GetUpdateCounters returns UpdateCountersResponse.UpdateCounters, and is useful for accessing the field via an interface.
 func (v *UpdateCountersResponse) GetUpdateCounters() bool { return v.UpdateCounters }
 
+// UpsertLiquidityEstimateResponse is returned by UpsertLiquidityEstimate on success.
+type UpsertLiquidityEstimateResponse struct {
+	// If the symbol exists, update it. If not, create it
+	UpsertSymbolStats UpsertLiquidityEstimateUpsertSymbolStats `json:"upsertSymbolStats"`
+}
+
+// GetUpsertSymbolStats returns UpsertLiquidityEstimateResponse.UpsertSymbolStats, and is useful for accessing the field via an interface.
+func (v *UpsertLiquidityEstimateResponse) GetUpsertSymbolStats() UpsertLiquidityEstimateUpsertSymbolStats {
+	return v.UpsertSymbolStats
+}
+
+// UpsertLiquidityEstimateUpsertSymbolStats includes the requested fields of the GraphQL type SymbolStats.
+type UpsertLiquidityEstimateUpsertSymbolStats struct {
+	Symbol               string     `json:"Symbol"`
+	LiquidityEstimate    model.Mean `json:"LiquidityEstimate"`
+	MaxLiquidityEstimate float64    `json:"MaxLiquidityEstimate"`
+	MinLiquidityEstimate float64    `json:"MinLiquidityEstimate"`
+}
+
+// GetSymbol returns UpsertLiquidityEstimateUpsertSymbolStats.Symbol, and is useful for accessing the field via an interface.
+func (v *UpsertLiquidityEstimateUpsertSymbolStats) GetSymbol() string { return v.Symbol }
+
+// GetLiquidityEstimate returns UpsertLiquidityEstimateUpsertSymbolStats.LiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *UpsertLiquidityEstimateUpsertSymbolStats) GetLiquidityEstimate() model.Mean {
+	return v.LiquidityEstimate
+}
+
+// GetMaxLiquidityEstimate returns UpsertLiquidityEstimateUpsertSymbolStats.MaxLiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *UpsertLiquidityEstimateUpsertSymbolStats) GetMaxLiquidityEstimate() float64 {
+	return v.MaxLiquidityEstimate
+}
+
+// GetMinLiquidityEstimate returns UpsertLiquidityEstimateUpsertSymbolStats.MinLiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *UpsertLiquidityEstimateUpsertSymbolStats) GetMinLiquidityEstimate() float64 {
+	return v.MinLiquidityEstimate
+}
+
+// UpsertPositionCountsResponse is returned by UpsertPositionCounts on success.
+type UpsertPositionCountsResponse struct {
+	// If the symbol exists, update it. If not, create it
+	UpsertSymbolStats UpsertPositionCountsUpsertSymbolStats `json:"upsertSymbolStats"`
+}
+
+// GetUpsertSymbolStats returns UpsertPositionCountsResponse.UpsertSymbolStats, and is useful for accessing the field via an interface.
+func (v *UpsertPositionCountsResponse) GetUpsertSymbolStats() UpsertPositionCountsUpsertSymbolStats {
+	return v.UpsertSymbolStats
+}
+
+// UpsertPositionCountsUpsertSymbolStats includes the requested fields of the GraphQL type SymbolStats.
+type UpsertPositionCountsUpsertSymbolStats struct {
+	Symbol         string       `json:"Symbol"`
+	PositionCounts []model.Mean `json:"PositionCounts"`
+}
+
+// GetSymbol returns UpsertPositionCountsUpsertSymbolStats.Symbol, and is useful for accessing the field via an interface.
+func (v *UpsertPositionCountsUpsertSymbolStats) GetSymbol() string { return v.Symbol }
+
+// GetPositionCounts returns UpsertPositionCountsUpsertSymbolStats.PositionCounts, and is useful for accessing the field via an interface.
+func (v *UpsertPositionCountsUpsertSymbolStats) GetPositionCounts() []model.Mean {
+	return v.PositionCounts
+}
+
 // __CreateActivityReportInput is used internally by genqlient
 type __CreateActivityReportInput struct {
 	TimeStamp      int     `json:"timeStamp"`
@@ -1255,6 +1361,14 @@ func (v *__GetPriceDataInput) GetSymbol() string { return v.Symbol }
 // GetLimit returns __GetPriceDataInput.Limit, and is useful for accessing the field via an interface.
 func (v *__GetPriceDataInput) GetLimit() int { return v.Limit }
 
+// __GetSymbolStatsBySymbolInput is used internally by genqlient
+type __GetSymbolStatsBySymbolInput struct {
+	Symbol string `json:"symbol"`
+}
+
+// GetSymbol returns __GetSymbolStatsBySymbolInput.Symbol, and is useful for accessing the field via an interface.
+func (v *__GetSymbolStatsBySymbolInput) GetSymbol() string { return v.Symbol }
+
 // __GetTickerLiquidityEstimateInput is used internally by genqlient
 type __GetTickerLiquidityEstimateInput struct {
 	Symbol string `json:"symbol"`
@@ -1282,6 +1396,44 @@ type __UpdateCountersInput struct {
 
 // GetInput returns __UpdateCountersInput.Input, and is useful for accessing the field via an interface.
 func (v *__UpdateCountersInput) GetInput() UpdateCountersInput { return v.Input }
+
+// __UpsertLiquidityEstimateInput is used internally by genqlient
+type __UpsertLiquidityEstimateInput struct {
+	Symbol               string          `json:"symbol"`
+	LiquidityEstimate    model.MeanInput `json:"liquidityEstimate"`
+	MaxLiquidityEstimate float64         `json:"maxLiquidityEstimate"`
+	MinLiquidityEstimate float64         `json:"minLiquidityEstimate"`
+}
+
+// GetSymbol returns __UpsertLiquidityEstimateInput.Symbol, and is useful for accessing the field via an interface.
+func (v *__UpsertLiquidityEstimateInput) GetSymbol() string { return v.Symbol }
+
+// GetLiquidityEstimate returns __UpsertLiquidityEstimateInput.LiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *__UpsertLiquidityEstimateInput) GetLiquidityEstimate() model.MeanInput {
+	return v.LiquidityEstimate
+}
+
+// GetMaxLiquidityEstimate returns __UpsertLiquidityEstimateInput.MaxLiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *__UpsertLiquidityEstimateInput) GetMaxLiquidityEstimate() float64 {
+	return v.MaxLiquidityEstimate
+}
+
+// GetMinLiquidityEstimate returns __UpsertLiquidityEstimateInput.MinLiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *__UpsertLiquidityEstimateInput) GetMinLiquidityEstimate() float64 {
+	return v.MinLiquidityEstimate
+}
+
+// __UpsertPositionCountsInput is used internally by genqlient
+type __UpsertPositionCountsInput struct {
+	Symbol         string            `json:"symbol"`
+	PositionCounts []model.MeanInput `json:"positionCounts"`
+}
+
+// GetSymbol returns __UpsertPositionCountsInput.Symbol, and is useful for accessing the field via an interface.
+func (v *__UpsertPositionCountsInput) GetSymbol() string { return v.Symbol }
+
+// GetPositionCounts returns __UpsertPositionCountsInput.PositionCounts, and is useful for accessing the field via an interface.
+func (v *__UpsertPositionCountsInput) GetPositionCounts() []model.MeanInput { return v.PositionCounts }
 
 // The mutation executed by CreateActivityReport.
 const CreateActivityReport_Operation = `
@@ -1873,6 +2025,50 @@ func GetPriceData(
 	return data_, err_
 }
 
+// The query executed by GetSymbolStatsBySymbol.
+const GetSymbolStatsBySymbol_Operation = `
+query GetSymbolStatsBySymbol ($symbol: String!) {
+	SymbolStatsBySymbol(Symbol: $symbol) {
+		Symbol
+		PositionCounts {
+			Avg
+			Count
+		}
+		LiquidityEstimate {
+			Avg
+			Count
+		}
+		MaxLiquidityEstimate
+		MinLiquidityEstimate
+	}
+}
+`
+
+func GetSymbolStatsBySymbol(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	symbol string,
+) (data_ *GetSymbolStatsBySymbolResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetSymbolStatsBySymbol",
+		Query:  GetSymbolStatsBySymbol_Operation,
+		Variables: &__GetSymbolStatsBySymbolInput{
+			Symbol: symbol,
+		},
+	}
+
+	data_ = &GetSymbolStatsBySymbolResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The query executed by GetTickerLiquidityEstimate.
 const GetTickerLiquidityEstimate_Operation = `
 query GetTickerLiquidityEstimate ($symbol: String!, $limit: Int!) {
@@ -1965,6 +2161,92 @@ func UpdateCounters(
 	}
 
 	data_ = &UpdateCountersResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by UpsertLiquidityEstimate.
+const UpsertLiquidityEstimate_Operation = `
+mutation UpsertLiquidityEstimate ($symbol: String!, $liquidityEstimate: MeanInput!, $maxLiquidityEstimate: Float!, $minLiquidityEstimate: Float!) {
+	upsertSymbolStats(input: {Symbol:$symbol,LiquidityEstimate:$liquidityEstimate,MaxLiquidityEstimate:$maxLiquidityEstimate,MinLiquidityEstimate:$minLiquidityEstimate}) {
+		Symbol
+		LiquidityEstimate {
+			Avg
+			Count
+		}
+		MaxLiquidityEstimate
+		MinLiquidityEstimate
+	}
+}
+`
+
+func UpsertLiquidityEstimate(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	symbol string,
+	liquidityEstimate model.MeanInput,
+	maxLiquidityEstimate float64,
+	minLiquidityEstimate float64,
+) (data_ *UpsertLiquidityEstimateResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "UpsertLiquidityEstimate",
+		Query:  UpsertLiquidityEstimate_Operation,
+		Variables: &__UpsertLiquidityEstimateInput{
+			Symbol:               symbol,
+			LiquidityEstimate:    liquidityEstimate,
+			MaxLiquidityEstimate: maxLiquidityEstimate,
+			MinLiquidityEstimate: minLiquidityEstimate,
+		},
+	}
+
+	data_ = &UpsertLiquidityEstimateResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by UpsertPositionCounts.
+const UpsertPositionCounts_Operation = `
+mutation UpsertPositionCounts ($symbol: String!, $positionCounts: [MeanInput]) {
+	upsertSymbolStats(input: {Symbol:$symbol,PositionCounts:$positionCounts}) {
+		Symbol
+		PositionCounts {
+			Avg
+			Count
+		}
+	}
+}
+`
+
+func UpsertPositionCounts(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	symbol string,
+	positionCounts []model.MeanInput,
+) (data_ *UpsertPositionCountsResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "UpsertPositionCounts",
+		Query:  UpsertPositionCounts_Operation,
+		Variables: &__UpsertPositionCountsInput{
+			Symbol:         symbol,
+			PositionCounts: positionCounts,
+		},
+	}
+
+	data_ = &UpsertPositionCountsResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

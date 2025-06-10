@@ -87,6 +87,16 @@ type MarkAsTestedInput struct {
 	Tested          bool   `json:"Tested"`
 }
 
+type Mean struct {
+	Avg   float64 `json:"Avg"`
+	Count int     `json:"Count"`
+}
+
+type MeanInput struct {
+	Avg   float64 `json:"Avg"`
+	Count int     `json:"Count"`
+}
+
 type Mutation struct {
 }
 
@@ -226,6 +236,14 @@ type StrategyInput struct {
 	CreatedOn            int      `json:"CreatedOn"`
 }
 
+type SymbolStats struct {
+	Symbol               string   `json:"Symbol"`
+	PositionCounts       []*Mean  `json:"PositionCounts"`
+	LiquidityEstimate    *Mean    `json:"LiquidityEstimate,omitempty"`
+	MaxLiquidityEstimate *float64 `json:"MaxLiquidityEstimate,omitempty"`
+	MinLiquidityEstimate *float64 `json:"MinLiquidityEstimate,omitempty"`
+}
+
 type Task struct {
 	ID          string    `json:"id"`
 	Title       string    `json:"title"`
@@ -338,6 +356,14 @@ type UpdateUserInput struct {
 	InvitedBy              *string `json:"invitedBy,omitempty"`
 	JoinedBallot           *bool   `json:"joinedBallot,omitempty"`
 	IsPaidMember           *bool   `json:"isPaidMember,omitempty"`
+}
+
+type UpsertSymbolStatsInput struct {
+	Symbol               string       `json:"Symbol"`
+	PositionCounts       []*MeanInput `json:"PositionCounts,omitempty"`
+	LiquidityEstimate    *MeanInput   `json:"LiquidityEstimate,omitempty"`
+	MaxLiquidityEstimate *float64     `json:"MaxLiquidityEstimate,omitempty"`
+	MinLiquidityEstimate *float64     `json:"MinLiquidityEstimate,omitempty"`
 }
 
 type User struct {

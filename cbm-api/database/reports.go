@@ -10,6 +10,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -30,6 +31,94 @@ func (db *DB) SaveActivityReport(input *model.NewActivityReport) *model.Activity
 		TopBGain:       input.TopBGain,
 		TopCGain:       input.TopCGain,
 		FearGreedIndex: input.FearGreedIndex,
+	}
+}
+
+func (db *DB) UpsertSymbolStats(input *model.UpsertSymbolStatsInput) *model.SymbolStats {
+	collection := db.client.Database("go_trading_db").Collection("SymbolStats")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"symbol": input.Symbol}
+
+	// Fetch current document
+	var existing model.SymbolStats
+	err := collection.FindOne(ctx, filter).Decode(&existing)
+	if err != nil && err != mongo.ErrNoDocuments {
+		log.Error().Err(err).Msg("Failed to fetch existing symbol stats")
+		return nil
+	}
+
+	// Merge PositionCounts averages
+	mergedCounts := input.PositionCounts
+	if len(existing.PositionCounts) == len(input.PositionCounts) {
+		for i := range input.PositionCounts {
+			old := existing.PositionCounts[i]
+			new := input.PositionCounts[i]
+			totalCount := old.Count + new.Count
+			if totalCount > 0 {
+				mergedCounts[i].Avg = ((old.Avg * float64(old.Count)) + (new.Avg * float64(new.Count))) / float64(totalCount)
+				mergedCounts[i].Count = totalCount
+			}
+		}
+	}
+
+	// Merge LiquidityEstimate
+	var mergedLiquidity *model.Mean
+	if input.LiquidityEstimate != nil {
+		mergedLiquidity = &model.Mean{
+			Avg:   input.LiquidityEstimate.Avg,
+			Count: input.LiquidityEstimate.Count,
+		}
+	}
+	if existing.LiquidityEstimate != nil && mergedLiquidity != nil {
+		old := existing.LiquidityEstimate
+		new := mergedLiquidity
+		totalCount := old.Count + new.Count
+		if totalCount > 0 {
+			mergedLiquidity = &model.Mean{
+				Avg:   ((old.Avg * float64(old.Count)) + (new.Avg * float64(new.Count))) / float64(totalCount),
+				Count: totalCount,
+			}
+		}
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"symbol":               input.Symbol,
+			"positionCounts":       mergedCounts,
+			"avgLiquidityEstimate": mergedLiquidity,
+			"maxLiquidityEstimate": input.MaxLiquidityEstimate,
+			"minLiquidityEstimate": input.MinLiquidityEstimate,
+		},
+	}
+
+	opts := options.Update().SetUpsert(true)
+	_, err = collection.UpdateOne(ctx, filter, update, opts)
+	if err != nil {
+		log.Error().Err(err).Msg("Error in upsert")
+		return nil
+	}
+
+	// Convert []*model.MeanInput to []*model.Mean
+	var positionCounts []*model.Mean
+	for _, m := range mergedCounts {
+		if m != nil {
+			positionCounts = append(positionCounts, &model.Mean{
+				Avg:   m.Avg,
+				Count: m.Count,
+			})
+		} else {
+			positionCounts = append(positionCounts, nil)
+		}
+	}
+
+	return &model.SymbolStats{
+		Symbol:               input.Symbol,
+		PositionCounts:       positionCounts,
+		LiquidityEstimate:    mergedLiquidity,
+		MaxLiquidityEstimate: input.MaxLiquidityEstimate,
+		MinLiquidityEstimate: input.MinLiquidityEstimate,
 	}
 }
 
@@ -128,6 +217,39 @@ func (db *DB) AllTradeOutcomeReports() []*model.TradeOutcomeReport {
 	return TradeOutcomeReports
 }
 
+func (db *DB) FindSymbolStatsBySymbol(ctx context.Context, symbol string) *model.SymbolStats {
+	collection := db.client.Database("go_trading_db").Collection("SymbolStats")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	res := collection.FindOne(ctx, bson.M{"symbol": symbol})
+	symbolStats := model.SymbolStats{}
+	res.Decode(&symbolStats)
+	return &symbolStats
+}
+
+func (db *DB) AllSymbolStats() []*model.SymbolStats {
+	collection := db.client.Database("go_trading_db").Collection("SymbolStats")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	cur, err := collection.Find(ctx, bson.D{})
+	if err != nil {
+		log.Error().Err(err).Msg("Error All func:")
+	}
+
+	var symbolStats []*model.SymbolStats
+	for cur.Next(ctx) {
+		var stat model.SymbolStats
+		err := cur.Decode(&stat)
+		if err != nil {
+			log.Error().Err(err).Msg("Error decoding document:")
+		}
+		symbolStats = append(symbolStats, &stat)
+	}
+
+	return symbolStats
+}
+
 // TradeOutcomeReportsByBot retrieves trade outcome reports based on the BotName.
 func (db *DB) TradeOutcomeReportsByBotName(ctx context.Context, botName string) ([]*model.TradeOutcomeReport, error) {
 	collection := db.client.Database("go_trading_db").Collection("TradeOutcomeReports")
@@ -190,6 +312,21 @@ func (db *DB) TradeOutcomeReportsByBotNameAndMarketStatus(ctx context.Context, b
 	}
 
 	return tradeOutcomeReports, nil
+}
+
+func (db *DB) DeleteSymbolStats(ctx context.Context, symbol string) (bool, error) {
+	collection := db.client.Database("go_trading_db").Collection("SymbolStats")
+
+	// Define a filter to match documents with the specified symbol
+	filter := bson.D{{"symbol", symbol}}
+
+	result, err := collection.DeleteOne(ctx, filter)
+	if err != nil {
+		log.Error().Err(err).Msg("Error deleting symbol stats from the database:")
+		return false, err
+	}
+
+	return result.DeletedCount > 0, nil
 }
 
 // DeleteStrategy deletes a strategy from the database.

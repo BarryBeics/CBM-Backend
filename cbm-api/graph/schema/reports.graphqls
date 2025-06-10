@@ -1,3 +1,16 @@
+# === Reusable Types ===
+type Mean {
+  Avg: Float!
+  Count: Int!
+}
+
+input MeanInput {
+  Avg: Float!
+  Count: Int!
+}
+
+
+# === Activity Domain ===
 type ActivityReport {
   _id: ID!
   Timestamp: Int!
@@ -9,14 +22,12 @@ type ActivityReport {
   FearGreedIndex: Int!
 }
 
-input NewActivityReport {
-  Timestamp: Int!
-  Qty: Int!
-  AvgGain: Float!
-  TopAGain: Float
-  TopBGain: Float
-  TopCGain: Float
-  FearGreedIndex: Int!
+type SymbolStats {
+  Symbol: String!
+  PositionCounts: [Mean!]!
+  LiquidityEstimate: Mean
+  MaxLiquidityEstimate: Float
+  MinLiquidityEstimate: Float
 }
 
 type TradeOutcomeReport {
@@ -34,6 +45,29 @@ type TradeOutcomeReport {
   MarketStatus: String!
 }
 
+
+# Inputs for SymbolStats
+input UpsertSymbolStatsInput {
+  Symbol: String!
+  PositionCounts: [MeanInput]
+  LiquidityEstimate: MeanInput
+  MaxLiquidityEstimate: Float
+  MinLiquidityEstimate: Float
+}
+
+
+# Input for ActivityReport
+input NewActivityReport {
+  Timestamp: Int!
+  Qty: Int!
+  AvgGain: Float!
+  TopAGain: Float
+  TopBGain: Float
+  TopCGain: Float
+  FearGreedIndex: Int!
+}
+
+# Input for TradeOutcomeReport
 input NewTradeOutcomeReport {
   Timestamp: Int!
   BotName: String!
@@ -50,34 +84,54 @@ input NewTradeOutcomeReport {
 
 
 type Mutation {
+  # === Activity Reports ===
   "Creates a new market Activity Report"
   createActivityReport(input: NewActivityReport): ActivityReport!
 
+  # === Trade Outcomes ===
   "Creates a new Trade Outcome Report"
   createTradeOutcomeReport(input: NewTradeOutcomeReport): TradeOutcomeReport!
 
   "Deletes outcome reports for the matching given timestamp"
   deleteOutcomeReports(Timestamp: Int!): Boolean!
+
+  # === Symbol Stats ===
+  "If the symbol exists, update it. If not, create it"
+  upsertSymbolStats(input: UpsertSymbolStatsInput): SymbolStats!
+
+  "Deletes Symbol Stats by Symbol"
+  deleteSymbolStats(Symbol: String!): Boolean!
 }
 
+
 type Query {
+  # === Activity Reports ===
   "Get activity reports by ID"
   ActivityReport(_id: ID!): ActivityReport!
-
+  
   "Get All activity reports"
   ActivityReports: [ActivityReport!]!
 
+  # === Trade Outcome Reports ===
   "Get Trade Outcome reports by ID"
   TradeOutcomeReport(_id: ID!): TradeOutcomeReport!
 
   "Get Trade Outcome reports by Bot Name"
   TradeOutcomes(BotName: String!): [TradeOutcomeReport!]!
 
-  "Get Trade Outcome reports by giving Bot Name, Market Status & a given limit"
+  "Get Trade Outcome reports by Bot Name & Market Status"
   TradeOutcomesInFocus(BotName: String!, MarketStatus: String!, limit: Int): [TradeOutcomeReport!]!
 
-  "Get All Trade Outcome reports"
+"Get All Trade Outcome reports"
   TradeOutcomeReports: [TradeOutcomeReport!]!
+
+  # === Symbol Stats ===
+  "Get All Symbol Stats"
+  SymbolStatsReports: [SymbolStats!]!
+
+  "Get Symbol Stats by Symbol"
+  SymbolStatsBySymbol(Symbol: String!): SymbolStats!
 }
+
 
 
