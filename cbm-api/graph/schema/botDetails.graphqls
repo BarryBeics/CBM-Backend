@@ -67,13 +67,13 @@ input MarkAsTestedInput {
   Tested: Boolean!
 }
 
-# Extend the existing Query type with a new query to get a strategy by name
+# Extend the existing Query type with a new query to read a strategy by name
 extend type Query {
-  "Get Stategy by Bot Name"
-  getStrategyByName(BotInstanceName: String!): Strategy
+  "Read Stategy by Bot Name"
+  readStrategyByName(BotInstanceName: String!): Strategy
 
-  "Get all strategies"
-  getAllStrategies: [Strategy]
+  "Read all strategies"
+  readAllStrategies: [Strategy]
 }
 
 # Extend the existing Mutation type with new mutations for CRUD operations on strategies
@@ -91,5 +91,5 @@ extend type Mutation {
   updateCounters(input: UpdateCountersInput!): Boolean
 
   "Set the Tested boolen value by bot Name"
-  markAsTested(input: MarkAsTestedInput!):Boolean
+  UpdateMarkAsTested(input: MarkAsTestedInput!):Boolean
 }

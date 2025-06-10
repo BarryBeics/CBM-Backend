@@ -6,6 +6,7 @@ package resolvers
 
 import (
 	"context"
+	"fmt"
 
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	"github.com/rs/zerolog/log"
@@ -61,22 +62,15 @@ func (r *mutationResolver) UpdateCounters(ctx context.Context, input model.Updat
 	return &success, nil
 }
 
-// MarkAsTested is the resolver for the markAsTested field.
-func (r *mutationResolver) MarkAsTested(ctx context.Context, input model.MarkAsTestedInput) (*bool, error) {
-	err := db.UpdateTested(ctx, input.BotInstanceName, input.Tested)
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to update strategy is tested status.")
-		return nil, err
-	}
-
-	success := true
-	return &success, nil
+// UpdateMarkAsTested is the resolver for the UpdateMarkAsTested field.
+func (r *mutationResolver) UpdateMarkAsTested(ctx context.Context, input model.MarkAsTestedInput) (*bool, error) {
+	panic(fmt.Errorf("not implemented: UpdateMarkAsTested - UpdateMarkAsTested"))
 }
 
-// GetStrategyByName is the resolver for the getStrategyByName field.
-func (r *queryResolver) GetStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error) {
+// ReadStrategyByName is the resolver for the readStrategyByName field.
+func (r *queryResolver) ReadStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error) {
 	// Assuming db is an instance of your DB type
-	strategy, err := db.GetStrategyByName(ctx, botInstanceName)
+	strategy, err := db.ReadStrategyByName(ctx, botInstanceName)
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting strategy by name:")
 		return nil, err
@@ -85,10 +79,10 @@ func (r *queryResolver) GetStrategyByName(ctx context.Context, botInstanceName s
 	return strategy, nil
 }
 
-// GetAllStrategies is the resolver for the getAllStrategies field.
-func (r *queryResolver) GetAllStrategies(ctx context.Context) ([]*model.Strategy, error) {
+// ReadAllStrategies is the resolver for the readAllStrategies field.
+func (r *queryResolver) ReadAllStrategies(ctx context.Context) ([]*model.Strategy, error) {
 	// Assuming db is an instance of your DB type
-	strategies, err := db.GetAllStrategies(ctx)
+	strategies, err := db.ReadAllStrategies(ctx)
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting all strategies:")
 		return nil, err
@@ -96,3 +90,22 @@ func (r *queryResolver) GetAllStrategies(ctx context.Context) ([]*model.Strategy
 
 	return strategies, nil
 }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	func (r *mutationResolver) MarkAsTested(ctx context.Context, input model.MarkAsTestedInput) (*bool, error) {
+	err := db.UpdateMarkAsTested(ctx, input.BotInstanceName, input.Tested)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to update strategy is tested status.")
+		return nil, err
+	}
+
+	success := true
+	return &success, nil
+}
+*/

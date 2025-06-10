@@ -161,7 +161,7 @@ type Mutation {
   """
   Set the Tested boolen value by bot Name
   """
-  markAsTested(input: MarkAsTestedInput!): Boolean
+  UpdateMarkAsTested(input: MarkAsTestedInput!): Boolean
 
   """
   Creates a new user
@@ -370,14 +370,14 @@ type Query {
   SymbolStatsBySymbol(Symbol: String!): SymbolStats!
 
   """
-  Get Stategy by Bot Name
+  Read Stategy by Bot Name
   """
-  getStrategyByName(BotInstanceName: String!): Strategy
+  readStrategyByName(BotInstanceName: String!): Strategy
 
   """
-  Get all strategies
+  Read all strategies
   """
-  getAllStrategies: [Strategy]
+  readAllStrategies: [Strategy]
   readUserByEmail(email: String!): User
   readAllUsers: [User!]!
   readUsersByRole(role: String!): [User!]!

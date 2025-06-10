@@ -45,79 +45,8 @@ func (db *DB) CreateStrategy(ctx context.Context, input model.StrategyInput) (*m
 	return strategy, nil
 }
 
-// UpdateStrategy updates an existing strategy in the database.
-func (db *DB) UpdateStrategy(ctx context.Context, botInstanceName string, input model.StrategyInput) (*model.Strategy, error) {
-	collection := db.client.Database("go_trading_db").Collection("BotDetails")
-
-	// Convert StrategyInput to Strategy model
-	updatedStrategy := &model.Strategy{
-		BotInstanceName:      input.BotInstanceName,
-		TradeDuration:        input.TradeDuration,
-		IncrementsAtr:        input.IncrementsAtr,
-		LongSMADuration:      input.LongSMADuration,
-		ShortSMADuration:     input.ShortSMADuration,
-		WINCounter:           input.WINCounter,
-		LOSSCounter:          input.LOSSCounter,
-		TIMEOUTGainCounter:   input.TIMEOUTGainCounter,
-		TIMEOUTLossCounter:   input.TIMEOUTLossCounter,
-		NetGainCounter:       input.NetGainCounter,
-		NetLossCounter:       input.NetLossCounter,
-		AccountBalance:       input.AccountBalance,
-		MovingAveMomentum:    input.MovingAveMomentum,
-		TakeProfitPercentage: &input.TakeProfitPercentage,
-		StopLossPercentage:   &input.StopLossPercentage,
-		ATRtollerance:        input.ATRtollerance,
-		FeesTotal:            input.FeesTotal,
-		Tested:               input.Tested,
-		Owner:                &input.Owner,
-		CreatedOn:            input.CreatedOn,
-	}
-
-	filter := bson.D{{"botinstancename", botInstanceName}}
-	update := bson.D{{"$set", updatedStrategy}}
-
-	_, err := collection.UpdateOne(ctx, filter, update)
-	if err != nil {
-		log.Error().Err(err).Msg("Error updating strategy in the database:")
-		return nil, err
-	}
-
-	return updatedStrategy, nil
-}
-
-// DeleteStrategy deletes a strategy from the database.
-func (db *DB) DeleteStrategy(ctx context.Context, botInstanceName string) (bool, error) {
-	collection := db.client.Database("go_trading_db").Collection("BotDetails")
-
-	filter := bson.D{{"botinstancename", botInstanceName}}
-
-	result, err := collection.DeleteOne(ctx, filter)
-	if err != nil {
-		log.Error().Err(err).Msg("Error deleting strategy from the database:")
-		return false, err
-	}
-
-	return result.DeletedCount > 0, nil
-}
-
-// GetStrategyByName retrieves a strategy from the database by its name.
-func (db *DB) GetStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error) {
-	collection := db.client.Database("go_trading_db").Collection("BotDetails")
-
-	filter := bson.D{{"botinstancename", botInstanceName}}
-
-	var strategy model.Strategy
-	err := collection.FindOne(ctx, filter).Decode(&strategy)
-	if err != nil {
-		log.Error().Err(err).Msg("Error getting strategy from the database:")
-		return nil, err
-	}
-
-	return &strategy, nil
-}
-
-// GetAllStrategies retrieves all strategies from the database.
-func (db *DB) GetAllStrategies(ctx context.Context) ([]*model.Strategy, error) {
+// ReadAllStrategies retrieves all strategies from the database.
+func (db *DB) ReadAllStrategies(ctx context.Context) ([]*model.Strategy, error) {
 	collection := db.client.Database("go_trading_db").Collection("BotDetails")
 
 	cursor, err := collection.Find(ctx, bson.D{})
@@ -134,6 +63,22 @@ func (db *DB) GetAllStrategies(ctx context.Context) ([]*model.Strategy, error) {
 	}
 
 	return strategies, nil
+}
+
+// ReadStrategyByName retrieves a strategy from the database by its name.
+func (db *DB) ReadStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error) {
+	collection := db.client.Database("go_trading_db").Collection("BotDetails")
+
+	filter := bson.D{{"botinstancename", botInstanceName}}
+
+	var strategy model.Strategy
+	err := collection.FindOne(ctx, filter).Decode(&strategy)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting strategy from the database:")
+		return nil, err
+	}
+
+	return &strategy, nil
 }
 
 // UpdateCountersAndBalance updates WIN, LOSS, TIMEOUT counters, and closingBalance in the database for a specific strategy.
@@ -196,8 +141,8 @@ func (db *DB) UpdateCountersAndBalance(ctx context.Context, botInstanceName stri
 	return nil
 }
 
-// UpdateTested updates the tested status in the database for a specific strategy.
-func (db *DB) UpdateTested(ctx context.Context, botInstanceName string, tested bool) error {
+// UpdateMarkAsTested updates the tested status in the database for a specific strategy.
+func (db *DB) UpdateMarkAsTested(ctx context.Context, botInstanceName string, tested bool) error {
 	collection := db.client.Database("go_trading_db").Collection("BotDetails")
 
 	filter := bson.D{{"botinstancename", botInstanceName}}
@@ -210,4 +155,59 @@ func (db *DB) UpdateTested(ctx context.Context, botInstanceName string, tested b
 	}
 
 	return nil
+}
+
+// UpdateStrategy updates an existing strategy in the database.
+func (db *DB) UpdateStrategy(ctx context.Context, botInstanceName string, input model.StrategyInput) (*model.Strategy, error) {
+	collection := db.client.Database("go_trading_db").Collection("BotDetails")
+
+	// Convert StrategyInput to Strategy model
+	updatedStrategy := &model.Strategy{
+		BotInstanceName:      input.BotInstanceName,
+		TradeDuration:        input.TradeDuration,
+		IncrementsAtr:        input.IncrementsAtr,
+		LongSMADuration:      input.LongSMADuration,
+		ShortSMADuration:     input.ShortSMADuration,
+		WINCounter:           input.WINCounter,
+		LOSSCounter:          input.LOSSCounter,
+		TIMEOUTGainCounter:   input.TIMEOUTGainCounter,
+		TIMEOUTLossCounter:   input.TIMEOUTLossCounter,
+		NetGainCounter:       input.NetGainCounter,
+		NetLossCounter:       input.NetLossCounter,
+		AccountBalance:       input.AccountBalance,
+		MovingAveMomentum:    input.MovingAveMomentum,
+		TakeProfitPercentage: &input.TakeProfitPercentage,
+		StopLossPercentage:   &input.StopLossPercentage,
+		ATRtollerance:        input.ATRtollerance,
+		FeesTotal:            input.FeesTotal,
+		Tested:               input.Tested,
+		Owner:                &input.Owner,
+		CreatedOn:            input.CreatedOn,
+	}
+
+	filter := bson.D{{"botinstancename", botInstanceName}}
+	update := bson.D{{"$set", updatedStrategy}}
+
+	_, err := collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		log.Error().Err(err).Msg("Error updating strategy in the database:")
+		return nil, err
+	}
+
+	return updatedStrategy, nil
+}
+
+// DeleteStrategy deletes a strategy from the database.
+func (db *DB) DeleteStrategy(ctx context.Context, botInstanceName string) (bool, error) {
+	collection := db.client.Database("go_trading_db").Collection("BotDetails")
+
+	filter := bson.D{{"botinstancename", botInstanceName}}
+
+	result, err := collection.DeleteOne(ctx, filter)
+	if err != nil {
+		log.Error().Err(err).Msg("Error deleting strategy from the database:")
+		return false, err
+	}
+
+	return result.DeletedCount > 0, nil
 }

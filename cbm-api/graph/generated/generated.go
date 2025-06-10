@@ -104,8 +104,8 @@ type ComplexityRoot struct {
 		DeleteTask                func(childComplexity int, id string) int
 		DeleteUser                func(childComplexity int, email string) int
 		Login                     func(childComplexity int, input model.LoginInput) int
-		MarkAsTested              func(childComplexity int, input model.MarkAsTestedInput) int
 		UpdateCounters            func(childComplexity int, input model.UpdateCountersInput) int
+		UpdateMarkAsTested        func(childComplexity int, input model.MarkAsTestedInput) int
 		UpdateProject             func(childComplexity int, input model.UpdateProjectInput) int
 		UpdateStrategy            func(childComplexity int, botInstanceName string, input model.StrategyInput) int
 		UpdateTask                func(childComplexity int, input model.UpdateTaskInput) int
@@ -149,17 +149,17 @@ type ComplexityRoot struct {
 		AvailableSymbols                  func(childComplexity int) int
 		AvailableTickerSymbols            func(childComplexity int) int
 		FilterProjects                    func(childComplexity int, filter *model.ProjectFilterInput) int
-		GetAllStrategies                  func(childComplexity int) int
 		GetHistoricKlineData              func(childComplexity int, symbol string, limit *int) int
 		GetHistoricPrice                  func(childComplexity int, symbol string, limit *int) int
 		GetHistoricPricesAtTimestamp      func(childComplexity int, timestamp int) int
 		GetHistoricTickerStatsAtTimestamp func(childComplexity int, timestamp int) int
-		GetStrategyByName                 func(childComplexity int, botInstanceName string) int
 		GetTickerStatsBySymbol            func(childComplexity int, symbol string, limit *int) int
 		GetTickerStatsSnapshotCount       func(childComplexity int) int
 		GetUniqueTimestampCount           func(childComplexity int) int
 		ProjectByID                       func(childComplexity int, id string) int
+		ReadAllStrategies                 func(childComplexity int) int
 		ReadAllUsers                      func(childComplexity int) int
+		ReadStrategyByName                func(childComplexity int, botInstanceName string) int
 		ReadUserByEmail                   func(childComplexity int, email string) int
 		ReadUsersByRole                   func(childComplexity int, role string) int
 		SymbolStatsBySymbol               func(childComplexity int, symbol string) int
@@ -279,7 +279,7 @@ type MutationResolver interface {
 	UpdateStrategy(ctx context.Context, botInstanceName string, input model.StrategyInput) (*model.Strategy, error)
 	DeleteStrategy(ctx context.Context, botInstanceName string) (*bool, error)
 	UpdateCounters(ctx context.Context, input model.UpdateCountersInput) (*bool, error)
-	MarkAsTested(ctx context.Context, input model.MarkAsTestedInput) (*bool, error)
+	UpdateMarkAsTested(ctx context.Context, input model.MarkAsTestedInput) (*bool, error)
 	CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error)
 	UpdateUser(ctx context.Context, input model.UpdateUserInput) (*model.User, error)
 	DeleteUser(ctx context.Context, email string) (*bool, error)
@@ -305,8 +305,8 @@ type QueryResolver interface {
 	TradeOutcomeReports(ctx context.Context) ([]*model.TradeOutcomeReport, error)
 	SymbolStatsReports(ctx context.Context) ([]*model.SymbolStats, error)
 	SymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error)
-	GetStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error)
-	GetAllStrategies(ctx context.Context) ([]*model.Strategy, error)
+	ReadStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error)
+	ReadAllStrategies(ctx context.Context) ([]*model.Strategy, error)
 	ReadUserByEmail(ctx context.Context, email string) (*model.User, error)
 	ReadAllUsers(ctx context.Context) ([]*model.User, error)
 	ReadUsersByRole(ctx context.Context, role string) ([]*model.User, error)
@@ -700,18 +700,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.Login(childComplexity, args["input"].(model.LoginInput)), true
 
-	case "Mutation.markAsTested":
-		if e.complexity.Mutation.MarkAsTested == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_markAsTested_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.MarkAsTested(childComplexity, args["input"].(model.MarkAsTestedInput)), true
-
 	case "Mutation.updateCounters":
 		if e.complexity.Mutation.UpdateCounters == nil {
 			break
@@ -723,6 +711,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.UpdateCounters(childComplexity, args["input"].(model.UpdateCountersInput)), true
+
+	case "Mutation.UpdateMarkAsTested":
+		if e.complexity.Mutation.UpdateMarkAsTested == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_UpdateMarkAsTested_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateMarkAsTested(childComplexity, args["input"].(model.MarkAsTestedInput)), true
 
 	case "Mutation.updateProject":
 		if e.complexity.Mutation.UpdateProject == nil {
@@ -976,13 +976,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.FilterProjects(childComplexity, args["filter"].(*model.ProjectFilterInput)), true
 
-	case "Query.getAllStrategies":
-		if e.complexity.Query.GetAllStrategies == nil {
-			break
-		}
-
-		return e.complexity.Query.GetAllStrategies(childComplexity), true
-
 	case "Query.getHistoricKlineData":
 		if e.complexity.Query.GetHistoricKlineData == nil {
 			break
@@ -1031,18 +1024,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.GetHistoricTickerStatsAtTimestamp(childComplexity, args["Timestamp"].(int)), true
 
-	case "Query.getStrategyByName":
-		if e.complexity.Query.GetStrategyByName == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getStrategyByName_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetStrategyByName(childComplexity, args["BotInstanceName"].(string)), true
-
 	case "Query.getTickerStatsBySymbol":
 		if e.complexity.Query.GetTickerStatsBySymbol == nil {
 			break
@@ -1081,12 +1062,31 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.ProjectByID(childComplexity, args["id"].(string)), true
 
+	case "Query.readAllStrategies":
+		if e.complexity.Query.ReadAllStrategies == nil {
+			break
+		}
+
+		return e.complexity.Query.ReadAllStrategies(childComplexity), true
+
 	case "Query.readAllUsers":
 		if e.complexity.Query.ReadAllUsers == nil {
 			break
 		}
 
 		return e.complexity.Query.ReadAllUsers(childComplexity), true
+
+	case "Query.readStrategyByName":
+		if e.complexity.Query.ReadStrategyByName == nil {
+			break
+		}
+
+		args, err := ec.field_Query_readStrategyByName_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ReadStrategyByName(childComplexity, args["BotInstanceName"].(string)), true
 
 	case "Query.readUserByEmail":
 		if e.complexity.Query.ReadUserByEmail == nil {
@@ -1934,13 +1934,13 @@ input MarkAsTestedInput {
   Tested: Boolean!
 }
 
-# Extend the existing Query type with a new query to get a strategy by name
+# Extend the existing Query type with a new query to read a strategy by name
 extend type Query {
-  "Get Stategy by Bot Name"
-  getStrategyByName(BotInstanceName: String!): Strategy
+  "Read Stategy by Bot Name"
+  readStrategyByName(BotInstanceName: String!): Strategy
 
-  "Get all strategies"
-  getAllStrategies: [Strategy]
+  "Read all strategies"
+  readAllStrategies: [Strategy]
 }
 
 # Extend the existing Mutation type with new mutations for CRUD operations on strategies
@@ -1958,7 +1958,7 @@ extend type Mutation {
   updateCounters(input: UpdateCountersInput!): Boolean
 
   "Set the Tested boolen value by bot Name"
-  markAsTested(input: MarkAsTestedInput!):Boolean
+  UpdateMarkAsTested(input: MarkAsTestedInput!):Boolean
 }
 `, BuiltIn: false},
 	{Name: "../schema/customers.graphqls", Input: `# customers.graphqls
@@ -2490,6 +2490,34 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
+func (ec *executionContext) field_Mutation_UpdateMarkAsTested_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_UpdateMarkAsTested_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_UpdateMarkAsTested_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.MarkAsTestedInput, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal model.MarkAsTestedInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNMarkAsTestedInput2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐMarkAsTestedInput(ctx, tmp)
+	}
+
+	var zeroVal model.MarkAsTestedInput
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_createActivityReport_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -2991,34 +3019,6 @@ func (ec *executionContext) field_Mutation_login_argsInput(
 	}
 
 	var zeroVal model.LoginInput
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_markAsTested_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := ec.field_Mutation_markAsTested_argsInput(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["input"] = arg0
-	return args, nil
-}
-func (ec *executionContext) field_Mutation_markAsTested_argsInput(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (model.MarkAsTestedInput, error) {
-	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal model.MarkAsTestedInput
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNMarkAsTestedInput2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐMarkAsTestedInput(ctx, tmp)
-	}
-
-	var zeroVal model.MarkAsTestedInput
 	return zeroVal, nil
 }
 
@@ -3613,34 +3613,6 @@ func (ec *executionContext) field_Query_getHistoricTickerStatsAtTimestamp_argsTi
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Query_getStrategyByName_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := ec.field_Query_getStrategyByName_argsBotInstanceName(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["BotInstanceName"] = arg0
-	return args, nil
-}
-func (ec *executionContext) field_Query_getStrategyByName_argsBotInstanceName(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (string, error) {
-	if _, ok := rawArgs["BotInstanceName"]; !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("BotInstanceName"))
-	if tmp, ok := rawArgs["BotInstanceName"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
 func (ec *executionContext) field_Query_getTickerStatsBySymbol_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -3714,6 +3686,34 @@ func (ec *executionContext) field_Query_projectById_argsID(
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 	if tmp, ok := rawArgs["id"]; ok {
 		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_readStrategyByName_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_readStrategyByName_argsBotInstanceName(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["BotInstanceName"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_readStrategyByName_argsBotInstanceName(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	if _, ok := rawArgs["BotInstanceName"]; !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("BotInstanceName"))
+	if tmp, ok := rawArgs["BotInstanceName"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
 	}
 
 	var zeroVal string
@@ -5499,8 +5499,8 @@ func (ec *executionContext) fieldContext_Mutation_updateCounters(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_markAsTested(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_markAsTested(ctx, field)
+func (ec *executionContext) _Mutation_UpdateMarkAsTested(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_UpdateMarkAsTested(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5513,7 +5513,7 @@ func (ec *executionContext) _Mutation_markAsTested(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().MarkAsTested(rctx, fc.Args["input"].(model.MarkAsTestedInput))
+		return ec.resolvers.Mutation().UpdateMarkAsTested(rctx, fc.Args["input"].(model.MarkAsTestedInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5527,7 +5527,7 @@ func (ec *executionContext) _Mutation_markAsTested(ctx context.Context, field gr
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_markAsTested(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_UpdateMarkAsTested(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -5544,7 +5544,7 @@ func (ec *executionContext) fieldContext_Mutation_markAsTested(ctx context.Conte
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_markAsTested_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_UpdateMarkAsTested_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -8022,8 +8022,8 @@ func (ec *executionContext) fieldContext_Query_SymbolStatsBySymbol(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getStrategyByName(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getStrategyByName(ctx, field)
+func (ec *executionContext) _Query_readStrategyByName(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_readStrategyByName(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -8036,7 +8036,7 @@ func (ec *executionContext) _Query_getStrategyByName(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetStrategyByName(rctx, fc.Args["BotInstanceName"].(string))
+		return ec.resolvers.Query().ReadStrategyByName(rctx, fc.Args["BotInstanceName"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8050,7 +8050,7 @@ func (ec *executionContext) _Query_getStrategyByName(ctx context.Context, field 
 	return ec.marshalOStrategy2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐStrategy(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getStrategyByName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_readStrategyByName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -8109,15 +8109,15 @@ func (ec *executionContext) fieldContext_Query_getStrategyByName(ctx context.Con
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getStrategyByName_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_readStrategyByName_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getAllStrategies(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getAllStrategies(ctx, field)
+func (ec *executionContext) _Query_readAllStrategies(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_readAllStrategies(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -8130,7 +8130,7 @@ func (ec *executionContext) _Query_getAllStrategies(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetAllStrategies(rctx)
+		return ec.resolvers.Query().ReadAllStrategies(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8144,7 +8144,7 @@ func (ec *executionContext) _Query_getAllStrategies(ctx context.Context, field g
 	return ec.marshalOStrategy2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐStrategy(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getAllStrategies(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_readAllStrategies(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -16573,9 +16573,9 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateCounters(ctx, field)
 			})
-		case "markAsTested":
+		case "UpdateMarkAsTested":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_markAsTested(ctx, field)
+				return ec._Mutation_UpdateMarkAsTested(ctx, field)
 			})
 		case "createUser":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -17057,7 +17057,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getStrategyByName":
+		case "readStrategyByName":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -17066,7 +17066,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getStrategyByName(ctx, field)
+				res = ec._Query_readStrategyByName(ctx, field)
 				return res
 			}
 
@@ -17076,7 +17076,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getAllStrategies":
+		case "readAllStrategies":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -17085,7 +17085,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getAllStrategies(ctx, field)
+				res = ec._Query_readAllStrategies(ctx, field)
 				return res
 			}
 

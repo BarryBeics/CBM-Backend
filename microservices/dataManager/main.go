@@ -262,7 +262,7 @@ func seedUsers() error {
 }
 
 func userExists(ctx context.Context, client graphql.Client, email string) (bool, error) {
-	resp, err := graph.GetUserByEmail(ctx, client, email)
+	resp, err := graph.ReadUserByEmail(ctx, client, email)
 	if err != nil {
 		// If the error is "no documents in result", treat as "user not found"
 		if strings.Contains(err.Error(), "no documents in result") {
@@ -272,5 +272,5 @@ func userExists(ctx context.Context, client graphql.Client, email string) (bool,
 	}
 
 	// Use the ID check as a fallback in case it returns an empty struct
-	return resp.GetUserByEmail.Id != "", nil
+	return resp.ReadUserByEmail.Id != "", nil
 }
