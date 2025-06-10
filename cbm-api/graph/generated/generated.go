@@ -280,9 +280,6 @@ type MutationResolver interface {
 	DeleteStrategy(ctx context.Context, botInstanceName string) (*bool, error)
 	UpdateCounters(ctx context.Context, input model.UpdateCountersInput) (*bool, error)
 	UpdateMarkAsTested(ctx context.Context, input model.MarkAsTestedInput) (*bool, error)
-	CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error)
-	UpdateUser(ctx context.Context, input model.UpdateUserInput) (*model.User, error)
-	DeleteUser(ctx context.Context, email string) (*bool, error)
 	Login(ctx context.Context, input model.LoginInput) (*model.LoginResponse, error)
 	CreateHistoricPrices(ctx context.Context, input *model.NewHistoricPriceInput) ([]*model.HistoricPrices, error)
 	CreateHistoricKline(ctx context.Context, input *model.NewHistoricKlineDataInput) ([]*model.HistoricKlineData, error)
@@ -295,6 +292,9 @@ type MutationResolver interface {
 	CreateProject(ctx context.Context, input model.CreateProjectInput) (*model.Project, error)
 	UpdateProject(ctx context.Context, input model.UpdateProjectInput) (*model.Project, error)
 	DeleteProject(ctx context.Context, id string) (*bool, error)
+	CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error)
+	UpdateUser(ctx context.Context, input model.UpdateUserInput) (*model.User, error)
+	DeleteUser(ctx context.Context, email string) (*bool, error)
 }
 type QueryResolver interface {
 	ActivityReport(ctx context.Context, id string) (*model.ActivityReport, error)
@@ -307,9 +307,6 @@ type QueryResolver interface {
 	SymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error)
 	ReadStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error)
 	ReadAllStrategies(ctx context.Context) ([]*model.Strategy, error)
-	ReadUserByEmail(ctx context.Context, email string) (*model.User, error)
-	ReadAllUsers(ctx context.Context) ([]*model.User, error)
-	ReadUsersByRole(ctx context.Context, role string) ([]*model.User, error)
 	GetHistoricPrice(ctx context.Context, symbol string, limit *int) ([]*model.HistoricPrices, error)
 	GetHistoricPricesAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricPrices, error)
 	GetHistoricKlineData(ctx context.Context, symbol string, limit *int) ([]*model.HistoricKlineData, error)
@@ -323,6 +320,9 @@ type QueryResolver interface {
 	AllTasks(ctx context.Context) ([]*model.Task, error)
 	ProjectByID(ctx context.Context, id string) (*model.Project, error)
 	FilterProjects(ctx context.Context, filter *model.ProjectFilterInput) ([]*model.Project, error)
+	ReadUserByEmail(ctx context.Context, email string) (*model.User, error)
+	ReadAllUsers(ctx context.Context) ([]*model.User, error)
+	ReadUsersByRole(ctx context.Context, role string) ([]*model.User, error)
 }
 
 type executableSchema struct {
@@ -1961,90 +1961,6 @@ extend type Mutation {
   UpdateMarkAsTested(input: MarkAsTestedInput!):Boolean
 }
 `, BuiltIn: false},
-	{Name: "../schema/customers.graphqls", Input: `# customers.graphqls
-type User {
-  id: ID!
-  firstName: String!
-  lastName: String!
-  email: String!
-  password: String! # Suggest hashing at rest
-
-  mobileNumber: String
-  verifiedEmail: Boolean!
-  verifiedMobile: Boolean!
-
-  role: String! # guest | interested | member | admin
-  isDeleted: Boolean!
-
-  openToTrade: Boolean!
-  binanceAPI: String
-
-  preferredContactMethod: String # "email" | "whatsapp"
-  notes: String
-
-  invitedBy: String
-  joinedBallot: Boolean!
-  isPaidMember: Boolean!
-
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-
-input CreateUserInput {
-  firstName: String!
-  lastName: String!
-  email: String!
-  password: String!
-  mobileNumber: String
-  role: String!          # e.g. "interested" or "guest"
-  invitedBy: String
-  preferredContactMethod: String 
-}
-
-
-input UpdateUserInput {
-  id: ID!
-  firstName: String
-  lastName: String
-  email: String
-  password: String
-  mobileNumber: String
-  verifiedEmail: Boolean
-  verifiedMobile: Boolean
-  role: String
-  isDeleted: Boolean!
-  openToTrade: Boolean
-  binanceAPI: String
-  preferredContactMethod: String
-  notes: String
-  invitedBy: String
-  joinedBallot: Boolean
-  isPaidMember: Boolean
-}
-
-
-
-extend type Mutation {
-  "Creates a new user"
-  createUser(input: CreateUserInput!): User
-
-  "Update an existing user"
-  updateUser(input: UpdateUserInput!): User
-
-  "Deletes a user by email"
-  deleteUser(email: String!): Boolean
-}
-
-
-extend type Query {
-  readUserByEmail(email: String!): User
-  readAllUsers: [User!]!
-  readUsersByRole(role: String!): [User!]!
-}
-
-
-`, BuiltIn: false},
 	{Name: "../schema/enums.graphqls", Input: `enum UserRole {
   GUEST
   INTERESTED
@@ -2482,6 +2398,90 @@ extend type Mutation {
   "Delete a project by ID"
   deleteProject(id: ID!): Boolean
 }
+`, BuiltIn: false},
+	{Name: "../schema/users.graphqls", Input: `# customers.graphqls
+type User {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String! # Suggest hashing at rest
+
+  mobileNumber: String
+  verifiedEmail: Boolean!
+  verifiedMobile: Boolean!
+
+  role: String! # guest | interested | member | admin
+  isDeleted: Boolean!
+
+  openToTrade: Boolean!
+  binanceAPI: String
+
+  preferredContactMethod: String # "email" | "whatsapp"
+  notes: String
+
+  invitedBy: String
+  joinedBallot: Boolean!
+  isPaidMember: Boolean!
+
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+
+input CreateUserInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  mobileNumber: String
+  role: String!          # e.g. "interested" or "guest"
+  invitedBy: String
+  preferredContactMethod: String 
+}
+
+
+input UpdateUserInput {
+  id: ID!
+  firstName: String
+  lastName: String
+  email: String
+  password: String
+  mobileNumber: String
+  verifiedEmail: Boolean
+  verifiedMobile: Boolean
+  role: String
+  isDeleted: Boolean!
+  openToTrade: Boolean
+  binanceAPI: String
+  preferredContactMethod: String
+  notes: String
+  invitedBy: String
+  joinedBallot: Boolean
+  isPaidMember: Boolean
+}
+
+
+
+extend type Mutation {
+  "Creates a new user"
+  createUser(input: CreateUserInput!): User
+
+  "Update an existing user"
+  updateUser(input: UpdateUserInput!): User
+
+  "Deletes a user by email"
+  deleteUser(email: String!): Boolean
+}
+
+
+extend type Query {
+  readUserByEmail(email: String!): User
+  readAllUsers: [User!]!
+  readUsersByRole(role: String!): [User!]!
+}
+
+
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -5551,242 +5551,6 @@ func (ec *executionContext) fieldContext_Mutation_UpdateMarkAsTested(ctx context
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(model.CreateUserInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "firstName":
-				return ec.fieldContext_User_firstName(ctx, field)
-			case "lastName":
-				return ec.fieldContext_User_lastName(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "password":
-				return ec.fieldContext_User_password(ctx, field)
-			case "mobileNumber":
-				return ec.fieldContext_User_mobileNumber(ctx, field)
-			case "verifiedEmail":
-				return ec.fieldContext_User_verifiedEmail(ctx, field)
-			case "verifiedMobile":
-				return ec.fieldContext_User_verifiedMobile(ctx, field)
-			case "role":
-				return ec.fieldContext_User_role(ctx, field)
-			case "isDeleted":
-				return ec.fieldContext_User_isDeleted(ctx, field)
-			case "openToTrade":
-				return ec.fieldContext_User_openToTrade(ctx, field)
-			case "binanceAPI":
-				return ec.fieldContext_User_binanceAPI(ctx, field)
-			case "preferredContactMethod":
-				return ec.fieldContext_User_preferredContactMethod(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
-			case "invitedBy":
-				return ec.fieldContext_User_invitedBy(ctx, field)
-			case "joinedBallot":
-				return ec.fieldContext_User_joinedBallot(ctx, field)
-			case "isPaidMember":
-				return ec.fieldContext_User_isPaidMember(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_User_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_User_updatedAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateUser(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["input"].(model.UpdateUserInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "firstName":
-				return ec.fieldContext_User_firstName(ctx, field)
-			case "lastName":
-				return ec.fieldContext_User_lastName(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "password":
-				return ec.fieldContext_User_password(ctx, field)
-			case "mobileNumber":
-				return ec.fieldContext_User_mobileNumber(ctx, field)
-			case "verifiedEmail":
-				return ec.fieldContext_User_verifiedEmail(ctx, field)
-			case "verifiedMobile":
-				return ec.fieldContext_User_verifiedMobile(ctx, field)
-			case "role":
-				return ec.fieldContext_User_role(ctx, field)
-			case "isDeleted":
-				return ec.fieldContext_User_isDeleted(ctx, field)
-			case "openToTrade":
-				return ec.fieldContext_User_openToTrade(ctx, field)
-			case "binanceAPI":
-				return ec.fieldContext_User_binanceAPI(ctx, field)
-			case "preferredContactMethod":
-				return ec.fieldContext_User_preferredContactMethod(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
-			case "invitedBy":
-				return ec.fieldContext_User_invitedBy(ctx, field)
-			case "joinedBallot":
-				return ec.fieldContext_User_joinedBallot(ctx, field)
-			case "isPaidMember":
-				return ec.fieldContext_User_isPaidMember(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_User_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_User_updatedAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteUser(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteUser(rctx, fc.Args["email"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_deleteUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_login(ctx, field)
 	if err != nil {
@@ -6555,6 +6319,242 @@ func (ec *executionContext) fieldContext_Mutation_deleteProject(ctx context.Cont
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteProject_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(model.CreateUserInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "mobileNumber":
+				return ec.fieldContext_User_mobileNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_User_verifiedEmail(ctx, field)
+			case "verifiedMobile":
+				return ec.fieldContext_User_verifiedMobile(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_User_isDeleted(ctx, field)
+			case "openToTrade":
+				return ec.fieldContext_User_openToTrade(ctx, field)
+			case "binanceAPI":
+				return ec.fieldContext_User_binanceAPI(ctx, field)
+			case "preferredContactMethod":
+				return ec.fieldContext_User_preferredContactMethod(ctx, field)
+			case "notes":
+				return ec.fieldContext_User_notes(ctx, field)
+			case "invitedBy":
+				return ec.fieldContext_User_invitedBy(ctx, field)
+			case "joinedBallot":
+				return ec.fieldContext_User_joinedBallot(ctx, field)
+			case "isPaidMember":
+				return ec.fieldContext_User_isPaidMember(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["input"].(model.UpdateUserInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "mobileNumber":
+				return ec.fieldContext_User_mobileNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_User_verifiedEmail(ctx, field)
+			case "verifiedMobile":
+				return ec.fieldContext_User_verifiedMobile(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_User_isDeleted(ctx, field)
+			case "openToTrade":
+				return ec.fieldContext_User_openToTrade(ctx, field)
+			case "binanceAPI":
+				return ec.fieldContext_User_binanceAPI(ctx, field)
+			case "preferredContactMethod":
+				return ec.fieldContext_User_preferredContactMethod(ctx, field)
+			case "notes":
+				return ec.fieldContext_User_notes(ctx, field)
+			case "invitedBy":
+				return ec.fieldContext_User_invitedBy(ctx, field)
+			case "joinedBallot":
+				return ec.fieldContext_User_joinedBallot(ctx, field)
+			case "isPaidMember":
+				return ec.fieldContext_User_isPaidMember(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteUser(rctx, fc.Args["email"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -8199,277 +8199,6 @@ func (ec *executionContext) fieldContext_Query_readAllStrategies(_ context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_readUserByEmail(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_readUserByEmail(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ReadUserByEmail(rctx, fc.Args["email"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_readUserByEmail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "firstName":
-				return ec.fieldContext_User_firstName(ctx, field)
-			case "lastName":
-				return ec.fieldContext_User_lastName(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "password":
-				return ec.fieldContext_User_password(ctx, field)
-			case "mobileNumber":
-				return ec.fieldContext_User_mobileNumber(ctx, field)
-			case "verifiedEmail":
-				return ec.fieldContext_User_verifiedEmail(ctx, field)
-			case "verifiedMobile":
-				return ec.fieldContext_User_verifiedMobile(ctx, field)
-			case "role":
-				return ec.fieldContext_User_role(ctx, field)
-			case "isDeleted":
-				return ec.fieldContext_User_isDeleted(ctx, field)
-			case "openToTrade":
-				return ec.fieldContext_User_openToTrade(ctx, field)
-			case "binanceAPI":
-				return ec.fieldContext_User_binanceAPI(ctx, field)
-			case "preferredContactMethod":
-				return ec.fieldContext_User_preferredContactMethod(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
-			case "invitedBy":
-				return ec.fieldContext_User_invitedBy(ctx, field)
-			case "joinedBallot":
-				return ec.fieldContext_User_joinedBallot(ctx, field)
-			case "isPaidMember":
-				return ec.fieldContext_User_isPaidMember(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_User_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_User_updatedAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_readUserByEmail_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_readAllUsers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_readAllUsers(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ReadAllUsers(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_readAllUsers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "firstName":
-				return ec.fieldContext_User_firstName(ctx, field)
-			case "lastName":
-				return ec.fieldContext_User_lastName(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "password":
-				return ec.fieldContext_User_password(ctx, field)
-			case "mobileNumber":
-				return ec.fieldContext_User_mobileNumber(ctx, field)
-			case "verifiedEmail":
-				return ec.fieldContext_User_verifiedEmail(ctx, field)
-			case "verifiedMobile":
-				return ec.fieldContext_User_verifiedMobile(ctx, field)
-			case "role":
-				return ec.fieldContext_User_role(ctx, field)
-			case "isDeleted":
-				return ec.fieldContext_User_isDeleted(ctx, field)
-			case "openToTrade":
-				return ec.fieldContext_User_openToTrade(ctx, field)
-			case "binanceAPI":
-				return ec.fieldContext_User_binanceAPI(ctx, field)
-			case "preferredContactMethod":
-				return ec.fieldContext_User_preferredContactMethod(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
-			case "invitedBy":
-				return ec.fieldContext_User_invitedBy(ctx, field)
-			case "joinedBallot":
-				return ec.fieldContext_User_joinedBallot(ctx, field)
-			case "isPaidMember":
-				return ec.fieldContext_User_isPaidMember(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_User_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_User_updatedAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_readUsersByRole(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_readUsersByRole(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ReadUsersByRole(rctx, fc.Args["role"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_readUsersByRole(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "firstName":
-				return ec.fieldContext_User_firstName(ctx, field)
-			case "lastName":
-				return ec.fieldContext_User_lastName(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "password":
-				return ec.fieldContext_User_password(ctx, field)
-			case "mobileNumber":
-				return ec.fieldContext_User_mobileNumber(ctx, field)
-			case "verifiedEmail":
-				return ec.fieldContext_User_verifiedEmail(ctx, field)
-			case "verifiedMobile":
-				return ec.fieldContext_User_verifiedMobile(ctx, field)
-			case "role":
-				return ec.fieldContext_User_role(ctx, field)
-			case "isDeleted":
-				return ec.fieldContext_User_isDeleted(ctx, field)
-			case "openToTrade":
-				return ec.fieldContext_User_openToTrade(ctx, field)
-			case "binanceAPI":
-				return ec.fieldContext_User_binanceAPI(ctx, field)
-			case "preferredContactMethod":
-				return ec.fieldContext_User_preferredContactMethod(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
-			case "invitedBy":
-				return ec.fieldContext_User_invitedBy(ctx, field)
-			case "joinedBallot":
-				return ec.fieldContext_User_joinedBallot(ctx, field)
-			case "isPaidMember":
-				return ec.fieldContext_User_isPaidMember(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_User_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_User_updatedAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_readUsersByRole_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Query_getHistoricPrice(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_getHistoricPrice(ctx, field)
 	if err != nil {
@@ -9271,6 +9000,277 @@ func (ec *executionContext) fieldContext_Query_filterProjects(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_filterProjects_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_readUserByEmail(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_readUserByEmail(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ReadUserByEmail(rctx, fc.Args["email"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_readUserByEmail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "mobileNumber":
+				return ec.fieldContext_User_mobileNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_User_verifiedEmail(ctx, field)
+			case "verifiedMobile":
+				return ec.fieldContext_User_verifiedMobile(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_User_isDeleted(ctx, field)
+			case "openToTrade":
+				return ec.fieldContext_User_openToTrade(ctx, field)
+			case "binanceAPI":
+				return ec.fieldContext_User_binanceAPI(ctx, field)
+			case "preferredContactMethod":
+				return ec.fieldContext_User_preferredContactMethod(ctx, field)
+			case "notes":
+				return ec.fieldContext_User_notes(ctx, field)
+			case "invitedBy":
+				return ec.fieldContext_User_invitedBy(ctx, field)
+			case "joinedBallot":
+				return ec.fieldContext_User_joinedBallot(ctx, field)
+			case "isPaidMember":
+				return ec.fieldContext_User_isPaidMember(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_readUserByEmail_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_readAllUsers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_readAllUsers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ReadAllUsers(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_readAllUsers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "mobileNumber":
+				return ec.fieldContext_User_mobileNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_User_verifiedEmail(ctx, field)
+			case "verifiedMobile":
+				return ec.fieldContext_User_verifiedMobile(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_User_isDeleted(ctx, field)
+			case "openToTrade":
+				return ec.fieldContext_User_openToTrade(ctx, field)
+			case "binanceAPI":
+				return ec.fieldContext_User_binanceAPI(ctx, field)
+			case "preferredContactMethod":
+				return ec.fieldContext_User_preferredContactMethod(ctx, field)
+			case "notes":
+				return ec.fieldContext_User_notes(ctx, field)
+			case "invitedBy":
+				return ec.fieldContext_User_invitedBy(ctx, field)
+			case "joinedBallot":
+				return ec.fieldContext_User_joinedBallot(ctx, field)
+			case "isPaidMember":
+				return ec.fieldContext_User_isPaidMember(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_readUsersByRole(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_readUsersByRole(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ReadUsersByRole(rctx, fc.Args["role"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_readUsersByRole(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "mobileNumber":
+				return ec.fieldContext_User_mobileNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_User_verifiedEmail(ctx, field)
+			case "verifiedMobile":
+				return ec.fieldContext_User_verifiedMobile(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_User_isDeleted(ctx, field)
+			case "openToTrade":
+				return ec.fieldContext_User_openToTrade(ctx, field)
+			case "binanceAPI":
+				return ec.fieldContext_User_binanceAPI(ctx, field)
+			case "preferredContactMethod":
+				return ec.fieldContext_User_preferredContactMethod(ctx, field)
+			case "notes":
+				return ec.fieldContext_User_notes(ctx, field)
+			case "invitedBy":
+				return ec.fieldContext_User_invitedBy(ctx, field)
+			case "joinedBallot":
+				return ec.fieldContext_User_joinedBallot(ctx, field)
+			case "isPaidMember":
+				return ec.fieldContext_User_isPaidMember(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_readUsersByRole_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -16577,18 +16577,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_UpdateMarkAsTested(ctx, field)
 			})
-		case "createUser":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createUser(ctx, field)
-			})
-		case "updateUser":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateUser(ctx, field)
-			})
-		case "deleteUser":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteUser(ctx, field)
-			})
 		case "login":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_login(ctx, field)
@@ -16654,6 +16642,18 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deleteProject":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteProject(ctx, field)
+			})
+		case "createUser":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createUser(ctx, field)
+			})
+		case "updateUser":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateUser(ctx, field)
+			})
+		case "deleteUser":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteUser(ctx, field)
 			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -17095,69 +17095,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "readUserByEmail":
-			field := field
-
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_readUserByEmail(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "readAllUsers":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_readAllUsers(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "readUsersByRole":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_readUsersByRole(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "getHistoricPrice":
 			field := field
 
@@ -17423,6 +17360,69 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_filterProjects(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "readUserByEmail":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_readUserByEmail(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "readAllUsers":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_readAllUsers(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "readUsersByRole":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_readUsersByRole(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
