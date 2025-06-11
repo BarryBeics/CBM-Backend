@@ -147,7 +147,6 @@ type ComplexityRoot struct {
 		ActivityReports                   func(childComplexity int) int
 		AllTasks                          func(childComplexity int) int
 		AvailableSymbols                  func(childComplexity int) int
-		AvailableTickerSymbols            func(childComplexity int) int
 		FilterProjects                    func(childComplexity int, filter *model.ProjectFilterInput) int
 		GetAllStrategies                  func(childComplexity int) int
 		GetAllUsers                       func(childComplexity int) int
@@ -157,7 +156,6 @@ type ComplexityRoot struct {
 		GetHistoricTickerStatsAtTimestamp func(childComplexity int, timestamp int) int
 		GetStrategyByName                 func(childComplexity int, botInstanceName string) int
 		GetTickerStatsBySymbol            func(childComplexity int, symbol string, limit *int) int
-		GetTickerStatsSnapshotCount       func(childComplexity int) int
 		GetUniqueTimestampCount           func(childComplexity int) int
 		GetUserByEmail                    func(childComplexity int, email string) int
 		GetUsersByRole                    func(childComplexity int, role string) int
@@ -271,58 +269,56 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	CreateActivityReport(ctx context.Context, input *model.NewActivityReport) (*model.ActivityReport, error)
-	CreateTradeOutcomeReport(ctx context.Context, input *model.NewTradeOutcomeReport) (*model.TradeOutcomeReport, error)
-	DeleteOutcomeReports(ctx context.Context, timestamp int) (bool, error)
-	UpsertSymbolStats(ctx context.Context, input *model.UpsertSymbolStatsInput) (*model.SymbolStats, error)
-	DeleteSymbolStats(ctx context.Context, symbol string) (bool, error)
 	CreateStrategy(ctx context.Context, input model.StrategyInput) (*model.Strategy, error)
 	UpdateStrategy(ctx context.Context, botInstanceName string, input model.StrategyInput) (*model.Strategy, error)
 	DeleteStrategy(ctx context.Context, botInstanceName string) (*bool, error)
 	UpdateCounters(ctx context.Context, input model.UpdateCountersInput) (*bool, error)
 	MarkAsTested(ctx context.Context, input model.MarkAsTestedInput) (*bool, error)
-	CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error)
-	UpdateUser(ctx context.Context, input model.UpdateUserInput) (*model.User, error)
-	DeleteUser(ctx context.Context, email string) (*bool, error)
 	Login(ctx context.Context, input model.LoginInput) (*model.LoginResponse, error)
 	CreateHistoricPrices(ctx context.Context, input *model.NewHistoricPriceInput) ([]*model.HistoricPrices, error)
-	CreateHistoricKline(ctx context.Context, input *model.NewHistoricKlineDataInput) ([]*model.HistoricKlineData, error)
 	DeleteHistoricPrices(ctx context.Context, timestamp int) (bool, error)
+	CreateHistoricKline(ctx context.Context, input *model.NewHistoricKlineDataInput) ([]*model.HistoricKlineData, error)
+	UpsertSymbolStats(ctx context.Context, input *model.UpsertSymbolStatsInput) (*model.SymbolStats, error)
+	DeleteSymbolStats(ctx context.Context, symbol string) (bool, error)
 	CreateHistoricTickerStats(ctx context.Context, input model.NewHistoricTickerStatsInput) ([]*model.HistoricTickerStats, error)
 	DeleteHistoricTickerStats(ctx context.Context, timestamp int) (bool, error)
+	CreateTradeOutcomeReport(ctx context.Context, input *model.NewTradeOutcomeReport) (*model.TradeOutcomeReport, error)
+	DeleteOutcomeReports(ctx context.Context, timestamp int) (bool, error)
 	CreateTask(ctx context.Context, input model.CreateTaskInput) (*model.Task, error)
 	UpdateTask(ctx context.Context, input model.UpdateTaskInput) (*model.Task, error)
 	DeleteTask(ctx context.Context, id string) (*bool, error)
 	CreateProject(ctx context.Context, input model.CreateProjectInput) (*model.Project, error)
 	UpdateProject(ctx context.Context, input model.UpdateProjectInput) (*model.Project, error)
 	DeleteProject(ctx context.Context, id string) (*bool, error)
+	CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error)
+	UpdateUser(ctx context.Context, input model.UpdateUserInput) (*model.User, error)
+	DeleteUser(ctx context.Context, email string) (*bool, error)
 }
 type QueryResolver interface {
 	ActivityReport(ctx context.Context, id string) (*model.ActivityReport, error)
 	ActivityReports(ctx context.Context) ([]*model.ActivityReport, error)
+	GetStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error)
+	GetAllStrategies(ctx context.Context) ([]*model.Strategy, error)
+	GetHistoricPrice(ctx context.Context, symbol string, limit *int) ([]*model.HistoricPrices, error)
+	GetHistoricPricesAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricPrices, error)
+	GetUniqueTimestampCount(ctx context.Context) (int, error)
+	AvailableSymbols(ctx context.Context) ([]string, error)
+	GetHistoricKlineData(ctx context.Context, symbol string, limit *int) ([]*model.HistoricKlineData, error)
+	SymbolStatsReports(ctx context.Context) ([]*model.SymbolStats, error)
+	SymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error)
+	GetHistoricTickerStatsAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricTickerStats, error)
+	GetTickerStatsBySymbol(ctx context.Context, symbol string, limit *int) ([]*model.TickerStats, error)
 	TradeOutcomeReport(ctx context.Context, id string) (*model.TradeOutcomeReport, error)
 	TradeOutcomes(ctx context.Context, botName string) ([]*model.TradeOutcomeReport, error)
 	TradeOutcomesInFocus(ctx context.Context, botName string, marketStatus string, limit *int) ([]*model.TradeOutcomeReport, error)
 	TradeOutcomeReports(ctx context.Context) ([]*model.TradeOutcomeReport, error)
-	SymbolStatsReports(ctx context.Context) ([]*model.SymbolStats, error)
-	SymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error)
-	GetStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error)
-	GetAllStrategies(ctx context.Context) ([]*model.Strategy, error)
-	GetUserByEmail(ctx context.Context, email string) (*model.User, error)
-	GetAllUsers(ctx context.Context) ([]*model.User, error)
-	GetUsersByRole(ctx context.Context, role string) ([]*model.User, error)
-	GetHistoricPrice(ctx context.Context, symbol string, limit *int) ([]*model.HistoricPrices, error)
-	GetHistoricPricesAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricPrices, error)
-	GetHistoricKlineData(ctx context.Context, symbol string, limit *int) ([]*model.HistoricKlineData, error)
-	GetUniqueTimestampCount(ctx context.Context) (int, error)
-	AvailableSymbols(ctx context.Context) ([]string, error)
-	GetHistoricTickerStatsAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricTickerStats, error)
-	GetTickerStatsBySymbol(ctx context.Context, symbol string, limit *int) ([]*model.TickerStats, error)
-	AvailableTickerSymbols(ctx context.Context) ([]string, error)
-	GetTickerStatsSnapshotCount(ctx context.Context) (int, error)
 	TaskByID(ctx context.Context, id string) (*model.Task, error)
 	AllTasks(ctx context.Context) ([]*model.Task, error)
 	ProjectByID(ctx context.Context, id string) (*model.Project, error)
 	FilterProjects(ctx context.Context, filter *model.ProjectFilterInput) ([]*model.Project, error)
+	GetUserByEmail(ctx context.Context, email string) (*model.User, error)
+	GetAllUsers(ctx context.Context) ([]*model.User, error)
+	GetUsersByRole(ctx context.Context, role string) ([]*model.User, error)
 }
 
 type executableSchema struct {
@@ -957,13 +953,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.AvailableSymbols(childComplexity), true
 
-	case "Query.availableTickerSymbols":
-		if e.complexity.Query.AvailableTickerSymbols == nil {
-			break
-		}
-
-		return e.complexity.Query.AvailableTickerSymbols(childComplexity), true
-
 	case "Query.filterProjects":
 		if e.complexity.Query.FilterProjects == nil {
 			break
@@ -1061,13 +1050,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.GetTickerStatsBySymbol(childComplexity, args["symbol"].(string), args["limit"].(*int)), true
-
-	case "Query.getTickerStatsSnapshotCount":
-		if e.complexity.Query.GetTickerStatsSnapshotCount == nil {
-			break
-		}
-
-		return e.complexity.Query.GetTickerStatsSnapshotCount(childComplexity), true
 
 	case "Query.getUniqueTimestampCount":
 		if e.complexity.Query.GetUniqueTimestampCount == nil {
@@ -1865,597 +1847,75 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../schema/botDetails.graphqls", Input: `# botDetails.graphqls
-
-# Extend the existing Strategy type with additional fields
-extend type Strategy {
-  BotInstanceName: String!
-  TradeDuration: Int!
-  IncrementsATR: Int!
-  LongSMADuration: Int!
-  ShortSMADuration: Int!
-  WINCounter: Int
-  LOSSCounter: Int
-  TIMEOUTGainCounter: Int
-  TIMEOUTLossCounter: Int
-  NetGainCounter: Int
-  NetLossCounter: Int
-  AccountBalance: Float!
-  MovingAveMomentum: Float!
-  TakeProfitPercentage: Float
-  StopLossPercentage: Float
-  ATRtollerance: Float
-  FeesTotal: Float
-  Tested: Boolean
-  Owner: String
-  CreatedOn: Int!
-}
-
-# New input type for creating or updating a strategy
-input StrategyInput {
-  BotInstanceName: String!
-  TradeDuration: Int!
-  IncrementsATR: Int!
-  LongSMADuration: Int!
-  ShortSMADuration: Int!
-  WINCounter: Int
-  LOSSCounter: Int
-  TIMEOUTGainCounter: Int
-  TIMEOUTLossCounter: Int
-  NetGainCounter: Int
-  NetLossCounter: Int
-  AccountBalance: Float!
-  MovingAveMomentum: Float!
-  TakeProfitPercentage: Float!
-  StopLossPercentage: Float!
-  ATRtollerance: Float
-  FeesTotal: Float
-  Tested: Boolean
-  Owner: String!
-  CreatedOn: Int!
-}
-
-# New input type for updating counters
-input UpdateCountersInput {
-  BotInstanceName: String!
-  WINCounter: Boolean
-  LOSSCounter: Boolean
-  TIMEOUTGainCounter: Boolean
-  TIMEOUTLossCounter: Boolean
-  NetGainCounter: Boolean
-  NetLossCounter: Boolean
-  AccountBalance: Float!
-  FeesTotal: Float
-}
-
-# Set tested to true
-input MarkAsTestedInput {
-  BotInstanceName: String!
-  Tested: Boolean!
-}
-
-# Extend the existing Query type with a new query to get a strategy by name
-extend type Query {
-  "Get Stategy by Bot Name"
-  getStrategyByName(BotInstanceName: String!): Strategy
-
-  "Get all strategies"
-  getAllStrategies: [Strategy]
-}
-
-# Extend the existing Mutation type with new mutations for CRUD operations on strategies
-extend type Mutation {
-  "Creates a New strategy"
-  createStrategy(input: StrategyInput!): Strategy
-
-  "Updates the strategy you have provided the name for"
-  updateStrategy(BotInstanceName: String!, input: StrategyInput!): Strategy
-
-  "Deletes strategy for the given bot Name"
-  deleteStrategy(BotInstanceName: String!): Boolean
-
-  "Updates the outcome counters and account balance help on the strategy object"
-  updateCounters(input: UpdateCountersInput!): Boolean
-
-  "Set the Tested boolen value by bot Name"
-  markAsTested(input: MarkAsTestedInput!):Boolean
-}
-`, BuiltIn: false},
-	{Name: "../schema/customers.graphqls", Input: `# customers.graphqls
-type User {
-  id: ID!
-  firstName: String!
-  lastName: String!
-  email: String!
-  password: String! # Suggest hashing at rest
-
-  mobileNumber: String
-  verifiedEmail: Boolean!
-  verifiedMobile: Boolean!
-
-  role: String! # guest | interested | member | admin
-  isDeleted: Boolean!
-
-  openToTrade: Boolean!
-  binanceAPI: String
-
-  preferredContactMethod: String # "email" | "whatsapp"
-  notes: String
-
-  invitedBy: String
-  joinedBallot: Boolean!
-  isPaidMember: Boolean!
-
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-
-input CreateUserInput {
-  firstName: String!
-  lastName: String!
-  email: String!
-  password: String!
-  mobileNumber: String
-  role: String!          # e.g. "interested" or "guest"
-  invitedBy: String
-  preferredContactMethod: String 
-}
-
-
-input UpdateUserInput {
-  id: ID!
-  firstName: String
-  lastName: String
-  email: String
-  password: String
-  mobileNumber: String
-  verifiedEmail: Boolean
-  verifiedMobile: Boolean
-  role: String
-  isDeleted: Boolean!
-  openToTrade: Boolean
-  binanceAPI: String
-  preferredContactMethod: String
-  notes: String
-  invitedBy: String
-  joinedBallot: Boolean
-  isPaidMember: Boolean
-}
-
-
-
-extend type Mutation {
-  "Creates a new user"
-  createUser(input: CreateUserInput!): User
-
-  "Update an existing user"
-  updateUser(input: UpdateUserInput!): User
-
-  "Deletes a user by email"
-  deleteUser(email: String!): Boolean
-}
-
-
-extend type Query {
-  getUserByEmail(email: String!): User
-  getAllUsers: [User!]!
-  getUsersByRole(role: String!): [User!]!
-}
-
-
-`, BuiltIn: false},
-	{Name: "../schema/enums.graphqls", Input: `enum UserRole {
-  GUEST
-  INTERESTED
-  MEMBER
-  ADMIN
-}
-
-enum ContactMethod {
-  EMAIL
-  WHATSAPP
-}
-`, BuiltIn: false},
-	{Name: "../schema/login.graphqls", Input: `type LoginResponse {
-  token: String!
-  user: User!
-}
-
-input LoginInput {
-  email: String!
-  password: String!
-}
-
-extend type Mutation {
-  login(input: LoginInput!): LoginResponse!
-}
-`, BuiltIn: false},
-	{Name: "../schema/priceData.graphqls", Input: `type Pair {
-	Symbol: String!
-	Price: String!
-	PercentageChange: String
-  }
-  
-  input PairInput {
-	Symbol: String!
-	Price: String!
-	PercentageChange: String
-  }
-  
-  type HistoricPrices {
-	Pair: [Pair!]
-	Timestamp: Int!
-	CreatedAt: DateTime!
-  }
-  
-  input NewHistoricPriceInput {
-	Pairs: [PairInput!]!
-	Timestamp: Int!
-  }
-  
-  type OHLC {
-	  OpenPrice:   String!
-	  HighPrice:   String!
-	  LowPrice:    String! 
-	  ClosePrice:  String! 
-	  TradeVolume: String! 
-	  Symbol:      String! 
-  }
-  
-  input OHLCInput {
-	  OpenPrice:   String!
-	  HighPrice:   String!
-	  LowPrice:    String! 
-	  ClosePrice:  String! 
-	  TradeVolume: String! 
-	  Symbol:      String! 
-  }
-
-  type TickerStats {
-	Symbol:          String!
-	PriceChange:     String!
-	PriceChangePct:  String!
-	QuoteVolume:     String!
-	Volume:          String!
-	TradeCount:      Int!
-	HighPrice:       String!
-	LowPrice:        String!
-	LastPrice:       String!
-	LiquidityEstimate: String
-}
-
-input TickerStatsInput {
-  Symbol: String!
-  PriceChange: String!
-  PriceChangePct: String!
-  QuoteVolume: String!
-  Volume: String!
-  TradeCount: Int!
-  HighPrice: String!
-  LowPrice: String!
-  LastPrice: String!
-  LiquidityEstimate: String
-}
-
-type HistoricTickerStats {
-  Timestamp: Int!
-  Stats: [TickerStats!]!
-  CreatedAt: DateTime!
-}
-
-input NewHistoricTickerStatsInput {
-  Timestamp: Int!
-  Stats: [TickerStatsInput!]!
-}
-
-
-  
-  type HistoricKlineData {
-  opentime: Int!
-  coins: [OHLC!]!
-}
-  
-  input NewHistoricKlineDataInput {
-	  Opentime: Int!
-	  Coins:    [OHLCInput!]!
-  }
-  
-  
-  extend type Mutation {
-	"Creates an array of Historic Price pairs"
-	createHistoricPrices(input: NewHistoricPriceInput): [HistoricPrices!]!
-  
-	"Creates an array of Historic Kline Data"
-	createHistoricKline(input: NewHistoricKlineDataInput): [HistoricKlineData!]!
-  
-	"Deletes all prices data for the matching given timestamp"
-	deleteHistoricPrices(Timestamp: Int!): Boolean!
-
-	"Creates an array of 24h Ticker Stats at a given timestamp"
-	createHistoricTickerStats(input: NewHistoricTickerStatsInput!): [HistoricTickerStats!]!
-
-	"Deletes all Ticker Stats at a specific timestamp"
-	deleteHistoricTickerStats(Timestamp: Int!): Boolean!
-  }
-  
-  extend type Query {
-	"Fetches price data for a given symbol up to a given limit of records"
-	getHistoricPrice(symbol: String!, limit: Int): [HistoricPrices!]!
-  
-	"Gets all prices data at a given timestamp"
-	getHistoricPricesAtTimestamp(Timestamp: Int!): [HistoricPrices!]!
-  
-	"Fetches kline data data for a given symbol up to a given limit of records"
-	getHistoricKlineData(symbol: String!, limit: Int): [HistoricKlineData!]!
-  
-	"Returns a count of timestamps in the DB"
-	getUniqueTimestampCount: Int!
-
-    "This will give you a []string of all available trading symbols in your HistoricPrices collection."
-	availableSymbols: [String!]!
-
-	"Gets all 24h Ticker Stats at a specific timestamp"
-	getHistoricTickerStatsAtTimestamp(Timestamp: Int!): [HistoricTickerStats!]!
-
-	"Fetches TickerStats history for a given symbol (e.g., to chart volatility or volume)"
-	getTickerStatsBySymbol(symbol: String!, limit: Int): [TickerStats!]!
-
-	"Returns a list of available symbols from TickerStats data"
-	availableTickerSymbols: [String!]!
-
-	"Returns a count of stored timestamps (like snapshots)"
-	getTickerStatsSnapshotCount: Int!
-  }`, BuiltIn: false},
-	{Name: "../schema/reports.graphqls", Input: `# === Reusable Types ===
-type Mean {
-  Avg: Float!
-  Count: Int!
-}
-
-input MeanInput {
-  Avg: Float!
-  Count: Int!
-}
-
-
-# === Activity Domain ===
-type ActivityReport {
-  _id: ID!
-  Timestamp: Int!
-  Qty: Int!
-  AvgGain: Float!
-  TopAGain: Float
-  TopBGain: Float
-  TopCGain: Float
-  FearGreedIndex: Int!
-}
-
-type SymbolStats {
-  Symbol: String!
-  PositionCounts: [Mean!]!
-  LiquidityEstimate: Mean
-  MaxLiquidityEstimate: Float
-  MinLiquidityEstimate: Float
-}
-
-type TradeOutcomeReport {
-  _id: ID!
-  Timestamp: Int!
-  BotName: String!
-  PercentageChange: Float!
-  Balance: Float!
-  Symbol: String!
-  Outcome: String!
-  Fee: Float
-  ElapsedTime: Int!
-  Volume: Float!
-  FearGreedIndex: Int!
-  MarketStatus: String!
-}
-
-
-# Inputs for SymbolStats
-input UpsertSymbolStatsInput {
-  Symbol: String!
-  PositionCounts: [MeanInput]
-  LiquidityEstimate: MeanInput
-  MaxLiquidityEstimate: Float
-  MinLiquidityEstimate: Float
-}
-
-
-# Input for ActivityReport
-input NewActivityReport {
-  Timestamp: Int!
-  Qty: Int!
-  AvgGain: Float!
-  TopAGain: Float
-  TopBGain: Float
-  TopCGain: Float
-  FearGreedIndex: Int!
-}
-
-# Input for TradeOutcomeReport
-input NewTradeOutcomeReport {
-  Timestamp: Int!
-  BotName: String!
-  PercentageChange: Float!
-  Balance: Float!
-  Symbol: String!
-  Outcome: String!
-  Fee: Float
-  ElapsedTime: Int!
-  Volume: Float!
-  FearGreedIndex: Int!
-  MarketStatus: String!
-}
-
-
-type Mutation {
-  # === Activity Reports ===
-  "Creates a new market Activity Report"
-  createActivityReport(input: NewActivityReport): ActivityReport!
-
-  # === Trade Outcomes ===
-  "Creates a new Trade Outcome Report"
-  createTradeOutcomeReport(input: NewTradeOutcomeReport): TradeOutcomeReport!
-
-  "Deletes outcome reports for the matching given timestamp"
-  deleteOutcomeReports(Timestamp: Int!): Boolean!
-
-  # === Symbol Stats ===
-  "If the symbol exists, update it. If not, create it"
-  upsertSymbolStats(input: UpsertSymbolStatsInput): SymbolStats!
-
-  "Deletes Symbol Stats by Symbol"
-  deleteSymbolStats(Symbol: String!): Boolean!
-}
-
-
-type Query {
-  # === Activity Reports ===
-  "Get activity reports by ID"
-  ActivityReport(_id: ID!): ActivityReport!
-  
-  "Get All activity reports"
-  ActivityReports: [ActivityReport!]!
-
-  # === Trade Outcome Reports ===
-  "Get Trade Outcome reports by ID"
-  TradeOutcomeReport(_id: ID!): TradeOutcomeReport!
-
-  "Get Trade Outcome reports by Bot Name"
-  TradeOutcomes(BotName: String!): [TradeOutcomeReport!]!
-
-  "Get Trade Outcome reports by Bot Name & Market Status"
-  TradeOutcomesInFocus(BotName: String!, MarketStatus: String!, limit: Int): [TradeOutcomeReport!]!
-
-"Get All Trade Outcome reports"
-  TradeOutcomeReports: [TradeOutcomeReport!]!
-
-  # === Symbol Stats ===
-  "Get All Symbol Stats"
-  SymbolStatsReports: [SymbolStats!]!
-
-  "Get Symbol Stats by Symbol"
-  SymbolStatsBySymbol(Symbol: String!): SymbolStats!
-}
-
-
-
-`, BuiltIn: false},
-	{Name: "../schema/scalar.graphqls", Input: `# graph/schema/scalars.graphqls
-scalar DateTime
-`, BuiltIn: false},
-	{Name: "../schema/tasks.graphqls", Input: `# ==========================
+	{Name: "../schema/botDetails.graphqls", Input: `# ==========================
 # Types
 # ==========================
 
-type Task {
-  id: ID!
-  title: String!
-  description: String
-  status: String!            # inbox, nextAction, scheduled, etc.
-  labels: [String]           # use these for meeting, call, design, etc.
-  assignedTo: String
-  dueDate: String
-  deferDate: String          # optional, for delayed tasks
-  department: String         # e.g. sales, marketing, programming
-  projectId: String
-  duration: Int              # track how long a task took
-  createdAt: String!
-  updatedAt: String!
-}
-
-type Project {
-  id: ID!
-  title: String!           # Now includes structured naming (e.g. "Q2-2025 | Marketing | New Launch")
-  sop: Boolean!            # For standard operating procedure templates — good addition
-  description: String
-  labels: [String]         # Used for filtering/grouping (e.g. ["Q2", "marketing"])
-  assignedTo: String
-  dueDate: String
-  status: String!          # "active", "completed", "archived"
-  createdAt: String!
-  updatedAt: String!
-  tasks: [Task]
+extend type Strategy {
+    BotInstanceName: String!
+    TradeDuration: Int!
+    IncrementsATR: Int!
+    LongSMADuration: Int!
+    ShortSMADuration: Int!
+    WINCounter: Int
+    LOSSCounter: Int
+    TIMEOUTGainCounter: Int
+    TIMEOUTLossCounter: Int
+    NetGainCounter: Int
+    NetLossCounter: Int
+    AccountBalance: Float!
+    MovingAveMomentum: Float!
+    TakeProfitPercentage: Float
+    StopLossPercentage: Float
+    ATRtollerance: Float
+    FeesTotal: Float
+    Tested: Boolean
+    Owner: String
+    CreatedOn: Int!
 }
 
 # ==========================
 # Input Types
 # ==========================
 
-input CreateTaskInput {
-  title: String!
-  description: String
-  status: String = "inbox"
-  labels: [String]
-  assignedTo: String
-  dueDate: String
-  deferDate: String
-  department: String
-  projectId: String
-  duration: Int
+input StrategyInput {
+    BotInstanceName: String!
+    TradeDuration: Int!
+    IncrementsATR: Int!
+    LongSMADuration: Int!
+    ShortSMADuration: Int!
+    WINCounter: Int
+    LOSSCounter: Int
+    TIMEOUTGainCounter: Int
+    TIMEOUTLossCounter: Int
+    NetGainCounter: Int
+    NetLossCounter: Int
+    AccountBalance: Float!
+    MovingAveMomentum: Float!
+    TakeProfitPercentage: Float!
+    StopLossPercentage: Float!
+    ATRtollerance: Float
+    FeesTotal: Float
+    Tested: Boolean
+    Owner: String!
+    CreatedOn: Int!
 }
 
-input UpdateTaskInput {
-  id: ID!
-  title: String
-  description: String
-  status: String
-  labels: [String]
-  assignedTo: String
-  dueDate: String
-  deferDate: String
-  department: String
-  projectId: String
-  duration: Int
+input UpdateCountersInput {
+    BotInstanceName: String!
+    WINCounter: Boolean
+    LOSSCounter: Boolean
+    TIMEOUTGainCounter: Boolean
+    TIMEOUTLossCounter: Boolean
+    NetGainCounter: Boolean
+    NetLossCounter: Boolean
+    AccountBalance: Float!
+    FeesTotal: Float
 }
 
-
-input CreateProjectInput {
-  title: String!
-  sop: Boolean = false
-  description: String
-  labels: [String]
-  assignedTo: String
-  dueDate: String
-  status: String = "active"
-}
-
-input UpdateProjectInput {
-  id: ID!
-  title: String
-  sop: Boolean
-  description: String
-  labels: [String]
-  assignedTo: String
-  dueDate: String
-  status: String
-}
-
-input ProjectFilterInput {
-  sop: Boolean
-}
-
-# ==========================
-# Queries
-# ==========================
-
-extend type Query {
-  "Get a single task by ID"
-  taskById(id: ID!): Task
-
-  "Get all tasks"
-  allTasks: [Task]
-
-  "Get a single project by ID"
-  projectById(id: ID!): Project
-
-
-  "Get projects filtered by SOP standard operating proceedure"
-  filterProjects(filter: ProjectFilterInput): [Project!]!
+input MarkAsTestedInput {
+    BotInstanceName: String!
+    Tested: Boolean!
 }
 
 
@@ -2464,24 +1924,658 @@ extend type Query {
 # ==========================
 
 extend type Mutation {
-  "Create a new task"
-  createTask(input: CreateTaskInput!): Task
+    "Creates a New strategy"
+    createStrategy(input: StrategyInput!): Strategy
 
-  "Update an existing task"
-  updateTask(input: UpdateTaskInput!): Task
+    "Updates the strategy you have provided the name for"
+    updateStrategy(BotInstanceName: String!, input: StrategyInput!): Strategy
 
-  "Delete a task by ID"
-  deleteTask(id: ID!): Boolean
+    "Deletes strategy for the given bot Name"
+    deleteStrategy(BotInstanceName: String!): Boolean
 
-  "Create a new project"
-  createProject(input: CreateProjectInput!): Project
+    "Updates the outcome counters and account balance help on the strategy object"
+    updateCounters(input: UpdateCountersInput!): Boolean
 
-  "Update an existing project"
-  updateProject(input: UpdateProjectInput!): Project
-
-  "Delete a project by ID"
-  deleteProject(id: ID!): Boolean
+    "Set the Tested boolen value by bot Name"
+    markAsTested(input: MarkAsTestedInput!):Boolean
 }
+
+# ==========================
+# Queries
+# ==========================
+
+extend type Query {
+    "Get Stategy by Bot Name"
+    getStrategyByName(BotInstanceName: String!): Strategy
+
+    "Get all strategies"
+    getAllStrategies: [Strategy]
+}
+`, BuiltIn: false},
+	{Name: "../schema/enums.graphqls", Input: `enum UserRole {
+    GUEST
+    INTERESTED
+    MEMBER
+    ADMIN
+}
+
+enum ContactMethod {
+    EMAIL
+    WHATSAPP
+}
+`, BuiltIn: false},
+	{Name: "../schema/login.graphqls", Input: `# ==========================
+# Types
+# ==========================
+
+type LoginResponse {
+    token: String!
+    user: User!
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input LoginInput {
+    email: String!
+    password: String!
+}
+
+# ==========================
+# Mutations
+# ==========================
+
+extend type Mutation {
+    login(input: LoginInput!): LoginResponse!
+}
+
+# ==========================
+# Queries
+# ==========================
+
+`, BuiltIn: false},
+	{Name: "../schema/pricesHistoric.graphqls", Input: `# ==========================
+# Types
+# ==========================
+
+type Pair {
+	Symbol: String!
+	Price: String!
+	PercentageChange: String
+}
+  
+type HistoricPrices {
+	Pair: [Pair!]
+	Timestamp: Int!
+	CreatedAt: DateTime!
+}
+
+type HistoricTickerStats {
+    Timestamp: Int!
+    Stats: [TickerStats!]!
+    CreatedAt: DateTime!
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input PairInput {
+	Symbol: String!
+	Price: String!
+	PercentageChange: String
+}
+  
+input NewHistoricPriceInput {
+	Pairs: [PairInput!]!
+	Timestamp: Int!
+}
+
+# ==========================
+# Mutations
+# ==========================
+
+extend type Mutation {
+	"Creates an array of Historic Price pairs"
+	createHistoricPrices(input: NewHistoricPriceInput): [HistoricPrices!]!
+  
+	"Deletes all prices data for the matching given timestamp"
+	deleteHistoricPrices(Timestamp: Int!): Boolean!
+
+  }
+
+# ==========================
+# Queries
+# ==========================
+
+extend type Query {
+	"Fetches price data for a given symbol up to a given limit of records"
+	getHistoricPrice(symbol: String!, limit: Int): [HistoricPrices!]!
+  
+	"Gets all prices data at a given timestamp"
+	getHistoricPricesAtTimestamp(Timestamp: Int!): [HistoricPrices!]!
+  
+	"Returns a count of timestamps in the DB"
+	getUniqueTimestampCount: Int!
+
+    "This will give you a []string of all available trading symbols in your HistoricPrices collection."
+	availableSymbols: [String!]!
+}`, BuiltIn: false},
+	{Name: "../schema/pricesKilne.graphqls", Input: `# ==========================
+# Types
+# ==========================
+
+type OHLC {
+    OpenPrice:   String!
+    HighPrice:   String!
+    LowPrice:    String! 
+    ClosePrice:  String! 
+    TradeVolume: String! 
+    Symbol:      String! 
+}
+
+type HistoricKlineData {
+    opentime: Int!
+    coins: [OHLC!]!
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input OHLCInput {
+    OpenPrice:   String!
+    HighPrice:   String!
+    LowPrice:    String! 
+    ClosePrice:  String! 
+    TradeVolume: String! 
+    Symbol:      String! 
+}
+
+input NewHistoricKlineDataInput {
+    Opentime: Int!
+    Coins:    [OHLCInput!]!
+}
+  
+# ==========================
+# Mutations
+# ==========================
+
+extend type Mutation {
+    "Creates an array of Historic Kline Data"
+    createHistoricKline(input: NewHistoricKlineDataInput): [HistoricKlineData!]!
+}
+  
+# ==========================
+# Queries
+# ==========================
+
+extend type Query {
+    "Fetches kline data data for a given symbol up to a given limit of records"
+    getHistoricKlineData(symbol: String!, limit: Int): [HistoricKlineData!]!
+}`, BuiltIn: false},
+	{Name: "../schema/reportsActivity.graphqls", Input: `# ==========================
+# Types
+# ==========================
+
+type ActivityReport {
+    _id: ID!
+    Timestamp: Int!
+    Qty: Int!
+    AvgGain: Float!
+    TopAGain: Float
+    TopBGain: Float
+    TopCGain: Float
+    FearGreedIndex: Int!
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input NewActivityReport {
+    Timestamp: Int!
+    Qty: Int!
+    AvgGain: Float!
+    TopAGain: Float
+    TopBGain: Float
+    TopCGain: Float
+    FearGreedIndex: Int!
+}
+
+# ==========================
+# Mutations
+# ==========================
+
+type Mutation {
+    "Creates a new market Activity Report"
+    createActivityReport(input: NewActivityReport): ActivityReport!
+}
+
+# ==========================
+# Queries
+# ==========================
+
+type Query {
+    "Get activity reports by ID"
+    ActivityReport(_id: ID!): ActivityReport!
+  
+    "Get All activity reports"
+    ActivityReports: [ActivityReport!]!
+}`, BuiltIn: false},
+	{Name: "../schema/reportsSymbolStats.graphqls", Input: `# ==========================
+# Types
+# ==========================
+
+type Mean {
+    Avg: Float!
+    Count: Int!
+}
+
+type SymbolStats {
+    Symbol: String!
+    PositionCounts: [Mean!]!
+    LiquidityEstimate: Mean
+    MaxLiquidityEstimate: Float
+    MinLiquidityEstimate: Float
+}
+
+type TickerStats {
+    Symbol:          String!
+    PriceChange:     String!
+    PriceChangePct:  String!
+    QuoteVolume:     String!
+    Volume:          String!
+    TradeCount:      Int!
+    HighPrice:       String!
+    LowPrice:        String!
+    LastPrice:       String!
+    LiquidityEstimate: String
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input MeanInput {
+    Avg: Float!
+    Count: Int!
+}
+
+input TickerStatsInput {
+    Symbol: String!
+    PriceChange: String!
+    PriceChangePct: String!
+    QuoteVolume: String!
+    Volume: String!
+    TradeCount: Int!
+    HighPrice: String!
+    LowPrice: String!
+    LastPrice: String!
+    LiquidityEstimate: String
+}
+
+input UpsertSymbolStatsInput {
+    Symbol: String!
+    PositionCounts: [MeanInput]
+    LiquidityEstimate: MeanInput
+    MaxLiquidityEstimate: Float
+    MinLiquidityEstimate: Float
+}
+
+input NewHistoricTickerStatsInput {
+    Timestamp: Int!
+    Stats: [TickerStatsInput!]!
+}
+
+# ==========================
+# Mutations
+# ==========================
+
+extend type Mutation {
+    # === Symbol Stats ===
+    "If the symbol exists, update it. If not, create it"
+    upsertSymbolStats(input: UpsertSymbolStatsInput): SymbolStats!
+
+    "Deletes Symbol Stats by Symbol"
+    deleteSymbolStats(Symbol: String!): Boolean!
+
+    # === Ticker Stats ===
+    "Creates an array of 24h Ticker Stats at a given timestamp"
+    createHistoricTickerStats(input: NewHistoricTickerStatsInput!): [HistoricTickerStats!]!
+
+    "Deletes all Ticker Stats at a specific timestamp"
+    deleteHistoricTickerStats(Timestamp: Int!): Boolean!
+}
+
+# ==========================
+# Queries
+# ==========================
+
+extend type Query {
+    # === Symbol Stats ===
+    "Get All Symbol Stats"
+    SymbolStatsReports: [SymbolStats!]!
+
+    "Get Symbol Stats by Symbol"
+    SymbolStatsBySymbol(Symbol: String!): SymbolStats!
+
+
+    # === Ticker Stats ===
+    "Gets all 24h Ticker Stats at a specific timestamp"
+    getHistoricTickerStatsAtTimestamp(Timestamp: Int!): [HistoricTickerStats!]!
+
+    "Fetches TickerStats history for a given symbol (e.g., to chart volatility or volume)"
+    getTickerStatsBySymbol(symbol: String!, limit: Int): [TickerStats!]!
+}
+
+
+
+`, BuiltIn: false},
+	{Name: "../schema/reportsTradeOutcomes.graphqls", Input: `# ==========================
+# Types
+# ==========================
+
+type TradeOutcomeReport {
+    _id: ID!
+    Timestamp: Int!
+    BotName: String!
+    PercentageChange: Float!
+    Balance: Float!
+    Symbol: String!
+    Outcome: String!
+    Fee: Float
+    ElapsedTime: Int!
+    Volume: Float!
+    FearGreedIndex: Int!
+    MarketStatus: String!
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input NewTradeOutcomeReport {
+    Timestamp: Int!
+    BotName: String!
+    PercentageChange: Float!
+    Balance: Float!
+    Symbol: String!
+    Outcome: String!
+    Fee: Float
+    ElapsedTime: Int!
+    Volume: Float!
+    FearGreedIndex: Int!
+    MarketStatus: String!
+}
+
+# ==========================
+# Mutations
+# ==========================
+
+extend type Mutation {
+    "Creates a new Trade Outcome Report"
+    createTradeOutcomeReport(input: NewTradeOutcomeReport): TradeOutcomeReport!
+
+    "Deletes outcome reports for the matching given timestamp"
+    deleteOutcomeReports(Timestamp: Int!): Boolean!
+}
+
+# ==========================
+# Queries
+# ==========================
+
+extend type Query {
+    "Get Trade Outcome reports by ID"
+    TradeOutcomeReport(_id: ID!): TradeOutcomeReport!
+
+    "Get Trade Outcome reports by Bot Name"
+    TradeOutcomes(BotName: String!): [TradeOutcomeReport!]!
+
+    "Get Trade Outcome reports by Bot Name & Market Status"
+    TradeOutcomesInFocus(BotName: String!, MarketStatus: String!, limit: Int): [TradeOutcomeReport!]!
+
+    "Get All Trade Outcome reports"
+    TradeOutcomeReports: [TradeOutcomeReport!]!
+}`, BuiltIn: false},
+	{Name: "../schema/scalar.graphqls", Input: `# graph/schema/scalars.graphqls
+scalar DateTime
+`, BuiltIn: false},
+	{Name: "../schema/tasks.graphqls", Input: `# ==========================
+# Types
+# ==========================
+
+type Task {
+    id: ID!
+    title: String!
+    description: String
+    status: String!            # inbox, nextAction, scheduled, etc.
+    labels: [String]           # use these for meeting, call, design, etc.
+    assignedTo: String
+    dueDate: String
+    deferDate: String          # optional, for delayed tasks
+    department: String         # e.g. sales, marketing, programming
+    projectId: String
+    duration: Int              # track how long a task took
+    createdAt: String!
+    updatedAt: String!
+}
+
+type Project {
+    id: ID!
+    title: String!           # Now includes structured naming (e.g. "Q2-2025 | Marketing | New Launch")
+    sop: Boolean!            # For standard operating procedure templates — good addition
+    description: String
+    labels: [String]         # Used for filtering/grouping (e.g. ["Q2", "marketing"])
+    assignedTo: String
+    dueDate: String
+    status: String!          # "active", "completed", "archived"
+    createdAt: String!
+    updatedAt: String!
+    tasks: [Task]
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input CreateTaskInput {
+    title: String!
+    description: String
+    status: String = "inbox"
+    labels: [String]
+    assignedTo: String
+    dueDate: String
+    deferDate: String
+    department: String
+    projectId: String
+    duration: Int
+}
+
+input UpdateTaskInput {
+    id: ID!
+    title: String
+    description: String
+    status: String
+    labels: [String]
+    assignedTo: String
+    dueDate: String
+    deferDate: String
+    department: String
+    projectId: String
+    duration: Int
+}
+
+input CreateProjectInput {
+    title: String!
+    sop: Boolean = false
+    description: String
+    labels: [String]
+    assignedTo: String
+    dueDate: String
+    status: String = "active"
+}
+
+input UpdateProjectInput {
+    id: ID!
+    title: String
+    sop: Boolean
+    description: String
+    labels: [String]
+    assignedTo: String
+    dueDate: String
+    status: String
+}
+
+input ProjectFilterInput {
+    sop: Boolean
+}
+
+
+# ==========================
+# Mutations
+# ==========================
+
+extend type Mutation {
+    "Create a new task"
+    createTask(input: CreateTaskInput!): Task
+
+    "Update an existing task"
+    updateTask(input: UpdateTaskInput!): Task
+
+    "Delete a task by ID"
+    deleteTask(id: ID!): Boolean
+
+    "Create a new project"
+    createProject(input: CreateProjectInput!): Project
+
+    "Update an existing project"
+    updateProject(input: UpdateProjectInput!): Project
+
+    "Delete a project by ID"
+    deleteProject(id: ID!): Boolean
+}
+
+
+# ==========================
+# Queries
+# ==========================
+
+extend type Query {
+    "Get a single task by ID"
+    taskById(id: ID!): Task
+
+    "Get all tasks"
+    allTasks: [Task]
+
+    "Get a single project by ID"
+    projectById(id: ID!): Project
+
+    "Get projects filtered by SOP standard operating proceedure"
+    filterProjects(filter: ProjectFilterInput): [Project!]!
+}
+
+
+`, BuiltIn: false},
+	{Name: "../schema/users.graphqls", Input: `# ==========================
+# Types
+# ==========================
+
+type User {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    email: String!
+    password: String! # Suggest hashing at rest
+
+    mobileNumber: String
+    verifiedEmail: Boolean!
+    verifiedMobile: Boolean!
+
+    role: String! # guest | interested | member | admin
+    isDeleted: Boolean!
+
+    openToTrade: Boolean!
+    binanceAPI: String
+
+    preferredContactMethod: String # "email" | "whatsapp"
+    notes: String
+
+    invitedBy: String
+    joinedBallot: Boolean!
+    isPaidMember: Boolean!
+
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input CreateUserInput {
+    firstName: String!
+    lastName: String!
+    email: String!
+    password: String!
+    mobileNumber: String
+    role: String!          # e.g. "interested" or "guest"
+    invitedBy: String
+    preferredContactMethod: String 
+}
+
+input UpdateUserInput {
+    id: ID!
+    firstName: String
+    lastName: String
+    email: String
+    password: String
+    mobileNumber: String
+    verifiedEmail: Boolean
+    verifiedMobile: Boolean
+    role: String
+    isDeleted: Boolean!
+    openToTrade: Boolean
+    binanceAPI: String
+    preferredContactMethod: String
+    notes: String
+    invitedBy: String
+    joinedBallot: Boolean
+    isPaidMember: Boolean
+}
+
+# ==========================
+# Mutations
+# ==========================
+
+extend type Mutation {
+    "Creates a new user"
+    createUser(input: CreateUserInput!): User
+
+    "Update an existing user"
+    updateUser(input: UpdateUserInput!): User
+
+    "Deletes a user by email"
+    deleteUser(email: String!): Boolean
+}
+
+# ==========================
+# Queries
+# ==========================
+
+extend type Query {
+    "Get user by email"
+    getUserByEmail(email: String!): User
+
+    "Get all Users"
+    getAllUsers: [User!]!
+
+    "Get users by their role"
+    getUsersByRole(role: String!): [User!]!
+}
+
+
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -4949,264 +5043,6 @@ func (ec *executionContext) fieldContext_Mutation_createActivityReport(ctx conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createTradeOutcomeReport(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createTradeOutcomeReport(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTradeOutcomeReport(rctx, fc.Args["input"].(*model.NewTradeOutcomeReport))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.TradeOutcomeReport)
-	fc.Result = res
-	return ec.marshalNTradeOutcomeReport2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐTradeOutcomeReport(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_createTradeOutcomeReport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "_id":
-				return ec.fieldContext_TradeOutcomeReport__id(ctx, field)
-			case "Timestamp":
-				return ec.fieldContext_TradeOutcomeReport_Timestamp(ctx, field)
-			case "BotName":
-				return ec.fieldContext_TradeOutcomeReport_BotName(ctx, field)
-			case "PercentageChange":
-				return ec.fieldContext_TradeOutcomeReport_PercentageChange(ctx, field)
-			case "Balance":
-				return ec.fieldContext_TradeOutcomeReport_Balance(ctx, field)
-			case "Symbol":
-				return ec.fieldContext_TradeOutcomeReport_Symbol(ctx, field)
-			case "Outcome":
-				return ec.fieldContext_TradeOutcomeReport_Outcome(ctx, field)
-			case "Fee":
-				return ec.fieldContext_TradeOutcomeReport_Fee(ctx, field)
-			case "ElapsedTime":
-				return ec.fieldContext_TradeOutcomeReport_ElapsedTime(ctx, field)
-			case "Volume":
-				return ec.fieldContext_TradeOutcomeReport_Volume(ctx, field)
-			case "FearGreedIndex":
-				return ec.fieldContext_TradeOutcomeReport_FearGreedIndex(ctx, field)
-			case "MarketStatus":
-				return ec.fieldContext_TradeOutcomeReport_MarketStatus(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type TradeOutcomeReport", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createTradeOutcomeReport_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_deleteOutcomeReports(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteOutcomeReports(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteOutcomeReports(rctx, fc.Args["Timestamp"].(int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_deleteOutcomeReports(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_deleteOutcomeReports_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_upsertSymbolStats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_upsertSymbolStats(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpsertSymbolStats(rctx, fc.Args["input"].(*model.UpsertSymbolStatsInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.SymbolStats)
-	fc.Result = res
-	return ec.marshalNSymbolStats2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐSymbolStats(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_upsertSymbolStats(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "Symbol":
-				return ec.fieldContext_SymbolStats_Symbol(ctx, field)
-			case "PositionCounts":
-				return ec.fieldContext_SymbolStats_PositionCounts(ctx, field)
-			case "LiquidityEstimate":
-				return ec.fieldContext_SymbolStats_LiquidityEstimate(ctx, field)
-			case "MaxLiquidityEstimate":
-				return ec.fieldContext_SymbolStats_MaxLiquidityEstimate(ctx, field)
-			case "MinLiquidityEstimate":
-				return ec.fieldContext_SymbolStats_MinLiquidityEstimate(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type SymbolStats", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_upsertSymbolStats_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_deleteSymbolStats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteSymbolStats(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteSymbolStats(rctx, fc.Args["Symbol"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_deleteSymbolStats(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_deleteSymbolStats_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_createStrategy(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createStrategy(ctx, field)
 	if err != nil {
@@ -5551,242 +5387,6 @@ func (ec *executionContext) fieldContext_Mutation_markAsTested(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(model.CreateUserInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "firstName":
-				return ec.fieldContext_User_firstName(ctx, field)
-			case "lastName":
-				return ec.fieldContext_User_lastName(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "password":
-				return ec.fieldContext_User_password(ctx, field)
-			case "mobileNumber":
-				return ec.fieldContext_User_mobileNumber(ctx, field)
-			case "verifiedEmail":
-				return ec.fieldContext_User_verifiedEmail(ctx, field)
-			case "verifiedMobile":
-				return ec.fieldContext_User_verifiedMobile(ctx, field)
-			case "role":
-				return ec.fieldContext_User_role(ctx, field)
-			case "isDeleted":
-				return ec.fieldContext_User_isDeleted(ctx, field)
-			case "openToTrade":
-				return ec.fieldContext_User_openToTrade(ctx, field)
-			case "binanceAPI":
-				return ec.fieldContext_User_binanceAPI(ctx, field)
-			case "preferredContactMethod":
-				return ec.fieldContext_User_preferredContactMethod(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
-			case "invitedBy":
-				return ec.fieldContext_User_invitedBy(ctx, field)
-			case "joinedBallot":
-				return ec.fieldContext_User_joinedBallot(ctx, field)
-			case "isPaidMember":
-				return ec.fieldContext_User_isPaidMember(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_User_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_User_updatedAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateUser(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["input"].(model.UpdateUserInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "firstName":
-				return ec.fieldContext_User_firstName(ctx, field)
-			case "lastName":
-				return ec.fieldContext_User_lastName(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "password":
-				return ec.fieldContext_User_password(ctx, field)
-			case "mobileNumber":
-				return ec.fieldContext_User_mobileNumber(ctx, field)
-			case "verifiedEmail":
-				return ec.fieldContext_User_verifiedEmail(ctx, field)
-			case "verifiedMobile":
-				return ec.fieldContext_User_verifiedMobile(ctx, field)
-			case "role":
-				return ec.fieldContext_User_role(ctx, field)
-			case "isDeleted":
-				return ec.fieldContext_User_isDeleted(ctx, field)
-			case "openToTrade":
-				return ec.fieldContext_User_openToTrade(ctx, field)
-			case "binanceAPI":
-				return ec.fieldContext_User_binanceAPI(ctx, field)
-			case "preferredContactMethod":
-				return ec.fieldContext_User_preferredContactMethod(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
-			case "invitedBy":
-				return ec.fieldContext_User_invitedBy(ctx, field)
-			case "joinedBallot":
-				return ec.fieldContext_User_joinedBallot(ctx, field)
-			case "isPaidMember":
-				return ec.fieldContext_User_isPaidMember(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_User_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_User_updatedAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteUser(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteUser(rctx, fc.Args["email"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_deleteUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_login(ctx, field)
 	if err != nil {
@@ -5911,6 +5511,61 @@ func (ec *executionContext) fieldContext_Mutation_createHistoricPrices(ctx conte
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_deleteHistoricPrices(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteHistoricPrices(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteHistoricPrices(rctx, fc.Args["Timestamp"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteHistoricPrices(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteHistoricPrices_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createHistoricKline(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createHistoricKline(ctx, field)
 	if err != nil {
@@ -5972,8 +5627,8 @@ func (ec *executionContext) fieldContext_Mutation_createHistoricKline(ctx contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_deleteHistoricPrices(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteHistoricPrices(ctx, field)
+func (ec *executionContext) _Mutation_upsertSymbolStats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_upsertSymbolStats(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5986,7 +5641,74 @@ func (ec *executionContext) _Mutation_deleteHistoricPrices(ctx context.Context, 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteHistoricPrices(rctx, fc.Args["Timestamp"].(int))
+		return ec.resolvers.Mutation().UpsertSymbolStats(rctx, fc.Args["input"].(*model.UpsertSymbolStatsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SymbolStats)
+	fc.Result = res
+	return ec.marshalNSymbolStats2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐSymbolStats(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_upsertSymbolStats(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Symbol":
+				return ec.fieldContext_SymbolStats_Symbol(ctx, field)
+			case "PositionCounts":
+				return ec.fieldContext_SymbolStats_PositionCounts(ctx, field)
+			case "LiquidityEstimate":
+				return ec.fieldContext_SymbolStats_LiquidityEstimate(ctx, field)
+			case "MaxLiquidityEstimate":
+				return ec.fieldContext_SymbolStats_MaxLiquidityEstimate(ctx, field)
+			case "MinLiquidityEstimate":
+				return ec.fieldContext_SymbolStats_MinLiquidityEstimate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SymbolStats", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_upsertSymbolStats_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteSymbolStats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteSymbolStats(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteSymbolStats(rctx, fc.Args["Symbol"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6003,7 +5725,7 @@ func (ec *executionContext) _Mutation_deleteHistoricPrices(ctx context.Context, 
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_deleteHistoricPrices(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_deleteSymbolStats(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -6020,7 +5742,7 @@ func (ec *executionContext) fieldContext_Mutation_deleteHistoricPrices(ctx conte
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_deleteHistoricPrices_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_deleteSymbolStats_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -6139,6 +5861,142 @@ func (ec *executionContext) fieldContext_Mutation_deleteHistoricTickerStats(ctx 
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteHistoricTickerStats_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createTradeOutcomeReport(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createTradeOutcomeReport(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateTradeOutcomeReport(rctx, fc.Args["input"].(*model.NewTradeOutcomeReport))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.TradeOutcomeReport)
+	fc.Result = res
+	return ec.marshalNTradeOutcomeReport2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐTradeOutcomeReport(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createTradeOutcomeReport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "_id":
+				return ec.fieldContext_TradeOutcomeReport__id(ctx, field)
+			case "Timestamp":
+				return ec.fieldContext_TradeOutcomeReport_Timestamp(ctx, field)
+			case "BotName":
+				return ec.fieldContext_TradeOutcomeReport_BotName(ctx, field)
+			case "PercentageChange":
+				return ec.fieldContext_TradeOutcomeReport_PercentageChange(ctx, field)
+			case "Balance":
+				return ec.fieldContext_TradeOutcomeReport_Balance(ctx, field)
+			case "Symbol":
+				return ec.fieldContext_TradeOutcomeReport_Symbol(ctx, field)
+			case "Outcome":
+				return ec.fieldContext_TradeOutcomeReport_Outcome(ctx, field)
+			case "Fee":
+				return ec.fieldContext_TradeOutcomeReport_Fee(ctx, field)
+			case "ElapsedTime":
+				return ec.fieldContext_TradeOutcomeReport_ElapsedTime(ctx, field)
+			case "Volume":
+				return ec.fieldContext_TradeOutcomeReport_Volume(ctx, field)
+			case "FearGreedIndex":
+				return ec.fieldContext_TradeOutcomeReport_FearGreedIndex(ctx, field)
+			case "MarketStatus":
+				return ec.fieldContext_TradeOutcomeReport_MarketStatus(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TradeOutcomeReport", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createTradeOutcomeReport_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteOutcomeReports(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteOutcomeReports(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteOutcomeReports(rctx, fc.Args["Timestamp"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteOutcomeReports(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteOutcomeReports_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -6555,6 +6413,242 @@ func (ec *executionContext) fieldContext_Mutation_deleteProject(ctx context.Cont
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteProject_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(model.CreateUserInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "mobileNumber":
+				return ec.fieldContext_User_mobileNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_User_verifiedEmail(ctx, field)
+			case "verifiedMobile":
+				return ec.fieldContext_User_verifiedMobile(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_User_isDeleted(ctx, field)
+			case "openToTrade":
+				return ec.fieldContext_User_openToTrade(ctx, field)
+			case "binanceAPI":
+				return ec.fieldContext_User_binanceAPI(ctx, field)
+			case "preferredContactMethod":
+				return ec.fieldContext_User_preferredContactMethod(ctx, field)
+			case "notes":
+				return ec.fieldContext_User_notes(ctx, field)
+			case "invitedBy":
+				return ec.fieldContext_User_invitedBy(ctx, field)
+			case "joinedBallot":
+				return ec.fieldContext_User_joinedBallot(ctx, field)
+			case "isPaidMember":
+				return ec.fieldContext_User_isPaidMember(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["input"].(model.UpdateUserInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "mobileNumber":
+				return ec.fieldContext_User_mobileNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_User_verifiedEmail(ctx, field)
+			case "verifiedMobile":
+				return ec.fieldContext_User_verifiedMobile(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_User_isDeleted(ctx, field)
+			case "openToTrade":
+				return ec.fieldContext_User_openToTrade(ctx, field)
+			case "binanceAPI":
+				return ec.fieldContext_User_binanceAPI(ctx, field)
+			case "preferredContactMethod":
+				return ec.fieldContext_User_preferredContactMethod(ctx, field)
+			case "notes":
+				return ec.fieldContext_User_notes(ctx, field)
+			case "invitedBy":
+				return ec.fieldContext_User_invitedBy(ctx, field)
+			case "joinedBallot":
+				return ec.fieldContext_User_joinedBallot(ctx, field)
+			case "isPaidMember":
+				return ec.fieldContext_User_isPaidMember(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteUser(rctx, fc.Args["email"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -7586,6 +7680,721 @@ func (ec *executionContext) fieldContext_Query_ActivityReports(_ context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_getStrategyByName(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getStrategyByName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetStrategyByName(rctx, fc.Args["BotInstanceName"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Strategy)
+	fc.Result = res
+	return ec.marshalOStrategy2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐStrategy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getStrategyByName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "BotInstanceName":
+				return ec.fieldContext_Strategy_BotInstanceName(ctx, field)
+			case "TradeDuration":
+				return ec.fieldContext_Strategy_TradeDuration(ctx, field)
+			case "IncrementsATR":
+				return ec.fieldContext_Strategy_IncrementsATR(ctx, field)
+			case "LongSMADuration":
+				return ec.fieldContext_Strategy_LongSMADuration(ctx, field)
+			case "ShortSMADuration":
+				return ec.fieldContext_Strategy_ShortSMADuration(ctx, field)
+			case "WINCounter":
+				return ec.fieldContext_Strategy_WINCounter(ctx, field)
+			case "LOSSCounter":
+				return ec.fieldContext_Strategy_LOSSCounter(ctx, field)
+			case "TIMEOUTGainCounter":
+				return ec.fieldContext_Strategy_TIMEOUTGainCounter(ctx, field)
+			case "TIMEOUTLossCounter":
+				return ec.fieldContext_Strategy_TIMEOUTLossCounter(ctx, field)
+			case "NetGainCounter":
+				return ec.fieldContext_Strategy_NetGainCounter(ctx, field)
+			case "NetLossCounter":
+				return ec.fieldContext_Strategy_NetLossCounter(ctx, field)
+			case "AccountBalance":
+				return ec.fieldContext_Strategy_AccountBalance(ctx, field)
+			case "MovingAveMomentum":
+				return ec.fieldContext_Strategy_MovingAveMomentum(ctx, field)
+			case "TakeProfitPercentage":
+				return ec.fieldContext_Strategy_TakeProfitPercentage(ctx, field)
+			case "StopLossPercentage":
+				return ec.fieldContext_Strategy_StopLossPercentage(ctx, field)
+			case "ATRtollerance":
+				return ec.fieldContext_Strategy_ATRtollerance(ctx, field)
+			case "FeesTotal":
+				return ec.fieldContext_Strategy_FeesTotal(ctx, field)
+			case "Tested":
+				return ec.fieldContext_Strategy_Tested(ctx, field)
+			case "Owner":
+				return ec.fieldContext_Strategy_Owner(ctx, field)
+			case "CreatedOn":
+				return ec.fieldContext_Strategy_CreatedOn(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Strategy", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getStrategyByName_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getAllStrategies(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getAllStrategies(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetAllStrategies(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Strategy)
+	fc.Result = res
+	return ec.marshalOStrategy2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐStrategy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getAllStrategies(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "BotInstanceName":
+				return ec.fieldContext_Strategy_BotInstanceName(ctx, field)
+			case "TradeDuration":
+				return ec.fieldContext_Strategy_TradeDuration(ctx, field)
+			case "IncrementsATR":
+				return ec.fieldContext_Strategy_IncrementsATR(ctx, field)
+			case "LongSMADuration":
+				return ec.fieldContext_Strategy_LongSMADuration(ctx, field)
+			case "ShortSMADuration":
+				return ec.fieldContext_Strategy_ShortSMADuration(ctx, field)
+			case "WINCounter":
+				return ec.fieldContext_Strategy_WINCounter(ctx, field)
+			case "LOSSCounter":
+				return ec.fieldContext_Strategy_LOSSCounter(ctx, field)
+			case "TIMEOUTGainCounter":
+				return ec.fieldContext_Strategy_TIMEOUTGainCounter(ctx, field)
+			case "TIMEOUTLossCounter":
+				return ec.fieldContext_Strategy_TIMEOUTLossCounter(ctx, field)
+			case "NetGainCounter":
+				return ec.fieldContext_Strategy_NetGainCounter(ctx, field)
+			case "NetLossCounter":
+				return ec.fieldContext_Strategy_NetLossCounter(ctx, field)
+			case "AccountBalance":
+				return ec.fieldContext_Strategy_AccountBalance(ctx, field)
+			case "MovingAveMomentum":
+				return ec.fieldContext_Strategy_MovingAveMomentum(ctx, field)
+			case "TakeProfitPercentage":
+				return ec.fieldContext_Strategy_TakeProfitPercentage(ctx, field)
+			case "StopLossPercentage":
+				return ec.fieldContext_Strategy_StopLossPercentage(ctx, field)
+			case "ATRtollerance":
+				return ec.fieldContext_Strategy_ATRtollerance(ctx, field)
+			case "FeesTotal":
+				return ec.fieldContext_Strategy_FeesTotal(ctx, field)
+			case "Tested":
+				return ec.fieldContext_Strategy_Tested(ctx, field)
+			case "Owner":
+				return ec.fieldContext_Strategy_Owner(ctx, field)
+			case "CreatedOn":
+				return ec.fieldContext_Strategy_CreatedOn(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Strategy", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getHistoricPrice(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getHistoricPrice(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetHistoricPrice(rctx, fc.Args["symbol"].(string), fc.Args["limit"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.HistoricPrices)
+	fc.Result = res
+	return ec.marshalNHistoricPrices2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐHistoricPricesᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getHistoricPrice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Pair":
+				return ec.fieldContext_HistoricPrices_Pair(ctx, field)
+			case "Timestamp":
+				return ec.fieldContext_HistoricPrices_Timestamp(ctx, field)
+			case "CreatedAt":
+				return ec.fieldContext_HistoricPrices_CreatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type HistoricPrices", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getHistoricPrice_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getHistoricPricesAtTimestamp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getHistoricPricesAtTimestamp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetHistoricPricesAtTimestamp(rctx, fc.Args["Timestamp"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.HistoricPrices)
+	fc.Result = res
+	return ec.marshalNHistoricPrices2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐHistoricPricesᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getHistoricPricesAtTimestamp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Pair":
+				return ec.fieldContext_HistoricPrices_Pair(ctx, field)
+			case "Timestamp":
+				return ec.fieldContext_HistoricPrices_Timestamp(ctx, field)
+			case "CreatedAt":
+				return ec.fieldContext_HistoricPrices_CreatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type HistoricPrices", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getHistoricPricesAtTimestamp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getUniqueTimestampCount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getUniqueTimestampCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetUniqueTimestampCount(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getUniqueTimestampCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_availableSymbols(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_availableSymbols(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().AvailableSymbols(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_availableSymbols(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getHistoricKlineData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getHistoricKlineData(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetHistoricKlineData(rctx, fc.Args["symbol"].(string), fc.Args["limit"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.HistoricKlineData)
+	fc.Result = res
+	return ec.marshalNHistoricKlineData2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐHistoricKlineDataᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getHistoricKlineData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "opentime":
+				return ec.fieldContext_HistoricKlineData_opentime(ctx, field)
+			case "coins":
+				return ec.fieldContext_HistoricKlineData_coins(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type HistoricKlineData", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getHistoricKlineData_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_SymbolStatsReports(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_SymbolStatsReports(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SymbolStatsReports(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.SymbolStats)
+	fc.Result = res
+	return ec.marshalNSymbolStats2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐSymbolStatsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_SymbolStatsReports(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Symbol":
+				return ec.fieldContext_SymbolStats_Symbol(ctx, field)
+			case "PositionCounts":
+				return ec.fieldContext_SymbolStats_PositionCounts(ctx, field)
+			case "LiquidityEstimate":
+				return ec.fieldContext_SymbolStats_LiquidityEstimate(ctx, field)
+			case "MaxLiquidityEstimate":
+				return ec.fieldContext_SymbolStats_MaxLiquidityEstimate(ctx, field)
+			case "MinLiquidityEstimate":
+				return ec.fieldContext_SymbolStats_MinLiquidityEstimate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SymbolStats", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_SymbolStatsBySymbol(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_SymbolStatsBySymbol(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SymbolStatsBySymbol(rctx, fc.Args["Symbol"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SymbolStats)
+	fc.Result = res
+	return ec.marshalNSymbolStats2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐSymbolStats(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_SymbolStatsBySymbol(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Symbol":
+				return ec.fieldContext_SymbolStats_Symbol(ctx, field)
+			case "PositionCounts":
+				return ec.fieldContext_SymbolStats_PositionCounts(ctx, field)
+			case "LiquidityEstimate":
+				return ec.fieldContext_SymbolStats_LiquidityEstimate(ctx, field)
+			case "MaxLiquidityEstimate":
+				return ec.fieldContext_SymbolStats_MaxLiquidityEstimate(ctx, field)
+			case "MinLiquidityEstimate":
+				return ec.fieldContext_SymbolStats_MinLiquidityEstimate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SymbolStats", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_SymbolStatsBySymbol_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getHistoricTickerStatsAtTimestamp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getHistoricTickerStatsAtTimestamp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetHistoricTickerStatsAtTimestamp(rctx, fc.Args["Timestamp"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.HistoricTickerStats)
+	fc.Result = res
+	return ec.marshalNHistoricTickerStats2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐHistoricTickerStatsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getHistoricTickerStatsAtTimestamp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Timestamp":
+				return ec.fieldContext_HistoricTickerStats_Timestamp(ctx, field)
+			case "Stats":
+				return ec.fieldContext_HistoricTickerStats_Stats(ctx, field)
+			case "CreatedAt":
+				return ec.fieldContext_HistoricTickerStats_CreatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type HistoricTickerStats", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getHistoricTickerStatsAtTimestamp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getTickerStatsBySymbol(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getTickerStatsBySymbol(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetTickerStatsBySymbol(rctx, fc.Args["symbol"].(string), fc.Args["limit"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.TickerStats)
+	fc.Result = res
+	return ec.marshalNTickerStats2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐTickerStatsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getTickerStatsBySymbol(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Symbol":
+				return ec.fieldContext_TickerStats_Symbol(ctx, field)
+			case "PriceChange":
+				return ec.fieldContext_TickerStats_PriceChange(ctx, field)
+			case "PriceChangePct":
+				return ec.fieldContext_TickerStats_PriceChangePct(ctx, field)
+			case "QuoteVolume":
+				return ec.fieldContext_TickerStats_QuoteVolume(ctx, field)
+			case "Volume":
+				return ec.fieldContext_TickerStats_Volume(ctx, field)
+			case "TradeCount":
+				return ec.fieldContext_TickerStats_TradeCount(ctx, field)
+			case "HighPrice":
+				return ec.fieldContext_TickerStats_HighPrice(ctx, field)
+			case "LowPrice":
+				return ec.fieldContext_TickerStats_LowPrice(ctx, field)
+			case "LastPrice":
+				return ec.fieldContext_TickerStats_LastPrice(ctx, field)
+			case "LiquidityEstimate":
+				return ec.fieldContext_TickerStats_LiquidityEstimate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TickerStats", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getTickerStatsBySymbol_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_TradeOutcomeReport(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_TradeOutcomeReport(ctx, field)
 	if err != nil {
@@ -7899,1080 +8708,6 @@ func (ec *executionContext) fieldContext_Query_TradeOutcomeReports(_ context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_SymbolStatsReports(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_SymbolStatsReports(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().SymbolStatsReports(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.SymbolStats)
-	fc.Result = res
-	return ec.marshalNSymbolStats2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐSymbolStatsᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_SymbolStatsReports(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "Symbol":
-				return ec.fieldContext_SymbolStats_Symbol(ctx, field)
-			case "PositionCounts":
-				return ec.fieldContext_SymbolStats_PositionCounts(ctx, field)
-			case "LiquidityEstimate":
-				return ec.fieldContext_SymbolStats_LiquidityEstimate(ctx, field)
-			case "MaxLiquidityEstimate":
-				return ec.fieldContext_SymbolStats_MaxLiquidityEstimate(ctx, field)
-			case "MinLiquidityEstimate":
-				return ec.fieldContext_SymbolStats_MinLiquidityEstimate(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type SymbolStats", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_SymbolStatsBySymbol(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_SymbolStatsBySymbol(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().SymbolStatsBySymbol(rctx, fc.Args["Symbol"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.SymbolStats)
-	fc.Result = res
-	return ec.marshalNSymbolStats2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐSymbolStats(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_SymbolStatsBySymbol(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "Symbol":
-				return ec.fieldContext_SymbolStats_Symbol(ctx, field)
-			case "PositionCounts":
-				return ec.fieldContext_SymbolStats_PositionCounts(ctx, field)
-			case "LiquidityEstimate":
-				return ec.fieldContext_SymbolStats_LiquidityEstimate(ctx, field)
-			case "MaxLiquidityEstimate":
-				return ec.fieldContext_SymbolStats_MaxLiquidityEstimate(ctx, field)
-			case "MinLiquidityEstimate":
-				return ec.fieldContext_SymbolStats_MinLiquidityEstimate(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type SymbolStats", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_SymbolStatsBySymbol_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getStrategyByName(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getStrategyByName(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetStrategyByName(rctx, fc.Args["BotInstanceName"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.Strategy)
-	fc.Result = res
-	return ec.marshalOStrategy2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐStrategy(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getStrategyByName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "BotInstanceName":
-				return ec.fieldContext_Strategy_BotInstanceName(ctx, field)
-			case "TradeDuration":
-				return ec.fieldContext_Strategy_TradeDuration(ctx, field)
-			case "IncrementsATR":
-				return ec.fieldContext_Strategy_IncrementsATR(ctx, field)
-			case "LongSMADuration":
-				return ec.fieldContext_Strategy_LongSMADuration(ctx, field)
-			case "ShortSMADuration":
-				return ec.fieldContext_Strategy_ShortSMADuration(ctx, field)
-			case "WINCounter":
-				return ec.fieldContext_Strategy_WINCounter(ctx, field)
-			case "LOSSCounter":
-				return ec.fieldContext_Strategy_LOSSCounter(ctx, field)
-			case "TIMEOUTGainCounter":
-				return ec.fieldContext_Strategy_TIMEOUTGainCounter(ctx, field)
-			case "TIMEOUTLossCounter":
-				return ec.fieldContext_Strategy_TIMEOUTLossCounter(ctx, field)
-			case "NetGainCounter":
-				return ec.fieldContext_Strategy_NetGainCounter(ctx, field)
-			case "NetLossCounter":
-				return ec.fieldContext_Strategy_NetLossCounter(ctx, field)
-			case "AccountBalance":
-				return ec.fieldContext_Strategy_AccountBalance(ctx, field)
-			case "MovingAveMomentum":
-				return ec.fieldContext_Strategy_MovingAveMomentum(ctx, field)
-			case "TakeProfitPercentage":
-				return ec.fieldContext_Strategy_TakeProfitPercentage(ctx, field)
-			case "StopLossPercentage":
-				return ec.fieldContext_Strategy_StopLossPercentage(ctx, field)
-			case "ATRtollerance":
-				return ec.fieldContext_Strategy_ATRtollerance(ctx, field)
-			case "FeesTotal":
-				return ec.fieldContext_Strategy_FeesTotal(ctx, field)
-			case "Tested":
-				return ec.fieldContext_Strategy_Tested(ctx, field)
-			case "Owner":
-				return ec.fieldContext_Strategy_Owner(ctx, field)
-			case "CreatedOn":
-				return ec.fieldContext_Strategy_CreatedOn(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Strategy", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getStrategyByName_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getAllStrategies(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getAllStrategies(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetAllStrategies(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Strategy)
-	fc.Result = res
-	return ec.marshalOStrategy2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐStrategy(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getAllStrategies(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "BotInstanceName":
-				return ec.fieldContext_Strategy_BotInstanceName(ctx, field)
-			case "TradeDuration":
-				return ec.fieldContext_Strategy_TradeDuration(ctx, field)
-			case "IncrementsATR":
-				return ec.fieldContext_Strategy_IncrementsATR(ctx, field)
-			case "LongSMADuration":
-				return ec.fieldContext_Strategy_LongSMADuration(ctx, field)
-			case "ShortSMADuration":
-				return ec.fieldContext_Strategy_ShortSMADuration(ctx, field)
-			case "WINCounter":
-				return ec.fieldContext_Strategy_WINCounter(ctx, field)
-			case "LOSSCounter":
-				return ec.fieldContext_Strategy_LOSSCounter(ctx, field)
-			case "TIMEOUTGainCounter":
-				return ec.fieldContext_Strategy_TIMEOUTGainCounter(ctx, field)
-			case "TIMEOUTLossCounter":
-				return ec.fieldContext_Strategy_TIMEOUTLossCounter(ctx, field)
-			case "NetGainCounter":
-				return ec.fieldContext_Strategy_NetGainCounter(ctx, field)
-			case "NetLossCounter":
-				return ec.fieldContext_Strategy_NetLossCounter(ctx, field)
-			case "AccountBalance":
-				return ec.fieldContext_Strategy_AccountBalance(ctx, field)
-			case "MovingAveMomentum":
-				return ec.fieldContext_Strategy_MovingAveMomentum(ctx, field)
-			case "TakeProfitPercentage":
-				return ec.fieldContext_Strategy_TakeProfitPercentage(ctx, field)
-			case "StopLossPercentage":
-				return ec.fieldContext_Strategy_StopLossPercentage(ctx, field)
-			case "ATRtollerance":
-				return ec.fieldContext_Strategy_ATRtollerance(ctx, field)
-			case "FeesTotal":
-				return ec.fieldContext_Strategy_FeesTotal(ctx, field)
-			case "Tested":
-				return ec.fieldContext_Strategy_Tested(ctx, field)
-			case "Owner":
-				return ec.fieldContext_Strategy_Owner(ctx, field)
-			case "CreatedOn":
-				return ec.fieldContext_Strategy_CreatedOn(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Strategy", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getUserByEmail(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getUserByEmail(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetUserByEmail(rctx, fc.Args["email"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getUserByEmail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "firstName":
-				return ec.fieldContext_User_firstName(ctx, field)
-			case "lastName":
-				return ec.fieldContext_User_lastName(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "password":
-				return ec.fieldContext_User_password(ctx, field)
-			case "mobileNumber":
-				return ec.fieldContext_User_mobileNumber(ctx, field)
-			case "verifiedEmail":
-				return ec.fieldContext_User_verifiedEmail(ctx, field)
-			case "verifiedMobile":
-				return ec.fieldContext_User_verifiedMobile(ctx, field)
-			case "role":
-				return ec.fieldContext_User_role(ctx, field)
-			case "isDeleted":
-				return ec.fieldContext_User_isDeleted(ctx, field)
-			case "openToTrade":
-				return ec.fieldContext_User_openToTrade(ctx, field)
-			case "binanceAPI":
-				return ec.fieldContext_User_binanceAPI(ctx, field)
-			case "preferredContactMethod":
-				return ec.fieldContext_User_preferredContactMethod(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
-			case "invitedBy":
-				return ec.fieldContext_User_invitedBy(ctx, field)
-			case "joinedBallot":
-				return ec.fieldContext_User_joinedBallot(ctx, field)
-			case "isPaidMember":
-				return ec.fieldContext_User_isPaidMember(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_User_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_User_updatedAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getUserByEmail_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getAllUsers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getAllUsers(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetAllUsers(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getAllUsers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "firstName":
-				return ec.fieldContext_User_firstName(ctx, field)
-			case "lastName":
-				return ec.fieldContext_User_lastName(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "password":
-				return ec.fieldContext_User_password(ctx, field)
-			case "mobileNumber":
-				return ec.fieldContext_User_mobileNumber(ctx, field)
-			case "verifiedEmail":
-				return ec.fieldContext_User_verifiedEmail(ctx, field)
-			case "verifiedMobile":
-				return ec.fieldContext_User_verifiedMobile(ctx, field)
-			case "role":
-				return ec.fieldContext_User_role(ctx, field)
-			case "isDeleted":
-				return ec.fieldContext_User_isDeleted(ctx, field)
-			case "openToTrade":
-				return ec.fieldContext_User_openToTrade(ctx, field)
-			case "binanceAPI":
-				return ec.fieldContext_User_binanceAPI(ctx, field)
-			case "preferredContactMethod":
-				return ec.fieldContext_User_preferredContactMethod(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
-			case "invitedBy":
-				return ec.fieldContext_User_invitedBy(ctx, field)
-			case "joinedBallot":
-				return ec.fieldContext_User_joinedBallot(ctx, field)
-			case "isPaidMember":
-				return ec.fieldContext_User_isPaidMember(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_User_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_User_updatedAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getUsersByRole(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getUsersByRole(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetUsersByRole(rctx, fc.Args["role"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getUsersByRole(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "firstName":
-				return ec.fieldContext_User_firstName(ctx, field)
-			case "lastName":
-				return ec.fieldContext_User_lastName(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "password":
-				return ec.fieldContext_User_password(ctx, field)
-			case "mobileNumber":
-				return ec.fieldContext_User_mobileNumber(ctx, field)
-			case "verifiedEmail":
-				return ec.fieldContext_User_verifiedEmail(ctx, field)
-			case "verifiedMobile":
-				return ec.fieldContext_User_verifiedMobile(ctx, field)
-			case "role":
-				return ec.fieldContext_User_role(ctx, field)
-			case "isDeleted":
-				return ec.fieldContext_User_isDeleted(ctx, field)
-			case "openToTrade":
-				return ec.fieldContext_User_openToTrade(ctx, field)
-			case "binanceAPI":
-				return ec.fieldContext_User_binanceAPI(ctx, field)
-			case "preferredContactMethod":
-				return ec.fieldContext_User_preferredContactMethod(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
-			case "invitedBy":
-				return ec.fieldContext_User_invitedBy(ctx, field)
-			case "joinedBallot":
-				return ec.fieldContext_User_joinedBallot(ctx, field)
-			case "isPaidMember":
-				return ec.fieldContext_User_isPaidMember(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_User_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_User_updatedAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getUsersByRole_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getHistoricPrice(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getHistoricPrice(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetHistoricPrice(rctx, fc.Args["symbol"].(string), fc.Args["limit"].(*int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.HistoricPrices)
-	fc.Result = res
-	return ec.marshalNHistoricPrices2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐHistoricPricesᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getHistoricPrice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "Pair":
-				return ec.fieldContext_HistoricPrices_Pair(ctx, field)
-			case "Timestamp":
-				return ec.fieldContext_HistoricPrices_Timestamp(ctx, field)
-			case "CreatedAt":
-				return ec.fieldContext_HistoricPrices_CreatedAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type HistoricPrices", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getHistoricPrice_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getHistoricPricesAtTimestamp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getHistoricPricesAtTimestamp(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetHistoricPricesAtTimestamp(rctx, fc.Args["Timestamp"].(int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.HistoricPrices)
-	fc.Result = res
-	return ec.marshalNHistoricPrices2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐHistoricPricesᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getHistoricPricesAtTimestamp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "Pair":
-				return ec.fieldContext_HistoricPrices_Pair(ctx, field)
-			case "Timestamp":
-				return ec.fieldContext_HistoricPrices_Timestamp(ctx, field)
-			case "CreatedAt":
-				return ec.fieldContext_HistoricPrices_CreatedAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type HistoricPrices", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getHistoricPricesAtTimestamp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getHistoricKlineData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getHistoricKlineData(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetHistoricKlineData(rctx, fc.Args["symbol"].(string), fc.Args["limit"].(*int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.HistoricKlineData)
-	fc.Result = res
-	return ec.marshalNHistoricKlineData2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐHistoricKlineDataᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getHistoricKlineData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "opentime":
-				return ec.fieldContext_HistoricKlineData_opentime(ctx, field)
-			case "coins":
-				return ec.fieldContext_HistoricKlineData_coins(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type HistoricKlineData", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getHistoricKlineData_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getUniqueTimestampCount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getUniqueTimestampCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetUniqueTimestampCount(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getUniqueTimestampCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_availableSymbols(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_availableSymbols(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().AvailableSymbols(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_availableSymbols(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getHistoricTickerStatsAtTimestamp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getHistoricTickerStatsAtTimestamp(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetHistoricTickerStatsAtTimestamp(rctx, fc.Args["Timestamp"].(int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.HistoricTickerStats)
-	fc.Result = res
-	return ec.marshalNHistoricTickerStats2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐHistoricTickerStatsᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getHistoricTickerStatsAtTimestamp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "Timestamp":
-				return ec.fieldContext_HistoricTickerStats_Timestamp(ctx, field)
-			case "Stats":
-				return ec.fieldContext_HistoricTickerStats_Stats(ctx, field)
-			case "CreatedAt":
-				return ec.fieldContext_HistoricTickerStats_CreatedAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type HistoricTickerStats", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getHistoricTickerStatsAtTimestamp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getTickerStatsBySymbol(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getTickerStatsBySymbol(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetTickerStatsBySymbol(rctx, fc.Args["symbol"].(string), fc.Args["limit"].(*int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.TickerStats)
-	fc.Result = res
-	return ec.marshalNTickerStats2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐTickerStatsᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getTickerStatsBySymbol(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "Symbol":
-				return ec.fieldContext_TickerStats_Symbol(ctx, field)
-			case "PriceChange":
-				return ec.fieldContext_TickerStats_PriceChange(ctx, field)
-			case "PriceChangePct":
-				return ec.fieldContext_TickerStats_PriceChangePct(ctx, field)
-			case "QuoteVolume":
-				return ec.fieldContext_TickerStats_QuoteVolume(ctx, field)
-			case "Volume":
-				return ec.fieldContext_TickerStats_Volume(ctx, field)
-			case "TradeCount":
-				return ec.fieldContext_TickerStats_TradeCount(ctx, field)
-			case "HighPrice":
-				return ec.fieldContext_TickerStats_HighPrice(ctx, field)
-			case "LowPrice":
-				return ec.fieldContext_TickerStats_LowPrice(ctx, field)
-			case "LastPrice":
-				return ec.fieldContext_TickerStats_LastPrice(ctx, field)
-			case "LiquidityEstimate":
-				return ec.fieldContext_TickerStats_LiquidityEstimate(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type TickerStats", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getTickerStatsBySymbol_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_availableTickerSymbols(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_availableTickerSymbols(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().AvailableTickerSymbols(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_availableTickerSymbols(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getTickerStatsSnapshotCount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getTickerStatsSnapshotCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetTickerStatsSnapshotCount(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getTickerStatsSnapshotCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Query_taskById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_taskById(ctx, field)
 	if err != nil {
@@ -9271,6 +9006,277 @@ func (ec *executionContext) fieldContext_Query_filterProjects(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_filterProjects_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getUserByEmail(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getUserByEmail(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetUserByEmail(rctx, fc.Args["email"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getUserByEmail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "mobileNumber":
+				return ec.fieldContext_User_mobileNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_User_verifiedEmail(ctx, field)
+			case "verifiedMobile":
+				return ec.fieldContext_User_verifiedMobile(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_User_isDeleted(ctx, field)
+			case "openToTrade":
+				return ec.fieldContext_User_openToTrade(ctx, field)
+			case "binanceAPI":
+				return ec.fieldContext_User_binanceAPI(ctx, field)
+			case "preferredContactMethod":
+				return ec.fieldContext_User_preferredContactMethod(ctx, field)
+			case "notes":
+				return ec.fieldContext_User_notes(ctx, field)
+			case "invitedBy":
+				return ec.fieldContext_User_invitedBy(ctx, field)
+			case "joinedBallot":
+				return ec.fieldContext_User_joinedBallot(ctx, field)
+			case "isPaidMember":
+				return ec.fieldContext_User_isPaidMember(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getUserByEmail_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getAllUsers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getAllUsers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetAllUsers(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getAllUsers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "mobileNumber":
+				return ec.fieldContext_User_mobileNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_User_verifiedEmail(ctx, field)
+			case "verifiedMobile":
+				return ec.fieldContext_User_verifiedMobile(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_User_isDeleted(ctx, field)
+			case "openToTrade":
+				return ec.fieldContext_User_openToTrade(ctx, field)
+			case "binanceAPI":
+				return ec.fieldContext_User_binanceAPI(ctx, field)
+			case "preferredContactMethod":
+				return ec.fieldContext_User_preferredContactMethod(ctx, field)
+			case "notes":
+				return ec.fieldContext_User_notes(ctx, field)
+			case "invitedBy":
+				return ec.fieldContext_User_invitedBy(ctx, field)
+			case "joinedBallot":
+				return ec.fieldContext_User_joinedBallot(ctx, field)
+			case "isPaidMember":
+				return ec.fieldContext_User_isPaidMember(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getUsersByRole(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getUsersByRole(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetUsersByRole(rctx, fc.Args["role"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getUsersByRole(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "mobileNumber":
+				return ec.fieldContext_User_mobileNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_User_verifiedEmail(ctx, field)
+			case "verifiedMobile":
+				return ec.fieldContext_User_verifiedMobile(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_User_isDeleted(ctx, field)
+			case "openToTrade":
+				return ec.fieldContext_User_openToTrade(ctx, field)
+			case "binanceAPI":
+				return ec.fieldContext_User_binanceAPI(ctx, field)
+			case "preferredContactMethod":
+				return ec.fieldContext_User_preferredContactMethod(ctx, field)
+			case "notes":
+				return ec.fieldContext_User_notes(ctx, field)
+			case "invitedBy":
+				return ec.fieldContext_User_invitedBy(ctx, field)
+			case "joinedBallot":
+				return ec.fieldContext_User_joinedBallot(ctx, field)
+			case "isPaidMember":
+				return ec.fieldContext_User_isPaidMember(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getUsersByRole_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -16529,34 +16535,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "createTradeOutcomeReport":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createTradeOutcomeReport(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "deleteOutcomeReports":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteOutcomeReports(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "upsertSymbolStats":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_upsertSymbolStats(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "deleteSymbolStats":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteSymbolStats(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "createStrategy":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createStrategy(ctx, field)
@@ -16577,18 +16555,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_markAsTested(ctx, field)
 			})
-		case "createUser":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createUser(ctx, field)
-			})
-		case "updateUser":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateUser(ctx, field)
-			})
-		case "deleteUser":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteUser(ctx, field)
-			})
 		case "login":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_login(ctx, field)
@@ -16603,6 +16569,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "deleteHistoricPrices":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteHistoricPrices(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createHistoricKline":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createHistoricKline(ctx, field)
@@ -16610,9 +16583,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "deleteHistoricPrices":
+		case "upsertSymbolStats":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteHistoricPrices(ctx, field)
+				return ec._Mutation_upsertSymbolStats(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteSymbolStats":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteSymbolStats(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -16627,6 +16607,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deleteHistoricTickerStats":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteHistoricTickerStats(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createTradeOutcomeReport":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createTradeOutcomeReport(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteOutcomeReports":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteOutcomeReports(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -16654,6 +16648,18 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deleteProject":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteProject(ctx, field)
+			})
+		case "createUser":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createUser(ctx, field)
+			})
+		case "updateUser":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateUser(ctx, field)
+			})
+		case "deleteUser":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteUser(ctx, field)
 			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -16925,6 +16931,242 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getStrategyByName":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getStrategyByName(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getAllStrategies":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getAllStrategies(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getHistoricPrice":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getHistoricPrice(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getHistoricPricesAtTimestamp":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getHistoricPricesAtTimestamp(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getUniqueTimestampCount":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getUniqueTimestampCount(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "availableSymbols":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_availableSymbols(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getHistoricKlineData":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getHistoricKlineData(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "SymbolStatsReports":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_SymbolStatsReports(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "SymbolStatsBySymbol":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_SymbolStatsBySymbol(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getHistoricTickerStatsAtTimestamp":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getHistoricTickerStatsAtTimestamp(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getTickerStatsBySymbol":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getTickerStatsBySymbol(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "TradeOutcomeReport":
 			field := field
 
@@ -17013,349 +17255,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "SymbolStatsReports":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_SymbolStatsReports(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "SymbolStatsBySymbol":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_SymbolStatsBySymbol(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getStrategyByName":
-			field := field
-
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getStrategyByName(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getAllStrategies":
-			field := field
-
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getAllStrategies(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getUserByEmail":
-			field := field
-
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getUserByEmail(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getAllUsers":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getAllUsers(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getUsersByRole":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getUsersByRole(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getHistoricPrice":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getHistoricPrice(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getHistoricPricesAtTimestamp":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getHistoricPricesAtTimestamp(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getHistoricKlineData":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getHistoricKlineData(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getUniqueTimestampCount":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getUniqueTimestampCount(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "availableSymbols":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_availableSymbols(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getHistoricTickerStatsAtTimestamp":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getHistoricTickerStatsAtTimestamp(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getTickerStatsBySymbol":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getTickerStatsBySymbol(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "availableTickerSymbols":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_availableTickerSymbols(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getTickerStatsSnapshotCount":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getTickerStatsSnapshotCount(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "taskById":
 			field := field
 
@@ -17423,6 +17322,69 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_filterProjects(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getUserByEmail":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getUserByEmail(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getAllUsers":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getAllUsers(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getUsersByRole":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getUsersByRole(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

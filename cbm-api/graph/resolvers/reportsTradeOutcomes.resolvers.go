@@ -7,15 +7,9 @@ package resolvers
 import (
 	"context"
 
-	"cryptobotmanager.com/cbm-backend/cbm-api/graph/generated"
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	"github.com/rs/zerolog/log"
 )
-
-// MutationResolver implementation
-func (r *mutationResolver) CreateActivityReport(ctx context.Context, input *model.NewActivityReport) (*model.ActivityReport, error) {
-	return db.SaveActivityReport(input), nil
-}
 
 // CreateTradeOutcomeReport is the resolver for the createTradeOutcomeReport field.
 func (r *mutationResolver) CreateTradeOutcomeReport(ctx context.Context, input *model.NewTradeOutcomeReport) (*model.TradeOutcomeReport, error) {
@@ -32,27 +26,6 @@ func (r *mutationResolver) DeleteOutcomeReports(ctx context.Context, timestamp i
 	}
 
 	return success, nil
-}
-
-// UpsertSymbolStats is the resolver for the upsertSymbolStats field.
-func (r *mutationResolver) UpsertSymbolStats(ctx context.Context, input *model.UpsertSymbolStatsInput) (*model.SymbolStats, error) {
-	return db.UpsertSymbolStats(input), nil
-}
-
-// DeleteSymbolStats is the resolver for the deleteSymbolStats field.
-func (r *mutationResolver) DeleteSymbolStats(ctx context.Context, symbol string) (bool, error) {
-	success, err := db.DeleteSymbolStats(ctx, symbol)
-	return success, err
-}
-
-// ActivityReport is the resolver for the ActivityReport field.
-func (r *queryResolver) ActivityReport(ctx context.Context, id string) (*model.ActivityReport, error) {
-	return db.FindActivityReportByID(id), nil
-}
-
-// ActivityReports is the resolver for the ActivityReports field.
-func (r *queryResolver) ActivityReports(ctx context.Context) ([]*model.ActivityReport, error) {
-	return db.AllActivityReports(), nil
 }
 
 // TradeOutcomeReport is the resolver for the TradeOutcomeReport field.
@@ -74,22 +47,3 @@ func (r *queryResolver) TradeOutcomesInFocus(ctx context.Context, botName string
 func (r *queryResolver) TradeOutcomeReports(ctx context.Context) ([]*model.TradeOutcomeReport, error) {
 	return db.AllTradeOutcomeReports(), nil
 }
-
-// SymbolStatsReports is the resolver for the SymbolStatsReports field.
-func (r *queryResolver) SymbolStatsReports(ctx context.Context) ([]*model.SymbolStats, error) {
-	return db.AllSymbolStats(), nil
-}
-
-// SymbolStatsBySymbol is the resolver for the SymbolStatsBySymbol field.
-func (r *queryResolver) SymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error) {
-	return db.FindSymbolStatsBySymbol(ctx, symbol), nil
-}
-
-// Mutation returns generated.MutationResolver implementation.
-func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
-
-// Query returns generated.QueryResolver implementation.
-func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
-
-type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }

@@ -1,0 +1,98 @@
+# ==========================
+# Types
+# ==========================
+
+type User {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    email: String!
+    password: String! # Suggest hashing at rest
+
+    mobileNumber: String
+    verifiedEmail: Boolean!
+    verifiedMobile: Boolean!
+
+    role: String! # guest | interested | member | admin
+    isDeleted: Boolean!
+
+    openToTrade: Boolean!
+    binanceAPI: String
+
+    preferredContactMethod: String # "email" | "whatsapp"
+    notes: String
+
+    invitedBy: String
+    joinedBallot: Boolean!
+    isPaidMember: Boolean!
+
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input CreateUserInput {
+    firstName: String!
+    lastName: String!
+    email: String!
+    password: String!
+    mobileNumber: String
+    role: String!          # e.g. "interested" or "guest"
+    invitedBy: String
+    preferredContactMethod: String 
+}
+
+input UpdateUserInput {
+    id: ID!
+    firstName: String
+    lastName: String
+    email: String
+    password: String
+    mobileNumber: String
+    verifiedEmail: Boolean
+    verifiedMobile: Boolean
+    role: String
+    isDeleted: Boolean!
+    openToTrade: Boolean
+    binanceAPI: String
+    preferredContactMethod: String
+    notes: String
+    invitedBy: String
+    joinedBallot: Boolean
+    isPaidMember: Boolean
+}
+
+# ==========================
+# Mutations
+# ==========================
+
+extend type Mutation {
+    "Creates a new user"
+    createUser(input: CreateUserInput!): User
+
+    "Update an existing user"
+    updateUser(input: UpdateUserInput!): User
+
+    "Deletes a user by email"
+    deleteUser(email: String!): Boolean
+}
+
+# ==========================
+# Queries
+# ==========================
+
+extend type Query {
+    "Get user by email"
+    getUserByEmail(email: String!): User
+
+    "Get all Users"
+    getAllUsers: [User!]!
+
+    "Get users by their role"
+    getUsersByRole(role: String!): [User!]!
+}
+
+

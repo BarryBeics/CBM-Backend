@@ -1,13 +1,30 @@
+# ==========================
+# Types
+# ==========================
+
 type LoginResponse {
-  token: String!
-  user: User!
+    token: String!
+    user: User!
 }
+
+# ==========================
+# Input Types
+# ==========================
 
 input LoginInput {
-  email: String!
-  password: String!
+    email: String!
+    password: String!
 }
 
+# ==========================
+# Mutations
+# ==========================
+
 extend type Mutation {
-  login(input: LoginInput!): LoginResponse!
+    login(input: LoginInput!): LoginResponse!
 }
+
+# ==========================
+# Queries
+# ==========================
+

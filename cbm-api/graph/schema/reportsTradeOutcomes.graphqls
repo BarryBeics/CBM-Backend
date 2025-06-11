@@ -1,0 +1,66 @@
+# ==========================
+# Types
+# ==========================
+
+type TradeOutcomeReport {
+    _id: ID!
+    Timestamp: Int!
+    BotName: String!
+    PercentageChange: Float!
+    Balance: Float!
+    Symbol: String!
+    Outcome: String!
+    Fee: Float
+    ElapsedTime: Int!
+    Volume: Float!
+    FearGreedIndex: Int!
+    MarketStatus: String!
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input NewTradeOutcomeReport {
+    Timestamp: Int!
+    BotName: String!
+    PercentageChange: Float!
+    Balance: Float!
+    Symbol: String!
+    Outcome: String!
+    Fee: Float
+    ElapsedTime: Int!
+    Volume: Float!
+    FearGreedIndex: Int!
+    MarketStatus: String!
+}
+
+# ==========================
+# Mutations
+# ==========================
+
+extend type Mutation {
+    "Creates a new Trade Outcome Report"
+    createTradeOutcomeReport(input: NewTradeOutcomeReport): TradeOutcomeReport!
+
+    "Deletes outcome reports for the matching given timestamp"
+    deleteOutcomeReports(Timestamp: Int!): Boolean!
+}
+
+# ==========================
+# Queries
+# ==========================
+
+extend type Query {
+    "Get Trade Outcome reports by ID"
+    TradeOutcomeReport(_id: ID!): TradeOutcomeReport!
+
+    "Get Trade Outcome reports by Bot Name"
+    TradeOutcomes(BotName: String!): [TradeOutcomeReport!]!
+
+    "Get Trade Outcome reports by Bot Name & Market Status"
+    TradeOutcomesInFocus(BotName: String!, MarketStatus: String!, limit: Int): [TradeOutcomeReport!]!
+
+    "Get All Trade Outcome reports"
+    TradeOutcomeReports: [TradeOutcomeReport!]!
+}
