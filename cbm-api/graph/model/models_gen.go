@@ -61,7 +61,7 @@ type HistoricKlineData struct {
 }
 
 type HistoricPrices struct {
-	Pair      []*Pair   `json:"Pair,omitempty"`
+	Pair      []*Pair   `json:"Pair"`
 	Timestamp int       `json:"Timestamp"`
 	CreatedAt time.Time `json:"CreatedAt"`
 }

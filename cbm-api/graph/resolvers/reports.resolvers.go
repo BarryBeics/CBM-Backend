@@ -6,6 +6,7 @@ package resolvers
 
 import (
 	"context"
+	"fmt"
 
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/generated"
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
@@ -45,44 +46,44 @@ func (r *mutationResolver) DeleteSymbolStats(ctx context.Context, symbol string)
 	return success, err
 }
 
-// ActivityReport is the resolver for the ActivityReport field.
-func (r *queryResolver) ActivityReport(ctx context.Context, id string) (*model.ActivityReport, error) {
-	return db.FindActivityReportByID(id), nil
+// ReadActivityReport is the resolver for the readActivityReport field.
+func (r *queryResolver) ReadActivityReport(ctx context.Context, id string) (*model.ActivityReport, error) {
+	panic(fmt.Errorf("not implemented: ReadActivityReport - readActivityReport"))
 }
 
-// ActivityReports is the resolver for the ActivityReports field.
-func (r *queryResolver) ActivityReports(ctx context.Context) ([]*model.ActivityReport, error) {
-	return db.AllActivityReports(), nil
+// ReadAllActivityReports is the resolver for the readAllActivityReports field.
+func (r *queryResolver) ReadAllActivityReports(ctx context.Context) ([]*model.ActivityReport, error) {
+	panic(fmt.Errorf("not implemented: ReadAllActivityReports - readAllActivityReports"))
 }
 
-// TradeOutcomeReport is the resolver for the TradeOutcomeReport field.
-func (r *queryResolver) TradeOutcomeReport(ctx context.Context, id string) (*model.TradeOutcomeReport, error) {
-	return db.FindTradeOutcomeReportByID(id), nil
+// ReadTradeOutcomeReport is the resolver for the readTradeOutcomeReport field.
+func (r *queryResolver) ReadTradeOutcomeReport(ctx context.Context, id string) (*model.TradeOutcomeReport, error) {
+	panic(fmt.Errorf("not implemented: ReadTradeOutcomeReport - readTradeOutcomeReport"))
 }
 
-// TradeOutcomes retrieves trade outcome reports based on the BotName.
-func (r *queryResolver) TradeOutcomes(ctx context.Context, botName string) ([]*model.TradeOutcomeReport, error) {
-	return db.TradeOutcomeReportsByBotName(ctx, botName)
+// ReadTradeOutcomes is the resolver for the readTradeOutcomes field.
+func (r *queryResolver) ReadTradeOutcomes(ctx context.Context, botName string) ([]*model.TradeOutcomeReport, error) {
+	panic(fmt.Errorf("not implemented: ReadTradeOutcomes - readTradeOutcomes"))
 }
 
-// TradeOutcomesInFocus is the resolver for the TradeOutcomesInFocus field.
-func (r *queryResolver) TradeOutcomesInFocus(ctx context.Context, botName string, marketStatus string, limit *int) ([]*model.TradeOutcomeReport, error) {
-	return db.TradeOutcomeReportsByBotNameAndMarketStatus(ctx, botName, marketStatus, *limit)
+// ReadTradeOutcomesInFocus is the resolver for the readTradeOutcomesInFocus field.
+func (r *queryResolver) ReadTradeOutcomesInFocus(ctx context.Context, botName string, marketStatus string, limit *int) ([]*model.TradeOutcomeReport, error) {
+	panic(fmt.Errorf("not implemented: ReadTradeOutcomesInFocus - readTradeOutcomesInFocus"))
 }
 
-// TradeOutcomeReports is the resolver for the TradeOutcomeReports field.
-func (r *queryResolver) TradeOutcomeReports(ctx context.Context) ([]*model.TradeOutcomeReport, error) {
-	return db.AllTradeOutcomeReports(), nil
+// ReadAllTradeOutcomeReports is the resolver for the readAllTradeOutcomeReports field.
+func (r *queryResolver) ReadAllTradeOutcomeReports(ctx context.Context) ([]*model.TradeOutcomeReport, error) {
+	panic(fmt.Errorf("not implemented: ReadAllTradeOutcomeReports - readAllTradeOutcomeReports"))
 }
 
-// SymbolStatsReports is the resolver for the SymbolStatsReports field.
-func (r *queryResolver) SymbolStatsReports(ctx context.Context) ([]*model.SymbolStats, error) {
-	return db.AllSymbolStats(), nil
+// ReadAllSymbolStatsReports is the resolver for the readAllSymbolStatsReports field.
+func (r *queryResolver) ReadAllSymbolStatsReports(ctx context.Context) ([]*model.SymbolStats, error) {
+	panic(fmt.Errorf("not implemented: ReadAllSymbolStatsReports - readAllSymbolStatsReports"))
 }
 
-// SymbolStatsBySymbol is the resolver for the SymbolStatsBySymbol field.
-func (r *queryResolver) SymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error) {
-	return db.FindSymbolStatsBySymbol(ctx, symbol), nil
+// ReadSymbolStatsBySymbol is the resolver for the readSymbolStatsBySymbol field.
+func (r *queryResolver) ReadSymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error) {
+	panic(fmt.Errorf("not implemented: ReadSymbolStatsBySymbol - readSymbolStatsBySymbol"))
 }
 
 // Mutation returns generated.MutationResolver implementation.
@@ -93,3 +94,36 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	func (r *queryResolver) ActivityReport(ctx context.Context, id string) (*model.ActivityReport, error) {
+	return db.FindActivityReportByID(id), nil
+}
+func (r *queryResolver) ActivityReports(ctx context.Context) ([]*model.ActivityReport, error) {
+	return db.AllActivityReports(), nil
+}
+func (r *queryResolver) TradeOutcomeReport(ctx context.Context, id string) (*model.TradeOutcomeReport, error) {
+	return db.FindTradeOutcomeReportByID(id), nil
+}
+func (r *queryResolver) TradeOutcomes(ctx context.Context, botName string) ([]*model.TradeOutcomeReport, error) {
+	return db.TradeOutcomeReportsByBotName(ctx, botName)
+}
+func (r *queryResolver) TradeOutcomesInFocus(ctx context.Context, botName string, marketStatus string, limit *int) ([]*model.TradeOutcomeReport, error) {
+	return db.TradeOutcomeReportsByBotNameAndMarketStatus(ctx, botName, marketStatus, *limit)
+}
+func (r *queryResolver) TradeOutcomeReports(ctx context.Context) ([]*model.TradeOutcomeReport, error) {
+	return db.AllTradeOutcomeReports(), nil
+}
+func (r *queryResolver) SymbolStatsReports(ctx context.Context) ([]*model.SymbolStats, error) {
+	return db.AllSymbolStats(), nil
+}
+func (r *queryResolver) SymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error) {
+	return db.FindSymbolStatsBySymbol(ctx, symbol), nil
+}
+*/

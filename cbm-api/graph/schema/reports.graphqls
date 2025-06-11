@@ -107,30 +107,30 @@ type Mutation {
 type Query {
   # === Activity Reports ===
   "Get activity reports by ID"
-  ActivityReport(_id: ID!): ActivityReport!
+  readActivityReport(_id: ID!): ActivityReport!
   
   "Get All activity reports"
-  ActivityReports: [ActivityReport!]!
+  readAllActivityReports: [ActivityReport!]!
 
   # === Trade Outcome Reports ===
   "Get Trade Outcome reports by ID"
-  TradeOutcomeReport(_id: ID!): TradeOutcomeReport!
+  readTradeOutcomeReport(_id: ID!): TradeOutcomeReport!
 
   "Get Trade Outcome reports by Bot Name"
-  TradeOutcomes(BotName: String!): [TradeOutcomeReport!]!
+  readTradeOutcomes(BotName: String!): [TradeOutcomeReport!]!
 
   "Get Trade Outcome reports by Bot Name & Market Status"
-  TradeOutcomesInFocus(BotName: String!, MarketStatus: String!, limit: Int): [TradeOutcomeReport!]!
+  readTradeOutcomesInFocus(BotName: String!, MarketStatus: String!, limit: Int): [TradeOutcomeReport!]!
 
-"Get All Trade Outcome reports"
-  TradeOutcomeReports: [TradeOutcomeReport!]!
+  "Get All Trade Outcome reports"
+  readAllTradeOutcomeReports: [TradeOutcomeReport!]!
 
   # === Symbol Stats ===
   "Get All Symbol Stats"
-  SymbolStatsReports: [SymbolStats!]!
+  readAllSymbolStatsReports: [SymbolStats!]!
 
   "Get Symbol Stats by Symbol"
-  SymbolStatsBySymbol(Symbol: String!): SymbolStats!
+  readSymbolStatsBySymbol(Symbol: String!): SymbolStats!
 }
 
 

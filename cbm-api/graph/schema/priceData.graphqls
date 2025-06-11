@@ -1,136 +1,147 @@
+# === Price Data Domain ===
+
+# --- Types ---
+
+# Represents a price pair for a trading symbol
 type Pair {
-	Symbol: String!
-	Price: String!
-	PercentageChange: String
-  }
-  
-  input PairInput {
-	Symbol: String!
-	Price: String!
-	PercentageChange: String
-  }
-  
-  type HistoricPrices {
-	Pair: [Pair!]
-	Timestamp: Int!
-	CreatedAt: DateTime!
-  }
-  
-  input NewHistoricPriceInput {
-	Pairs: [PairInput!]!
-	Timestamp: Int!
-  }
-  
-  type OHLC {
-	  OpenPrice:   String!
-	  HighPrice:   String!
-	  LowPrice:    String! 
-	  ClosePrice:  String! 
-	  TradeVolume: String! 
-	  Symbol:      String! 
-  }
-  
-  input OHLCInput {
-	  OpenPrice:   String!
-	  HighPrice:   String!
-	  LowPrice:    String! 
-	  ClosePrice:  String! 
-	  TradeVolume: String! 
-	  Symbol:      String! 
-  }
-
-  type TickerStats {
-	Symbol:          String!
-	PriceChange:     String!
-	PriceChangePct:  String!
-	QuoteVolume:     String!
-	Volume:          String!
-	TradeCount:      Int!
-	HighPrice:       String!
-	LowPrice:        String!
-	LastPrice:       String!
-	LiquidityEstimate: String
+    Symbol: String!              # Trading symbol (e.g., BTCUSDT)
+    Price: String!               # Last traded price
+    PercentageChange: String     # Optional: percentage change over period
 }
 
-input TickerStatsInput {
-  Symbol: String!
-  PriceChange: String!
-  PriceChangePct: String!
-  QuoteVolume: String!
-  Volume: String!
-  TradeCount: Int!
-  HighPrice: String!
-  LowPrice: String!
-  LastPrice: String!
-  LiquidityEstimate: String
+# Represents a snapshot of historic prices at a timestamp
+type HistoricPrices {
+    Pair: [Pair!]!               # List of price pairs
+    Timestamp: Int!              # Epoch timestamp
+    CreatedAt: DateTime!         # When this snapshot was created
 }
 
+# Represents OHLC (Open, High, Low, Close) data for a symbol
+type OHLC {
+    OpenPrice:   String!
+    HighPrice:   String!
+    LowPrice:    String!
+    ClosePrice:  String!
+    TradeVolume: String!
+    Symbol:      String!
+}
+
+# Represents 24h ticker statistics for a symbol
+type TickerStats {
+    Symbol:            String!   # Trading symbol
+    PriceChange:       String!   # Absolute price change over 24h
+    PriceChangePct:    String!   # Percentage price change over 24h
+    QuoteVolume:       String!   # Quote asset volume
+    Volume:            String!   # Base asset volume
+    TradeCount:        Int!      # Number of trades
+    HighPrice:         String!   # 24h high price
+    LowPrice:          String!   # 24h low price
+    LastPrice:         String!   # Last traded price
+    LiquidityEstimate: String    # Optional: estimated liquidity
+}
+
+# Represents a snapshot of ticker stats at a timestamp
 type HistoricTickerStats {
-  Timestamp: Int!
-  Stats: [TickerStats!]!
-  CreatedAt: DateTime!
+    Timestamp: Int!              # Epoch timestamp
+    Stats: [TickerStats!]!       # List of ticker stats
+    CreatedAt: DateTime!         # When this snapshot was created
 }
 
+# Represents a snapshot of kline (candlestick) data
+type HistoricKlineData {
+    opentime: Int!               # Open time for the kline
+    coins: [OHLC!]!              # List of OHLC data for coins
+}
+
+# --- Inputs ---
+
+# Input for a price pair
+input PairInput {
+    Symbol: String!
+    Price: String!
+    PercentageChange: String
+}
+
+# Input for creating a historic price snapshot
+input NewHistoricPriceInput {
+    Pairs: [PairInput!]!
+    Timestamp: Int!
+}
+
+# Input for OHLC data
+input OHLCInput {
+    OpenPrice:   String!
+    HighPrice:   String!
+    LowPrice:    String!
+    ClosePrice:  String!
+    TradeVolume: String!
+    Symbol:      String!
+}
+
+# Input for 24h ticker statistics
+input TickerStatsInput {
+    Symbol:            String!
+    PriceChange:       String!
+    PriceChangePct:    String!
+    QuoteVolume:       String!
+    Volume:            String!
+    TradeCount:        Int!
+    HighPrice:         String!
+    LowPrice:          String!
+    LastPrice:         String!
+    LiquidityEstimate: String
+}
+
+# Input for creating a historic ticker stats snapshot
 input NewHistoricTickerStatsInput {
-  Timestamp: Int!
-  Stats: [TickerStatsInput!]!
+    Timestamp: Int!
+    Stats: [TickerStatsInput!]!
 }
 
-
-  
-  type HistoricKlineData {
-  opentime: Int!
-  coins: [OHLC!]!
+# Input for creating historic kline data
+input NewHistoricKlineDataInput {
+    Opentime: Int!
+    Coins:    [OHLCInput!]!
 }
-  
-  input NewHistoricKlineDataInput {
-	  Opentime: Int!
-	  Coins:    [OHLCInput!]!
-  }
-  
-  
-  extend type Mutation {
-	"Creates an array of Historic Price pairs"
-	createHistoricPrices(input: NewHistoricPriceInput): [HistoricPrices!]!
-  
-	"Creates an array of Historic Kline Data"
-	createHistoricKline(input: NewHistoricKlineDataInput): [HistoricKlineData!]!
-  
-	"Deletes all prices data for the matching given timestamp"
-	deleteHistoricPrices(Timestamp: Int!): Boolean!
 
-	"Creates an array of 24h Ticker Stats at a given timestamp"
-	createHistoricTickerStats(input: NewHistoricTickerStatsInput!): [HistoricTickerStats!]!
+# --- Mutations ---
+extend type Mutation {
+    "Creates an array of Historic Price pairs"
+    createHistoricPrices(input: NewHistoricPriceInput): [HistoricPrices!]!
 
-	"Deletes all Ticker Stats at a specific timestamp"
-	deleteHistoricTickerStats(Timestamp: Int!): Boolean!
-  }
-  
-  extend type Query {
-	"Fetches price data for a given symbol up to a given limit of records"
-	getHistoricPrice(symbol: String!, limit: Int): [HistoricPrices!]!
-  
-	"Gets all prices data at a given timestamp"
-	getHistoricPricesAtTimestamp(Timestamp: Int!): [HistoricPrices!]!
-  
-	"Fetches kline data data for a given symbol up to a given limit of records"
-	getHistoricKlineData(symbol: String!, limit: Int): [HistoricKlineData!]!
-  
-	"Returns a count of timestamps in the DB"
-	getUniqueTimestampCount: Int!
+    "Creates an array of Historic Kline Data"
+    createHistoricKline(input: NewHistoricKlineDataInput): [HistoricKlineData!]!
+
+    "Deletes all prices data for the matching given timestamp"
+    deleteHistoricPrices(Timestamp: Int!): Boolean!
+
+    "Creates an array of 24h Ticker Stats at a given timestamp"
+    createHistoricTickerStats(input: NewHistoricTickerStatsInput!): [HistoricTickerStats!]!
+
+    "Deletes all Ticker Stats at a specific timestamp"
+    deleteHistoricTickerStats(Timestamp: Int!): Boolean!
+}
+
+# --- Queries ---
+extend type Query {
+    "Fetches price data for a given symbol up to a given limit of records"
+    readHistoricPrice(symbol: String!, limit: Int): [HistoricPrices!]!
+
+    "Gets all prices data at a given timestamp"
+    readHistoricPricesAtTimestamp(Timestamp: Int!): [HistoricPrices!]!
+
+    "Fetches kline data data for a given symbol up to a given limit of records"
+  readHistoricKlineData(symbol: String!, limit: Int): [HistoricKlineData!]!
+
+    "Returns a count of timestamps in the DB"
+    readUniqueTimestampCount: Int!
 
     "This will give you a []string of all available trading symbols in your HistoricPrices collection."
-	availableSymbols: [String!]!
+    readAvailableSymbols: [String!]!
 
-	"Gets all 24h Ticker Stats at a specific timestamp"
-	getHistoricTickerStatsAtTimestamp(Timestamp: Int!): [HistoricTickerStats!]!
+    "Gets all 24h Ticker Stats at a specific timestamp"
+    readHistoricTickerStatsAtTimestamp(Timestamp: Int!): [HistoricTickerStats!]!
 
-	"Fetches TickerStats history for a given symbol (e.g., to chart volatility or volume)"
-	getTickerStatsBySymbol(symbol: String!, limit: Int): [TickerStats!]!
-
-	"Returns a list of available symbols from TickerStats data"
-	availableTickerSymbols: [String!]!
-
-	"Returns a count of stored timestamps (like snapshots)"
-	getTickerStatsSnapshotCount: Int!
-  }
+    "Fetches TickerStats history for a given symbol (e.g., to chart volatility or volume)"
+    readTickerStatsBySymbol(symbol: String!, limit: Int): [TickerStats!]!
+}

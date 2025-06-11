@@ -74,8 +74,9 @@ func (r *mutationResolver) DeleteHistoricTickerStats(ctx context.Context, timest
 	return true, nil
 }
 
-// GetHistoricPrice is the resolver for the getHistoricPrice field.
-func (r *queryResolver) GetHistoricPrice(ctx context.Context, symbol string, limit *int) ([]*model.HistoricPrices, error) {
+// ReadHistoricPrice is the resolver for the readHistoricPrice field.
+func (r *queryResolver) ReadHistoricPrice(ctx context.Context, symbol string, limit *int) ([]*model.HistoricPrices, error) {
+
 	log.Info().Str("symbol", symbol).Int("limit", *limit).Msg("GetHistoricPrice called")
 
 	l := 0
@@ -97,10 +98,11 @@ func (r *queryResolver) GetHistoricPrice(ctx context.Context, symbol string, lim
 
 	// Return the slice of pointers to historic prices
 	return result, nil
+
 }
 
-// GetHistoricPricesAtTimestamp is the resolver for the getHistoricPricesAtTimestamp field.
-func (r *queryResolver) GetHistoricPricesAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricPrices, error) {
+// ReadHistoricPricesAtTimestamp is the resolver for the readHistoricPricesAtTimestamp field.
+func (r *queryResolver) ReadHistoricPricesAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricPrices, error) {
 	log.Info().Msgf("Fetching prices at Timestamp: %d", timestamp)
 
 	historicPrices, err := db.HistoricPricesAtTimestamp(timestamp)
@@ -121,8 +123,8 @@ func (r *queryResolver) GetHistoricPricesAtTimestamp(ctx context.Context, timest
 	return result, nil
 }
 
-// GetHistoricKlineData is the resolver for the getHistoricKlineData field.
-func (r *queryResolver) GetHistoricKlineData(ctx context.Context, symbol string, limit *int) ([]*model.HistoricKlineData, error) {
+// ReadHistoricKlineData is the resolver for the readHistoricKlineData field.
+func (r *queryResolver) ReadHistoricKlineData(ctx context.Context, symbol string, limit *int) ([]*model.HistoricKlineData, error) {
 	historicKlineData, err := db.HistoricKlineDataBySymbol(symbol, *limit)
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting historic Kline data")
@@ -138,8 +140,6 @@ func (r *queryResolver) GetHistoricKlineData(ctx context.Context, symbol string,
 	// Return the slice of pointers to historic kline data
 	return result, nil
 }
-
-// GetUniqueTimestampCount fetches the count of unique timestamps.
 func (r *queryResolver) GetUniqueTimestampCount(ctx context.Context) (int, error) {
 	int, err := db.GetUniqueTimestampCount(ctx)
 
@@ -151,13 +151,18 @@ func (r *queryResolver) GetUniqueTimestampCount(ctx context.Context) (int, error
 	return int, nil
 }
 
-// AvailableSymbols is the resolver for the availableSymbols field.
-func (r *queryResolver) AvailableSymbols(ctx context.Context) ([]string, error) {
+// ReadUniqueTimestampCount is the resolver for the readUniqueTimestampCount field.
+func (r *queryResolver) ReadUniqueTimestampCount(ctx context.Context) (int, error) {
+	panic(fmt.Errorf("not implemented: ReadUniqueTimestampCount - readUniqueTimestampCount"))
+}
+
+// ReadAvailableSymbols is the resolver for the readAvailableSymbols field.
+func (r *queryResolver) ReadAvailableSymbols(ctx context.Context) ([]string, error) {
 	return db.AvailableSymbols()
 }
 
-// GetHistoricTickerStatsAtTimestamp is the resolver for the getHistoricTickerStatsAtTimestamp field.
-func (r *queryResolver) GetHistoricTickerStatsAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricTickerStats, error) {
+// ReadHistoricTickerStatsAtTimestamp is the resolver for the readHistoricTickerStatsAtTimestamp field.
+func (r *queryResolver) ReadHistoricTickerStatsAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricTickerStats, error) {
 	log.Info().Msgf("Fetching historic ticker stats at Timestamp: %d", timestamp)
 
 	historicTickerStats, err := db.HistoricTickerStatsAtTimestamp(timestamp)
@@ -178,8 +183,8 @@ func (r *queryResolver) GetHistoricTickerStatsAtTimestamp(ctx context.Context, t
 	return result, nil
 }
 
-// GetTickerStatsBySymbol is the resolver for the getTickerStatsBySymbol field.
-func (r *queryResolver) GetTickerStatsBySymbol(ctx context.Context, symbol string, limit *int) ([]*model.TickerStats, error) {
+// ReadTickerStatsBySymbol is the resolver for the readTickerStatsBySymbol field.
+func (r *queryResolver) ReadTickerStatsBySymbol(ctx context.Context, symbol string, limit *int) ([]*model.TickerStats, error) {
 	log.Info().
 		Str("symbol", symbol).
 		Int("limit", func() int {
@@ -202,14 +207,4 @@ func (r *queryResolver) GetTickerStatsBySymbol(ctx context.Context, symbol strin
 	}
 
 	return tickerStats, nil // already []*model.TickerStats
-}
-
-// AvailableTickerSymbols is the resolver for the availableTickerSymbols field.
-func (r *queryResolver) AvailableTickerSymbols(ctx context.Context) ([]string, error) {
-	panic(fmt.Errorf("not implemented: AvailableTickerSymbols - availableTickerSymbols"))
-}
-
-// GetTickerStatsSnapshotCount is the resolver for the getTickerStatsSnapshotCount field.
-func (r *queryResolver) GetTickerStatsSnapshotCount(ctx context.Context) (int, error) {
-	panic(fmt.Errorf("not implemented: GetTickerStatsSnapshotCount - getTickerStatsSnapshotCount"))
 }
