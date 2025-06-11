@@ -1,0 +1,108 @@
+# ==========================
+# Types
+# ==========================
+
+type Mean {
+    Avg: Float!
+    Count: Int!
+}
+
+type SymbolStats {
+    Symbol: String!
+    PositionCounts: [Mean!]!
+    LiquidityEstimate: Mean
+    MaxLiquidityEstimate: Float
+    MinLiquidityEstimate: Float
+}
+
+type TickerStats {
+    Symbol:          String!
+    PriceChange:     String!
+    PriceChangePct:  String!
+    QuoteVolume:     String!
+    Volume:          String!
+    TradeCount:      Int!
+    HighPrice:       String!
+    LowPrice:        String!
+    LastPrice:       String!
+    LiquidityEstimate: String
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input MeanInput {
+    Avg: Float!
+    Count: Int!
+}
+
+input TickerStatsInput {
+    Symbol: String!
+    PriceChange: String!
+    PriceChangePct: String!
+    QuoteVolume: String!
+    Volume: String!
+    TradeCount: Int!
+    HighPrice: String!
+    LowPrice: String!
+    LastPrice: String!
+    LiquidityEstimate: String
+}
+
+input UpsertSymbolStatsInput {
+    Symbol: String!
+    PositionCounts: [MeanInput]
+    LiquidityEstimate: MeanInput
+    MaxLiquidityEstimate: Float
+    MinLiquidityEstimate: Float
+}
+
+input NewHistoricTickerStatsInput {
+    Timestamp: Int!
+    Stats: [TickerStatsInput!]!
+}
+
+# ==========================
+# Mutations
+# ==========================
+
+type Mutation {
+    # === Symbol Stats ===
+    "If the symbol exists, update it. If not, create it"
+    upsertSymbolStats(input: UpsertSymbolStatsInput): SymbolStats!
+
+    "Deletes Symbol Stats by Symbol"
+    deleteSymbolStats(Symbol: String!): Boolean!
+
+    # === Ticker Stats ===
+    "Creates an array of 24h Ticker Stats at a given timestamp"
+    createHistoricTickerStats(input: NewHistoricTickerStatsInput!): [HistoricTickerStats!]!
+
+    "Deletes all Ticker Stats at a specific timestamp"
+    deleteHistoricTickerStats(Timestamp: Int!): Boolean!
+}
+
+# ==========================
+# Queries
+# ==========================
+
+type Query {
+    # === Symbol Stats ===
+    "Get All Symbol Stats"
+    SymbolStatsReports: [SymbolStats!]!
+
+    "Get Symbol Stats by Symbol"
+    SymbolStatsBySymbol(Symbol: String!): SymbolStats!
+
+
+    # === Ticker Stats ===
+    "Gets all 24h Ticker Stats at a specific timestamp"
+    getHistoricTickerStatsAtTimestamp(Timestamp: Int!): [HistoricTickerStats!]!
+
+    "Fetches TickerStats history for a given symbol (e.g., to chart volatility or volume)"
+    getTickerStatsBySymbol(symbol: String!, limit: Int): [TickerStats!]!
+}
+
+
+

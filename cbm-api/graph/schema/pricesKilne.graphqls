@@ -1,0 +1,53 @@
+# ==========================
+# Types
+# ==========================
+
+type OHLC {
+    OpenPrice:   String!
+    HighPrice:   String!
+    LowPrice:    String! 
+    ClosePrice:  String! 
+    TradeVolume: String! 
+    Symbol:      String! 
+}
+
+type HistoricKlineData {
+    opentime: Int!
+    coins: [OHLC!]!
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input OHLCInput {
+    OpenPrice:   String!
+    HighPrice:   String!
+    LowPrice:    String! 
+    ClosePrice:  String! 
+    TradeVolume: String! 
+    Symbol:      String! 
+}
+
+input NewHistoricKlineDataInput {
+    Opentime: Int!
+    Coins:    [OHLCInput!]!
+}
+  
+# ==========================
+# Mutations
+# ==========================
+
+extend type Mutation {
+    "Creates an array of Historic Kline Data"
+    createHistoricKline(input: NewHistoricKlineDataInput): [HistoricKlineData!]!
+}
+  
+# ==========================
+# Queries
+# ==========================
+
+extend type Query {
+    "Fetches kline data data for a given symbol up to a given limit of records"
+    getHistoricKlineData(symbol: String!, limit: Int): [HistoricKlineData!]!
+}

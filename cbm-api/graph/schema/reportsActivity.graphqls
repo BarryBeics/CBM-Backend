@@ -1,0 +1,49 @@
+# ==========================
+# Types
+# ==========================
+
+type ActivityReport {
+    _id: ID!
+    Timestamp: Int!
+    Qty: Int!
+    AvgGain: Float!
+    TopAGain: Float
+    TopBGain: Float
+    TopCGain: Float
+    FearGreedIndex: Int!
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input NewActivityReport {
+    Timestamp: Int!
+    Qty: Int!
+    AvgGain: Float!
+    TopAGain: Float
+    TopBGain: Float
+    TopCGain: Float
+    FearGreedIndex: Int!
+}
+
+# ==========================
+# Mutations
+# ==========================
+
+type Mutation {
+    "Creates a new market Activity Report"
+    createActivityReport(input: NewActivityReport): ActivityReport!
+}
+
+# ==========================
+# Queries
+# ==========================
+
+type Query {
+    "Get activity reports by ID"
+    ActivityReport(_id: ID!): ActivityReport!
+  
+    "Get All activity reports"
+    ActivityReports: [ActivityReport!]!
+}

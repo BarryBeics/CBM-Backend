@@ -1,0 +1,67 @@
+# ==========================
+# Types
+# ==========================
+
+type Pair {
+	Symbol: String!
+	Price: String!
+	PercentageChange: String
+}
+  
+type HistoricPrices {
+	Pair: [Pair!]
+	Timestamp: Int!
+	CreatedAt: DateTime!
+}
+
+type HistoricTickerStats {
+    Timestamp: Int!
+    Stats: [TickerStats!]!
+    CreatedAt: DateTime!
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input PairInput {
+	Symbol: String!
+	Price: String!
+	PercentageChange: String
+}
+  
+input NewHistoricPriceInput {
+	Pairs: [PairInput!]!
+	Timestamp: Int!
+}
+
+# ==========================
+# Mutations
+# ==========================
+
+extend type Mutation {
+	"Creates an array of Historic Price pairs"
+	createHistoricPrices(input: NewHistoricPriceInput): [HistoricPrices!]!
+  
+	"Deletes all prices data for the matching given timestamp"
+	deleteHistoricPrices(Timestamp: Int!): Boolean!
+
+  }
+
+# ==========================
+# Queries
+# ==========================
+
+extend type Query {
+	"Fetches price data for a given symbol up to a given limit of records"
+	getHistoricPrice(symbol: String!, limit: Int): [HistoricPrices!]!
+  
+	"Gets all prices data at a given timestamp"
+	getHistoricPricesAtTimestamp(Timestamp: Int!): [HistoricPrices!]!
+  
+	"Returns a count of timestamps in the DB"
+	getUniqueTimestampCount: Int!
+
+    "This will give you a []string of all available trading symbols in your HistoricPrices collection."
+	availableSymbols: [String!]!
+}
