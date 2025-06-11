@@ -67,7 +67,7 @@ input NewHistoricTickerStatsInput {
 # Mutations
 # ==========================
 
-type Mutation {
+extend type Mutation {
     # === Symbol Stats ===
     "If the symbol exists, update it. If not, create it"
     upsertSymbolStats(input: UpsertSymbolStatsInput): SymbolStats!
@@ -87,7 +87,7 @@ type Mutation {
 # Queries
 # ==========================
 
-type Query {
+extend type Query {
     # === Symbol Stats ===
     "Get All Symbol Stats"
     SymbolStatsReports: [SymbolStats!]!

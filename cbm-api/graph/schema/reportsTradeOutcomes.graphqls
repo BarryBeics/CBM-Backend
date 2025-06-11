@@ -39,7 +39,7 @@ input NewTradeOutcomeReport {
 # Mutations
 # ==========================
 
-type Mutation {
+extend type Mutation {
     "Creates a new Trade Outcome Report"
     createTradeOutcomeReport(input: NewTradeOutcomeReport): TradeOutcomeReport!
 
@@ -51,7 +51,7 @@ type Mutation {
 # Queries
 # ==========================
 
-type Query {
+extend type Query {
     "Get Trade Outcome reports by ID"
     TradeOutcomeReport(_id: ID!): TradeOutcomeReport!
 
