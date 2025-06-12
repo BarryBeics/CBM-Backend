@@ -13,17 +13,17 @@ import (
 
 // MutationResolver implementation
 func (r *mutationResolver) CreateActivityReport(ctx context.Context, input *model.NewActivityReport) (*model.ActivityReport, error) {
-	return db.SaveActivityReport(input), nil
+	return db.CreateActivityReport(input), nil
 }
 
 // ReadActivityReport is the resolver for the readActivityReport field.
 func (r *queryResolver) ReadActivityReport(ctx context.Context, id string) (*model.ActivityReport, error) {
-	return db.FindActivityReportByID(id), nil
+	return db.ReadActivityReportByID(id), nil
 }
 
 // ReadAllActivityReports is the resolver for the readAllActivityReports field.
 func (r *queryResolver) ReadAllActivityReports(ctx context.Context) ([]*model.ActivityReport, error) {
-	return db.AllActivityReports(), nil
+	return db.ReadAllActivityReports(), nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
