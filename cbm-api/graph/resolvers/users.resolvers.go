@@ -22,6 +22,28 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 	return user, nil
 }
 
+// UpdateUser is the resolver for the updateUser field.
+func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*model.User, error) {
+	task, err := db.UpdateUser(ctx, input)
+	if err != nil {
+		log.Error().Err(err).Msg("Error updating task:")
+		return nil, err
+	}
+
+	return task, nil
+}
+
+// DeleteUser is the resolver for the deleteUser field.
+func (r *mutationResolver) DeleteUser(ctx context.Context, email string) (*bool, error) {
+	success, err := db.DeleteUserByEmail(ctx, email)
+	if err != nil {
+		log.Error().Err(err).Msg("Error deleting user:")
+		return nil, err
+	}
+
+	return &success, nil
+}
+
 // ReadUserByEmail is the resolver for the readUserByEmail field.
 func (r *queryResolver) ReadUserByEmail(ctx context.Context, email string) (*model.User, error) {
 	user, err := db.ReadUserByEmail(ctx, email)
@@ -53,26 +75,4 @@ func (r *queryResolver) ReadUsersByRole(ctx context.Context, role string) ([]*mo
 	}
 
 	return users, nil
-}
-
-// UpdateUser is the resolver for the updateUser field.
-func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*model.User, error) {
-	task, err := db.UpdateUser(ctx, input)
-	if err != nil {
-		log.Error().Err(err).Msg("Error updating task:")
-		return nil, err
-	}
-
-	return task, nil
-}
-
-// DeleteUser is the resolver for the deleteUser field.
-func (r *mutationResolver) DeleteUser(ctx context.Context, email string) (*bool, error) {
-	success, err := db.DeleteUserByEmail(ctx, email)
-	if err != nil {
-		log.Error().Err(err).Msg("Error deleting user:")
-		return nil, err
-	}
-
-	return &success, nil
 }

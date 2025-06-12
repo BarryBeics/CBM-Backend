@@ -94,6 +94,9 @@ input ProjectFilterInput {
 # ==========================
 
 extend type Mutation {
+    # ==========================
+    # Tasks
+    # ==========================
     "Create a new task"
     createTask(input: CreateTaskInput!): Task
 
@@ -102,6 +105,10 @@ extend type Mutation {
 
     "Delete a task by ID"
     deleteTask(id: ID!): Boolean
+
+    # ==========================
+    # Projects
+    # ==========================
 
     "Create a new project"
     createProject(input: CreateProjectInput!): Project
@@ -119,11 +126,18 @@ extend type Mutation {
 # ==========================
 
 extend type Query {
+    # ==========================
+    # Tasks
+    # ==========================
     "Get a single task by ID"
     readTaskById(id: ID!): Task
 
     "Get all tasks"
     readAllTasks: [Task]
+
+    # ==========================
+    # Projects
+    # ==========================
 
     "Get a single project by ID"
     readSingleProjectById(id: ID!): Project

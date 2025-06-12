@@ -11,10 +11,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// ==========================
-// === Tasks ===
-// ==========================
-
 // CreateTask is the resolver for the createTask field.
 func (r *mutationResolver) CreateTask(ctx context.Context, input model.CreateTaskInput) (*model.Task, error) {
 	task, err := db.CreateTask(ctx, input)
@@ -48,10 +44,6 @@ func (r *mutationResolver) DeleteTask(ctx context.Context, id string) (*bool, er
 	return &success, nil
 }
 
-// ==========================
-// === Projects ===
-// ==========================
-
 // CreateProject is the resolver for the createProject field.
 func (r *mutationResolver) CreateProject(ctx context.Context, input model.CreateProjectInput) (*model.Project, error) {
 	project, err := db.CreateProject(ctx, input)
@@ -60,6 +52,48 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input model.Create
 		return nil, err
 	}
 	return project, nil
+}
+
+// UpdateProject is the resolver for the updateProject field.
+func (r *mutationResolver) UpdateProject(ctx context.Context, input model.UpdateProjectInput) (*model.Project, error) {
+	project, err := db.UpdateProject(ctx, input)
+	if err != nil {
+		log.Error().Err(err).Msg("Error updating project:")
+		return nil, err
+	}
+	return project, nil
+}
+
+// DeleteProject is the resolver for the deleteProject field.
+func (r *mutationResolver) DeleteProject(ctx context.Context, id string) (*bool, error) {
+	success, err := db.DeleteProjectByID(ctx, id)
+	if err != nil {
+		log.Error().Err(err).Msg("Error deleting project:")
+		return nil, err
+	}
+	return &success, nil
+}
+
+// ReadTaskByID is the resolver for the readTaskById field.
+func (r *queryResolver) ReadTaskByID(ctx context.Context, id string) (*model.Task, error) {
+	task, err := db.ReadTaskByID(ctx, id)
+	if err != nil {
+		log.Error().Err(err).Msg("Error fetching task by ID:")
+		return nil, err
+	}
+
+	return task, nil
+}
+
+// ReadAllTasks is the resolver for the readAllTasks field.
+func (r *queryResolver) ReadAllTasks(ctx context.Context) ([]*model.Task, error) {
+	tasks, err := db.ReadAllTasks(ctx)
+	if err != nil {
+		log.Error().Err(err).Msg("Error fetching tasks:")
+		return nil, err
+	}
+
+	return tasks, nil
 }
 
 // ReadSingleProjectByID is the resolver for the readSingleProjectById field.
@@ -105,24 +139,4 @@ func (r *queryResolver) ReadProjectsFilter(ctx context.Context, filter *model.Pr
 	}
 
 	return projects, nil
-}
-
-// UpdateProject is the resolver for the updateProject field.
-func (r *mutationResolver) UpdateProject(ctx context.Context, input model.UpdateProjectInput) (*model.Project, error) {
-	project, err := db.UpdateProject(ctx, input)
-	if err != nil {
-		log.Error().Err(err).Msg("Error updating project:")
-		return nil, err
-	}
-	return project, nil
-}
-
-// DeleteProject is the resolver for the deleteProject field.
-func (r *mutationResolver) DeleteProject(ctx context.Context, id string) (*bool, error) {
-	success, err := db.DeleteProjectByID(ctx, id)
-	if err != nil {
-		log.Error().Err(err).Msg("Error deleting project:")
-		return nil, err
-	}
-	return &success, nil
 }

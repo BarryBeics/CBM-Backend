@@ -16,9 +16,16 @@ func (r *mutationResolver) CreateTradeOutcomeReport(ctx context.Context, input *
 	return db.CreateTradeOutcomeReport(input), nil
 }
 
-// ReadAllTradeOutcomes is the resolver for the readAllTradeOutcomes field.
-func (r *queryResolver) ReadAllTradeOutcomes(ctx context.Context) ([]*model.TradeOutcomeReport, error) {
-	return db.ReadAllTradeOutcomes(), nil
+// DeleteOutcomeReports is the resolver for the deleteOutcomeReports field.
+func (r *mutationResolver) DeleteOutcomeReports(ctx context.Context, timestamp int) (bool, error) {
+	// Assuming db is an instance of your DB type
+	success, err := db.DeleteOutcomeReports(ctx, timestamp)
+	if err != nil {
+		log.Error().Err(err).Msg("Error deleting trade outcome:")
+		return false, err // Return a boolean value, not a pointer to a boolean
+	}
+
+	return success, nil
 }
 
 // ReadTradeOutcomeReport is the resolver for the readTradeOutcomeReport field.
@@ -36,14 +43,7 @@ func (r *queryResolver) ReadTradeOutcomeInFocus(ctx context.Context, botName str
 	return db.ReadTradeOutcomeInFocus(ctx, botName, marketStatus, *limit)
 }
 
-// DeleteOutcomeReports is the resolver for the deleteOutcomeReports field.
-func (r *mutationResolver) DeleteOutcomeReports(ctx context.Context, timestamp int) (bool, error) {
-	// Assuming db is an instance of your DB type
-	success, err := db.DeleteOutcomeReports(ctx, timestamp)
-	if err != nil {
-		log.Error().Err(err).Msg("Error deleting trade outcome:")
-		return false, err // Return a boolean value, not a pointer to a boolean
-	}
-
-	return success, nil
+// ReadAllTradeOutcomes is the resolver for the readAllTradeOutcomes field.
+func (r *queryResolver) ReadAllTradeOutcomes(ctx context.Context) ([]*model.TradeOutcomeReport, error) {
+	return db.ReadAllTradeOutcomes(), nil
 }
