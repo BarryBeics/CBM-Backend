@@ -2269,9 +2269,6 @@ extend type Query {
     "Fetches TickerStats history for a given symbol (e.g., to chart volatility or volume)"
     readTickerStatsBySymbol(symbol: String!, limit: Int): [TickerStats!]!
 }
-
-
-
 `, BuiltIn: false},
 	{Name: "../schema/reportsTradeOutcomes.graphqls", Input: `# ==========================
 # Types

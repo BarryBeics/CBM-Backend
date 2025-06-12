@@ -11,71 +11,20 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// UpsertSymbolStats is the resolver for the upsertSymbolStats field.
-func (r *mutationResolver) UpsertSymbolStats(ctx context.Context, input *model.UpsertSymbolStatsInput) (*model.SymbolStats, error) {
-	return db.UpsertSymbolStats(input), nil
-}
-
-// DeleteSymbolStats is the resolver for the deleteSymbolStats field.
-func (r *mutationResolver) DeleteSymbolStats(ctx context.Context, symbol string) (bool, error) {
-	success, err := db.DeleteSymbolStats(ctx, symbol)
-	return success, err
-}
+// ==========================
+// === Ticker Stats ===
+// ==========================
 
 // CreateHistoricTickerStats is the resolver for the createHistoricTickerStats field.
 func (r *mutationResolver) CreateHistoricTickerStats(ctx context.Context, input model.NewHistoricTickerStatsInput) ([]*model.HistoricTickerStats, error) {
 	// Assuming you want to save multiple HistoricKlineData in the input
-	insertedHistoricKlineData, err := db.SaveHistoricTickerStats(input)
+	insertedHistoricKlineData, err := db.CreateHistoricTickerStats(input)
 	if err != nil {
 		return nil, err
 	}
 
 	// Assuming you want to return the insertedHistoricKlineData and the timestamp
 	return insertedHistoricKlineData, nil
-}
-
-// DeleteHistoricTickerStats is the resolver for the deleteHistoricTickerStats field.
-func (r *mutationResolver) DeleteHistoricTickerStats(ctx context.Context, timestamp int) (bool, error) {
-	err := db.DeleteHistoricTickerStatsByTimestamp(ctx, timestamp)
-
-	if err != nil {
-		log.Error().Err(err).Msg("Error getting Unique Timestamp Count")
-		return false, err
-	}
-
-	return true, nil
-}
-
-// ReadAllSymbolStats is the resolver for the ReadAllSymbolStats field.
-func (r *queryResolver) ReadAllSymbolStats(ctx context.Context) ([]*model.SymbolStats, error) {
-	return db.AllSymbolStats(), nil
-}
-
-// ReadSingleSymbolStatsBySymbol is the resolver for the ReadSingleSymbolStatsBySymbol field.
-func (r *queryResolver) ReadSingleSymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error) {
-	return db.FindSymbolStatsBySymbol(ctx, symbol), nil
-}
-
-// ReadHistoricTickerStatsAtTimestamp is the resolver for the readHistoricTickerStatsAtTimestamp field.
-func (r *queryResolver) ReadHistoricTickerStatsAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricTickerStats, error) {
-	log.Info().Msgf("Fetching historic ticker stats at Timestamp: %d", timestamp)
-
-	historicTickerStats, err := db.HistoricTickerStatsAtTimestamp(timestamp)
-	if err != nil {
-		log.Error().Err(err).Msg("Error getting historic ticker stats at timestamp")
-		return nil, err
-	}
-
-	// Convert slice of model.HistoricTickerStats to slice of *model.HistoricTickerStats
-	var result []*model.HistoricTickerStats
-	for i := range historicTickerStats {
-		result = append(result, &historicTickerStats[i])
-	}
-
-	log.Info().Msgf("Retrieved ticker stats: %+v", historicTickerStats)
-
-	// Return the slice of pointers to historic ticker stats
-	return result, nil
 }
 
 // ReadTickerStatsBySymbol is the resolver for the readTickerStatsBySymbol field.
@@ -95,11 +44,70 @@ func (r *queryResolver) ReadTickerStatsBySymbol(ctx context.Context, symbol stri
 		l = *limit
 	}
 
-	tickerStats, err := db.TickerStatsBySymbol(symbol, l)
+	tickerStats, err := db.ReadTickerStatsBySymbol(symbol, l)
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting ticker stats by symbol")
 		return nil, err
 	}
 
 	return tickerStats, nil // already []*model.TickerStats
+}
+
+// ReadHistoricTickerStatsAtTimestamp is the resolver for the readHistoricTickerStatsAtTimestamp field.
+func (r *queryResolver) ReadHistoricTickerStatsAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricTickerStats, error) {
+	log.Info().Msgf("Fetching historic ticker stats at Timestamp: %d", timestamp)
+
+	historicTickerStats, err := db.ReadHistoricTickerStatsAtTimestamp(timestamp)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting historic ticker stats at timestamp")
+		return nil, err
+	}
+
+	// Convert slice of model.HistoricTickerStats to slice of *model.HistoricTickerStats
+	var result []*model.HistoricTickerStats
+	for i := range historicTickerStats {
+		result = append(result, &historicTickerStats[i])
+	}
+
+	log.Info().Msgf("Retrieved ticker stats: %+v", historicTickerStats)
+
+	// Return the slice of pointers to historic ticker stats
+	return result, nil
+}
+
+// / DeleteHistoricTickerStats is the resolver for the deleteHistoricTickerStats field.
+func (r *mutationResolver) DeleteHistoricTickerStats(ctx context.Context, timestamp int) (bool, error) {
+	err := db.DeleteHistoricTickerStatsByTimestamp(ctx, timestamp)
+
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting Unique Timestamp Count")
+		return false, err
+	}
+
+	return true, nil
+}
+
+// ==========================
+// === Symbol Stats ===
+// ==========================
+
+// UpsertSymbolStats is the resolver for the upsertSymbolStats field.
+func (r *mutationResolver) UpsertSymbolStats(ctx context.Context, input *model.UpsertSymbolStatsInput) (*model.SymbolStats, error) {
+	return db.UpsertSymbolStats(input), nil
+}
+
+// ReadAllSymbolStats is the resolver for the ReadAllSymbolStats field.
+func (r *queryResolver) ReadAllSymbolStats(ctx context.Context) ([]*model.SymbolStats, error) {
+	return db.ReadAllSymbolStats(), nil
+}
+
+// ReadSingleSymbolStatsBySymbol is the resolver for the ReadSingleSymbolStatsBySymbol field.
+func (r *queryResolver) ReadSingleSymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error) {
+	return db.ReadSingleSymbolStatsBySymbol(symbol), nil
+}
+
+// DeleteSymbolStats is the resolver for the deleteSymbolStats field.
+func (r *mutationResolver) DeleteSymbolStats(ctx context.Context, symbol string) (bool, error) {
+	success, err := db.DeleteSymbolStats(ctx, symbol)
+	return success, err
 }

@@ -23,30 +23,6 @@ func (r *mutationResolver) CreateStrategy(ctx context.Context, input model.Strat
 	return strategy, nil
 }
 
-// ReadStrategyByName is the resolver for the readStrategyByName field.
-func (r *queryResolver) ReadStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error) {
-	// Assuming db is an instance of your DB type
-	strategy, err := db.ReadStrategyByName(ctx, botInstanceName)
-	if err != nil {
-		log.Error().Err(err).Msg("Error getting strategy by name:")
-		return nil, err
-	}
-
-	return strategy, nil
-}
-
-// ReadAllStrategies is the resolver for the readAllStrategies field.
-func (r *queryResolver) ReadAllStrategies(ctx context.Context) ([]*model.Strategy, error) {
-	// Assuming db is an instance of your DB type
-	strategies, err := db.ReadAllStrategies(ctx)
-	if err != nil {
-		log.Error().Err(err).Msg("Error getting all strategies:")
-		return nil, err
-	}
-
-	return strategies, nil
-}
-
 // UpdateStrategy is the resolver for the updateStrategy field.
 func (r *mutationResolver) UpdateStrategy(ctx context.Context, botInstanceName string, input model.StrategyInput) (*model.Strategy, error) {
 	// Assuming db is an instance of your DB type
@@ -57,6 +33,18 @@ func (r *mutationResolver) UpdateStrategy(ctx context.Context, botInstanceName s
 	}
 
 	return strategy, nil
+}
+
+// DeleteStrategy is the resolver for the deleteStrategy field.
+func (r *mutationResolver) DeleteStrategy(ctx context.Context, botInstanceName string) (*bool, error) {
+	// Assuming db is an instance of your DB type
+	success, err := db.DeleteStrategy(ctx, botInstanceName)
+	if err != nil {
+		log.Error().Err(err).Msg("Error deleting strategy:")
+		return nil, err
+	}
+
+	return &success, nil
 }
 
 // UpdateCounters is the resolver for the updateCounters field.
@@ -85,14 +73,26 @@ func (r *mutationResolver) UpdateMarkAsTested(ctx context.Context, input model.M
 	return &success, nil
 }
 
-// DeleteStrategy is the resolver for the deleteStrategy field.
-func (r *mutationResolver) DeleteStrategy(ctx context.Context, botInstanceName string) (*bool, error) {
+// ReadStrategyByName is the resolver for the readStrategyByName field.
+func (r *queryResolver) ReadStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error) {
 	// Assuming db is an instance of your DB type
-	success, err := db.DeleteStrategy(ctx, botInstanceName)
+	strategy, err := db.ReadStrategyByName(ctx, botInstanceName)
 	if err != nil {
-		log.Error().Err(err).Msg("Error deleting strategy:")
+		log.Error().Err(err).Msg("Error getting strategy by name:")
 		return nil, err
 	}
 
-	return &success, nil
+	return strategy, nil
+}
+
+// ReadAllStrategies is the resolver for the readAllStrategies field.
+func (r *queryResolver) ReadAllStrategies(ctx context.Context) ([]*model.Strategy, error) {
+	// Assuming db is an instance of your DB type
+	strategies, err := db.ReadAllStrategies(ctx)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting all strategies:")
+		return nil, err
+	}
+
+	return strategies, nil
 }

@@ -25,6 +25,18 @@ func (r *mutationResolver) CreateHistoricPrices(ctx context.Context, input *mode
 	return insertedHistoricPrices, nil
 }
 
+// DeleteHistoricPrices is the resolver for the deleteHistoricPrices field.
+func (r *mutationResolver) DeleteHistoricPrices(ctx context.Context, timestamp int) (bool, error) {
+	err := db.DeleteHistoricPricesByTimestamp(ctx, timestamp)
+
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting Unique Timestamp Count")
+		return false, err
+	}
+
+	return true, nil
+}
+
 // ReadHistoricPrice is the resolver for the readHistoricPrice field.
 func (r *queryResolver) ReadHistoricPrice(ctx context.Context, symbol string, limit *int) ([]*model.HistoricPrices, error) {
 	log.Info().Str("symbol", symbol).Int("limit", *limit).Msg("GetHistoricPrice called")
@@ -87,16 +99,4 @@ func (r *queryResolver) ReadUniqueTimestampCount(ctx context.Context) (int, erro
 // ReadAvailableSymbols is the resolver for the readAvailableSymbols field.
 func (r *queryResolver) ReadAvailableSymbols(ctx context.Context) ([]string, error) {
 	return db.ReadAvailableSymbols()
-}
-
-// DeleteHistoricPrices is the resolver for the deleteHistoricPrices field.
-func (r *mutationResolver) DeleteHistoricPrices(ctx context.Context, timestamp int) (bool, error) {
-	err := db.DeleteHistoricPricesByTimestamp(ctx, timestamp)
-
-	if err != nil {
-		log.Error().Err(err).Msg("Error getting Unique Timestamp Count")
-		return false, err
-	}
-
-	return true, nil
 }

@@ -15,6 +15,8 @@ type DB struct {
 	client *mongo.Client
 }
 
+// Connect establishes a connection to the MongoDB database and returns a DB instance.
+// It also ensures that the necessary indexes are created for the HistoricPrices collection.
 func Connect() *DB {
 	uri := "mongodb://fudgebot:cookiebot@database:27017/go_trading_db"
 	log.Info().Str("mongodb_uri", uri).Msg("Connecting to MongoDB")
@@ -49,6 +51,7 @@ func Connect() *DB {
 	return db
 }
 
+// ensureIndexes creates necessary indexes for the HistoricPrices collection.
 func (db *DB) ensureIndexes() error {
 	collection := db.client.Database("go_trading_db").Collection("HistoricPrices")
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
@@ -72,6 +75,7 @@ func (db *DB) ensureIndexes() error {
 	return err
 }
 
+// Close disconnects the MongoDB client.
 func (db *DB) Close() {
 	if db.client != nil {
 		db.client.Disconnect(context.Background())
