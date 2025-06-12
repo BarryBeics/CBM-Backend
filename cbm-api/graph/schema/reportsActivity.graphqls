@@ -42,8 +42,8 @@ type Mutation {
 
 type Query {
     "Get activity reports by ID"
-    ActivityReport(_id: ID!): ActivityReport!
+    readActivityReport(_id: ID!): ActivityReport!
   
     "Get All activity reports"
-    ActivityReports: [ActivityReport!]!
+    readAllActivityReports: [ActivityReport!]!
 }

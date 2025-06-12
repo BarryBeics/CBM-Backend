@@ -86,13 +86,13 @@ extend type Mutation {
 
 extend type Query {
     "Get user by email"
-    getUserByEmail(email: String!): User
+    readUserByEmail(email: String!): User
 
     "Get all Users"
-    getAllUsers: [User!]!
+    readAllUsers: [User!]!
 
     "Get users by their role"
-    getUsersByRole(role: String!): [User!]!
+    readUsersByRole(role: String!): [User!]!
 }
 
 

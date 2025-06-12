@@ -28,22 +28,22 @@ func (r *mutationResolver) DeleteOutcomeReports(ctx context.Context, timestamp i
 	return success, nil
 }
 
-// TradeOutcomeReport is the resolver for the TradeOutcomeReport field.
-func (r *queryResolver) TradeOutcomeReport(ctx context.Context, id string) (*model.TradeOutcomeReport, error) {
+// ReadTradeOutcomeReport is the resolver for the readTradeOutcomeReport field.
+func (r *queryResolver) ReadTradeOutcomeReport(ctx context.Context, id string) (*model.TradeOutcomeReport, error) {
 	return db.FindTradeOutcomeReportByID(id), nil
 }
 
-// TradeOutcomes retrieves trade outcome reports based on the BotName.
-func (r *queryResolver) TradeOutcomes(ctx context.Context, botName string) ([]*model.TradeOutcomeReport, error) {
+// ReadTradeOutcomesPerBotName is the resolver for the readTradeOutcomesPerBotName field.
+func (r *queryResolver) ReadTradeOutcomesPerBotName(ctx context.Context, botName string) ([]*model.TradeOutcomeReport, error) {
 	return db.TradeOutcomeReportsByBotName(ctx, botName)
 }
 
-// TradeOutcomesInFocus is the resolver for the TradeOutcomesInFocus field.
-func (r *queryResolver) TradeOutcomesInFocus(ctx context.Context, botName string, marketStatus string, limit *int) ([]*model.TradeOutcomeReport, error) {
+// ReadTradeOutcomeInFocus is the resolver for the readTradeOutcomeInFocus field.
+func (r *queryResolver) ReadTradeOutcomeInFocus(ctx context.Context, botName string, marketStatus string, limit *int) ([]*model.TradeOutcomeReport, error) {
 	return db.TradeOutcomeReportsByBotNameAndMarketStatus(ctx, botName, marketStatus, *limit)
 }
 
-// TradeOutcomeReports is the resolver for the TradeOutcomeReports field.
-func (r *queryResolver) TradeOutcomeReports(ctx context.Context) ([]*model.TradeOutcomeReport, error) {
+// ReadAllTradeOutcomes is the resolver for the readAllTradeOutcomes field.
+func (r *queryResolver) ReadAllTradeOutcomes(ctx context.Context) ([]*model.TradeOutcomeReport, error) {
 	return db.AllTradeOutcomeReports(), nil
 }

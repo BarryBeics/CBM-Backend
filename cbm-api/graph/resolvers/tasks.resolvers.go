@@ -74,8 +74,8 @@ func (r *mutationResolver) DeleteProject(ctx context.Context, id string) (*bool,
 	return &success, nil
 }
 
-// TaskByID is the resolver for the taskById field.
-func (r *queryResolver) TaskByID(ctx context.Context, id string) (*model.Task, error) {
+// ReadTaskByID is the resolver for the readTaskById field.
+func (r *queryResolver) ReadTaskByID(ctx context.Context, id string) (*model.Task, error) {
 	task, err := db.GetTaskByID(ctx, id)
 	if err != nil {
 		log.Error().Err(err).Msg("Error fetching task by ID:")
@@ -85,8 +85,8 @@ func (r *queryResolver) TaskByID(ctx context.Context, id string) (*model.Task, e
 	return task, nil
 }
 
-// AllTasks is the resolver for the allTasks field.
-func (r *queryResolver) AllTasks(ctx context.Context) ([]*model.Task, error) {
+// ReadAllTasks is the resolver for the readAllTasks field.
+func (r *queryResolver) ReadAllTasks(ctx context.Context) ([]*model.Task, error) {
 	tasks, err := db.GetAllTasks(ctx)
 	if err != nil {
 		log.Error().Err(err).Msg("Error fetching tasks:")
@@ -96,8 +96,8 @@ func (r *queryResolver) AllTasks(ctx context.Context) ([]*model.Task, error) {
 	return tasks, nil
 }
 
-// ProjectByID is the resolver for the projectById field.
-func (r *queryResolver) ProjectByID(ctx context.Context, id string) (*model.Project, error) {
+// ReadSingleProjectByID is the resolver for the readSingleProjectById field.
+func (r *queryResolver) ReadSingleProjectByID(ctx context.Context, id string) (*model.Project, error) {
 	project, err := db.GetProjectByID(ctx, id)
 	if err != nil {
 		log.Error().Err(err).Msg("Error fetching project by ID:")
@@ -115,8 +115,8 @@ func (r *queryResolver) ProjectByID(ctx context.Context, id string) (*model.Proj
 	return project, nil
 }
 
-// FilterProjects is the resolver for the filterProjects field.
-func (r *queryResolver) FilterProjects(ctx context.Context, filter *model.ProjectFilterInput) ([]*model.Project, error) {
+// ReadProjectsFilter is the resolver for the readProjectsFilter field.
+func (r *queryResolver) ReadProjectsFilter(ctx context.Context, filter *model.ProjectFilterInput) ([]*model.Project, error) {
 	var projects []*model.Project
 	var err error
 

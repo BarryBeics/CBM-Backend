@@ -120,16 +120,16 @@ extend type Mutation {
 
 extend type Query {
     "Get a single task by ID"
-    taskById(id: ID!): Task
+    readTaskById(id: ID!): Task
 
     "Get all tasks"
-    allTasks: [Task]
+    readAllTasks: [Task]
 
     "Get a single project by ID"
-    projectById(id: ID!): Project
+    readSingleProjectById(id: ID!): Project
 
     "Get projects filtered by SOP standard operating proceedure"
-    filterProjects(filter: ProjectFilterInput): [Project!]!
+    readProjectsFilter(filter: ProjectFilterInput): [Project!]!
 }
 
 

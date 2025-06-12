@@ -88,7 +88,7 @@ extend type Mutation {
     updateCounters(input: UpdateCountersInput!): Boolean
 
     "Set the Tested boolen value by bot Name"
-    markAsTested(input: MarkAsTestedInput!):Boolean
+    updateMarkAsTested(input: MarkAsTestedInput!):Boolean
 }
 
 # ==========================
@@ -97,8 +97,8 @@ extend type Mutation {
 
 extend type Query {
     "Get Stategy by Bot Name"
-    getStrategyByName(BotInstanceName: String!): Strategy
+    readStrategyByName(BotInstanceName: String!): Strategy
 
     "Get all strategies"
-    getAllStrategies: [Strategy]
+    readAllStrategies: [Strategy]
 }

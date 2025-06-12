@@ -90,18 +90,18 @@ extend type Mutation {
 extend type Query {
     # === Symbol Stats ===
     "Get All Symbol Stats"
-    SymbolStatsReports: [SymbolStats!]!
+    ReadAllSymbolStats: [SymbolStats!]!
 
     "Get Symbol Stats by Symbol"
-    SymbolStatsBySymbol(Symbol: String!): SymbolStats!
+    ReadSingleSymbolStatsBySymbol(Symbol: String!): SymbolStats!
 
 
     # === Ticker Stats ===
     "Gets all 24h Ticker Stats at a specific timestamp"
-    getHistoricTickerStatsAtTimestamp(Timestamp: Int!): [HistoricTickerStats!]!
+    readHistoricTickerStatsAtTimestamp(Timestamp: Int!): [HistoricTickerStats!]!
 
     "Fetches TickerStats history for a given symbol (e.g., to chart volatility or volume)"
-    getTickerStatsBySymbol(symbol: String!, limit: Int): [TickerStats!]!
+    readTickerStatsBySymbol(symbol: String!, limit: Int): [TickerStats!]!
 }
 
 

@@ -23,8 +23,8 @@ func (r *mutationResolver) CreateHistoricKline(ctx context.Context, input *model
 	return insertedHistoricKlineData, nil
 }
 
-// GetHistoricKlineData is the resolver for the getHistoricKlineData field.
-func (r *queryResolver) GetHistoricKlineData(ctx context.Context, symbol string, limit *int) ([]*model.HistoricKlineData, error) {
+// ReadHistoricKlineData is the resolver for the readHistoricKlineData field.
+func (r *queryResolver) ReadHistoricKlineData(ctx context.Context, symbol string, limit *int) ([]*model.HistoricKlineData, error) {
 	historicKlineData, err := db.HistoricKlineDataBySymbol(symbol, *limit)
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting historic Kline data")
