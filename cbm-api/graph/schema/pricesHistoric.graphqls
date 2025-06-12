@@ -54,14 +54,14 @@ extend type Mutation {
 
 extend type Query {
 	"Fetches price data for a given symbol up to a given limit of records"
-	getHistoricPrice(symbol: String!, limit: Int): [HistoricPrices!]!
+	readHistoricPrice(symbol: String!, limit: Int): [HistoricPrices!]!
   
 	"Gets all prices data at a given timestamp"
-	getHistoricPricesAtTimestamp(Timestamp: Int!): [HistoricPrices!]!
+	readHistoricPricesAtTimestamp(Timestamp: Int!): [HistoricPrices!]!
   
 	"Returns a count of timestamps in the DB"
-	getUniqueTimestampCount: Int!
+	readUniqueTimestampCount: Int!
 
     "This will give you a []string of all available trading symbols in your HistoricPrices collection."
-	availableSymbols: [String!]!
+	readAvailableSymbols: [String!]!
 }

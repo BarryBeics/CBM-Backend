@@ -53,14 +53,14 @@ extend type Mutation {
 
 extend type Query {
     "Get Trade Outcome reports by ID"
-    TradeOutcomeReport(_id: ID!): TradeOutcomeReport!
+    readTradeOutcomeReport(_id: ID!): TradeOutcomeReport!
 
     "Get Trade Outcome reports by Bot Name"
-    TradeOutcomes(BotName: String!): [TradeOutcomeReport!]!
+    readTradeOutcomesPerBotName(BotName: String!): [TradeOutcomeReport!]!
 
     "Get Trade Outcome reports by Bot Name & Market Status"
-    TradeOutcomesInFocus(BotName: String!, MarketStatus: String!, limit: Int): [TradeOutcomeReport!]!
+    readTradeOutcomeInFocus(BotName: String!, MarketStatus: String!, limit: Int): [TradeOutcomeReport!]!
 
     "Get All Trade Outcome reports"
-    TradeOutcomeReports: [TradeOutcomeReport!]!
+    readAllTradeOutcomes: [TradeOutcomeReport!]!
 }

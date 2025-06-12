@@ -49,5 +49,5 @@ extend type Mutation {
 
 extend type Query {
     "Fetches kline data data for a given symbol up to a given limit of records"
-    getHistoricKlineData(symbol: String!, limit: Int): [HistoricKlineData!]!
+    readHistoricKlineData(symbol: String!, limit: Int): [HistoricKlineData!]!
 }

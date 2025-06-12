@@ -46,18 +46,18 @@ func (r *mutationResolver) DeleteHistoricTickerStats(ctx context.Context, timest
 	return true, nil
 }
 
-// SymbolStatsReports is the resolver for the SymbolStatsReports field.
-func (r *queryResolver) SymbolStatsReports(ctx context.Context) ([]*model.SymbolStats, error) {
+// ReadAllSymbolStats is the resolver for the ReadAllSymbolStats field.
+func (r *queryResolver) ReadAllSymbolStats(ctx context.Context) ([]*model.SymbolStats, error) {
 	return db.AllSymbolStats(), nil
 }
 
-// SymbolStatsBySymbol is the resolver for the SymbolStatsBySymbol field.
-func (r *queryResolver) SymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error) {
+// ReadSingleSymbolStatsBySymbol is the resolver for the ReadSingleSymbolStatsBySymbol field.
+func (r *queryResolver) ReadSingleSymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error) {
 	return db.FindSymbolStatsBySymbol(ctx, symbol), nil
 }
 
-// GetHistoricTickerStatsAtTimestamp is the resolver for the getHistoricTickerStatsAtTimestamp field.
-func (r *queryResolver) GetHistoricTickerStatsAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricTickerStats, error) {
+// ReadHistoricTickerStatsAtTimestamp is the resolver for the readHistoricTickerStatsAtTimestamp field.
+func (r *queryResolver) ReadHistoricTickerStatsAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricTickerStats, error) {
 	log.Info().Msgf("Fetching historic ticker stats at Timestamp: %d", timestamp)
 
 	historicTickerStats, err := db.HistoricTickerStatsAtTimestamp(timestamp)
@@ -78,8 +78,8 @@ func (r *queryResolver) GetHistoricTickerStatsAtTimestamp(ctx context.Context, t
 	return result, nil
 }
 
-// GetTickerStatsBySymbol is the resolver for the getTickerStatsBySymbol field.
-func (r *queryResolver) GetTickerStatsBySymbol(ctx context.Context, symbol string, limit *int) ([]*model.TickerStats, error) {
+// ReadTickerStatsBySymbol is the resolver for the readTickerStatsBySymbol field.
+func (r *queryResolver) ReadTickerStatsBySymbol(ctx context.Context, symbol string, limit *int) ([]*model.TickerStats, error) {
 	log.Info().
 		Str("symbol", symbol).
 		Int("limit", func() int {

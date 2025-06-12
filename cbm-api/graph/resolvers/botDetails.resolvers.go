@@ -61,8 +61,8 @@ func (r *mutationResolver) UpdateCounters(ctx context.Context, input model.Updat
 	return &success, nil
 }
 
-// MarkAsTested is the resolver for the markAsTested field.
-func (r *mutationResolver) MarkAsTested(ctx context.Context, input model.MarkAsTestedInput) (*bool, error) {
+// UpdateMarkAsTested is the resolver for the updateMarkAsTested field.
+func (r *mutationResolver) UpdateMarkAsTested(ctx context.Context, input model.MarkAsTestedInput) (*bool, error) {
 	err := db.UpdateTested(ctx, input.BotInstanceName, input.Tested)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to update strategy is tested status.")
@@ -73,8 +73,8 @@ func (r *mutationResolver) MarkAsTested(ctx context.Context, input model.MarkAsT
 	return &success, nil
 }
 
-// GetStrategyByName is the resolver for the getStrategyByName field.
-func (r *queryResolver) GetStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error) {
+// ReadStrategyByName is the resolver for the readStrategyByName field.
+func (r *queryResolver) ReadStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error) {
 	// Assuming db is an instance of your DB type
 	strategy, err := db.GetStrategyByName(ctx, botInstanceName)
 	if err != nil {
@@ -85,8 +85,8 @@ func (r *queryResolver) GetStrategyByName(ctx context.Context, botInstanceName s
 	return strategy, nil
 }
 
-// GetAllStrategies is the resolver for the getAllStrategies field.
-func (r *queryResolver) GetAllStrategies(ctx context.Context) ([]*model.Strategy, error) {
+// ReadAllStrategies is the resolver for the readAllStrategies field.
+func (r *queryResolver) ReadAllStrategies(ctx context.Context) ([]*model.Strategy, error) {
 	// Assuming db is an instance of your DB type
 	strategies, err := db.GetAllStrategies(ctx)
 	if err != nil {

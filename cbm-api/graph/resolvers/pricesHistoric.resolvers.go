@@ -37,8 +37,8 @@ func (r *mutationResolver) DeleteHistoricPrices(ctx context.Context, timestamp i
 	return true, nil
 }
 
-// GetHistoricPrice is the resolver for the getHistoricPrice field.
-func (r *queryResolver) GetHistoricPrice(ctx context.Context, symbol string, limit *int) ([]*model.HistoricPrices, error) {
+// ReadHistoricPrice is the resolver for the readHistoricPrice field.
+func (r *queryResolver) ReadHistoricPrice(ctx context.Context, symbol string, limit *int) ([]*model.HistoricPrices, error) {
 	log.Info().Str("symbol", symbol).Int("limit", *limit).Msg("GetHistoricPrice called")
 
 	l := 0
@@ -62,8 +62,8 @@ func (r *queryResolver) GetHistoricPrice(ctx context.Context, symbol string, lim
 	return result, nil
 }
 
-// GetHistoricPricesAtTimestamp is the resolver for the getHistoricPricesAtTimestamp field.
-func (r *queryResolver) GetHistoricPricesAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricPrices, error) {
+// ReadHistoricPricesAtTimestamp is the resolver for the readHistoricPricesAtTimestamp field.
+func (r *queryResolver) ReadHistoricPricesAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricPrices, error) {
 	log.Info().Msgf("Fetching prices at Timestamp: %d", timestamp)
 
 	historicPrices, err := db.HistoricPricesAtTimestamp(timestamp)
@@ -84,8 +84,8 @@ func (r *queryResolver) GetHistoricPricesAtTimestamp(ctx context.Context, timest
 	return result, nil
 }
 
-// GetUniqueTimestampCount fetches the count of unique timestamps.
-func (r *queryResolver) GetUniqueTimestampCount(ctx context.Context) (int, error) {
+// ReadUniqueTimestampCount is the resolver for the readUniqueTimestampCount field.
+func (r *queryResolver) ReadUniqueTimestampCount(ctx context.Context) (int, error) {
 	int, err := db.GetUniqueTimestampCount(ctx)
 
 	if err != nil {
@@ -96,7 +96,7 @@ func (r *queryResolver) GetUniqueTimestampCount(ctx context.Context) (int, error
 	return int, nil
 }
 
-// AvailableSymbols is the resolver for the availableSymbols field.
-func (r *queryResolver) AvailableSymbols(ctx context.Context) ([]string, error) {
+// ReadAvailableSymbols is the resolver for the readAvailableSymbols field.
+func (r *queryResolver) ReadAvailableSymbols(ctx context.Context) ([]string, error) {
 	return db.AvailableSymbols()
 }
