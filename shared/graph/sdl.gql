@@ -119,26 +119,6 @@ type Mutation {
   createActivityReport(input: NewActivityReport): ActivityReport!
 
   """
-  Creates a new Trade Outcome Report
-  """
-  createTradeOutcomeReport(input: NewTradeOutcomeReport): TradeOutcomeReport!
-
-  """
-  Deletes outcome reports for the matching given timestamp
-  """
-  deleteOutcomeReports(Timestamp: Int!): Boolean!
-
-  """
-  If the symbol exists, update it. If not, create it
-  """
-  upsertSymbolStats(input: UpsertSymbolStatsInput): SymbolStats!
-
-  """
-  Deletes Symbol Stats by Symbol
-  """
-  deleteSymbolStats(Symbol: String!): Boolean!
-
-  """
   Creates a New strategy
   """
   createStrategy(input: StrategyInput!): Strategy
@@ -161,22 +141,7 @@ type Mutation {
   """
   Set the Tested boolen value by bot Name
   """
-  markAsTested(input: MarkAsTestedInput!): Boolean
-
-  """
-  Creates a new user
-  """
-  createUser(input: CreateUserInput!): User
-
-  """
-  Update an existing user
-  """
-  updateUser(input: UpdateUserInput!): User
-
-  """
-  Deletes a user by email
-  """
-  deleteUser(email: String!): Boolean
+  updateMarkAsTested(input: MarkAsTestedInput!): Boolean
   login(input: LoginInput!): LoginResponse!
 
   """
@@ -185,14 +150,24 @@ type Mutation {
   createHistoricPrices(input: NewHistoricPriceInput): [HistoricPrices!]!
 
   """
+  Deletes all prices data for the matching given timestamp
+  """
+  deleteHistoricPrices(Timestamp: Int!): Boolean!
+
+  """
   Creates an array of Historic Kline Data
   """
   createHistoricKline(input: NewHistoricKlineDataInput): [HistoricKlineData!]!
 
   """
-  Deletes all prices data for the matching given timestamp
+  If the symbol exists, update it. If not, create it
   """
-  deleteHistoricPrices(Timestamp: Int!): Boolean!
+  upsertSymbolStats(input: UpsertSymbolStatsInput): SymbolStats!
+
+  """
+  Deletes Symbol Stats by Symbol
+  """
+  deleteSymbolStats(Symbol: String!): Boolean!
 
   """
   Creates an array of 24h Ticker Stats at a given timestamp
@@ -205,6 +180,16 @@ type Mutation {
   Deletes all Ticker Stats at a specific timestamp
   """
   deleteHistoricTickerStats(Timestamp: Int!): Boolean!
+
+  """
+  Creates a new Trade Outcome Report
+  """
+  createTradeOutcomeReport(input: NewTradeOutcomeReport): TradeOutcomeReport!
+
+  """
+  Deletes outcome reports for the matching given timestamp
+  """
+  deleteOutcomeReports(Timestamp: Int!): Boolean!
 
   """
   Create a new task
@@ -235,6 +220,21 @@ type Mutation {
   Delete a project by ID
   """
   deleteProject(id: ID!): Boolean
+
+  """
+  Creates a new user
+  """
+  createUser(input: CreateUserInput!): User
+
+  """
+  Update an existing user
+  """
+  updateUser(input: UpdateUserInput!): User
+
+  """
+  Deletes a user by email
+  """
+  deleteUser(email: String!): Boolean
 }
 
 input NewActivityReport {
@@ -328,27 +328,82 @@ type Query {
   """
   Get activity reports by ID
   """
-  ActivityReport(_id: ID!): ActivityReport!
+  readActivityReport(_id: ID!): ActivityReport!
 
   """
   Get All activity reports
   """
-  ActivityReports: [ActivityReport!]!
+  readAllActivityReports: [ActivityReport!]!
+
+  """
+  Get Stategy by Bot Name
+  """
+  readStrategyByName(BotInstanceName: String!): Strategy
+
+  """
+  Get all strategies
+  """
+  readAllStrategies: [Strategy]
+
+  """
+  Fetches price data for a given symbol up to a given limit of records
+  """
+  readHistoricPrice(symbol: String!, limit: Int): [HistoricPrices!]!
+
+  """
+  Gets all prices data at a given timestamp
+  """
+  readHistoricPricesAtTimestamp(Timestamp: Int!): [HistoricPrices!]!
+
+  """
+  Returns a count of timestamps in the DB
+  """
+  readUniqueTimestampCount: Int!
+
+  """
+  This will give you a []string of all available trading symbols in your HistoricPrices collection.
+  """
+  readAvailableSymbols: [String!]!
+
+  """
+  Fetches kline data data for a given symbol up to a given limit of records
+  """
+  readHistoricKlineData(symbol: String!, limit: Int): [HistoricKlineData!]!
+
+  """
+  Get All Symbol Stats
+  """
+  ReadAllSymbolStats: [SymbolStats!]!
+
+  """
+  Get Symbol Stats by Symbol
+  """
+  ReadSingleSymbolStatsBySymbol(Symbol: String!): SymbolStats!
+
+  """
+  Gets all 24h Ticker Stats at a specific timestamp
+  """
+  readHistoricTickerStatsAtTimestamp(Timestamp: Int!): [HistoricTickerStats!]!
+
+  """
+  Fetches TickerStats history for a given symbol (e.g., to chart volatility or volume)
+  """
+  readTickerStatsBySymbol(symbol: String!, limit: Int): [TickerStats!]!
 
   """
   Get Trade Outcome reports by ID
   """
-  TradeOutcomeReport(_id: ID!): TradeOutcomeReport!
+  readTradeOutcomeReport(_id: ID!): TradeOutcomeReport!
 
   """
   Get Trade Outcome reports by Bot Name
   """
-  TradeOutcomes(BotName: String!): [TradeOutcomeReport!]!
+  readTradeOutcomesPerBotName(BotName: String!): [TradeOutcomeReport!]!
 
   """
   Get Trade Outcome reports by Bot Name & Market Status
   """
-  TradeOutcomesInFocus(
+  readTradeOutcomeInFocus(
     BotName: String!
     MarketStatus: String!
     limit: Int
@@ -357,95 +412,42 @@ type Query {
   """
   Get All Trade Outcome reports
   """
-  TradeOutcomeReports: [TradeOutcomeReport!]!
-
-  """
-  Get All Symbol Stats
-  """
-  SymbolStatsReports: [SymbolStats!]!
-
-  """
-  Get Symbol Stats by Symbol
-  """
-  SymbolStatsBySymbol(Symbol: String!): SymbolStats!
-
-  """
-  Get Stategy by Bot Name
-  """
-  getStrategyByName(BotInstanceName: String!): Strategy
-
-  """
-  Get all strategies
-  """
-  getAllStrategies: [Strategy]
-  getUserByEmail(email: String!): User
-  getAllUsers: [User!]!
-  getUsersByRole(role: String!): [User!]!
-
-  """
-  Fetches price data for a given symbol up to a given limit of records
-  """
-  getHistoricPrice(symbol: String!, limit: Int): [HistoricPrices!]!
-
-  """
-  Gets all prices data at a given timestamp
-  """
-  getHistoricPricesAtTimestamp(Timestamp: Int!): [HistoricPrices!]!
-
-  """
-  Fetches kline data data for a given symbol up to a given limit of records
-  """
-  getHistoricKlineData(symbol: String!, limit: Int): [HistoricKlineData!]!
-
-  """
-  Returns a count of timestamps in the DB
-  """
-  getUniqueTimestampCount: Int!
-
-  """
-  This will give you a []string of all available trading symbols in your HistoricPrices collection.
-  """
-  availableSymbols: [String!]!
-
-  """
-  Gets all 24h Ticker Stats at a specific timestamp
-  """
-  getHistoricTickerStatsAtTimestamp(Timestamp: Int!): [HistoricTickerStats!]!
-
-  """
-  Fetches TickerStats history for a given symbol (e.g., to chart volatility or volume)
-  """
-  getTickerStatsBySymbol(symbol: String!, limit: Int): [TickerStats!]!
-
-  """
-  Returns a list of available symbols from TickerStats data
-  """
-  availableTickerSymbols: [String!]!
-
-  """
-  Returns a count of stored timestamps (like snapshots)
-  """
-  getTickerStatsSnapshotCount: Int!
+  readAllTradeOutcomes: [TradeOutcomeReport!]!
 
   """
   Get a single task by ID
   """
-  taskById(id: ID!): Task
+  readTaskById(id: ID!): Task
 
   """
   Get all tasks
   """
-  allTasks: [Task]
+  readAllTasks: [Task]
 
   """
   Get a single project by ID
   """
-  projectById(id: ID!): Project
+  readSingleProjectById(id: ID!): Project
 
   """
   Get projects filtered by SOP standard operating proceedure
   """
-  filterProjects(filter: ProjectFilterInput): [Project!]!
+  readProjectsFilter(filter: ProjectFilterInput): [Project!]!
+
+  """
+  Get user by email
+  """
+  readUserByEmail(email: String!): User
+
+  """
+  Get all Users
+  """
+  readAllUsers: [User!]!
+
+  """
+  Get users by their role
+  """
+  readUsersByRole(role: String!): [User!]!
 }
 
 type Strategy {

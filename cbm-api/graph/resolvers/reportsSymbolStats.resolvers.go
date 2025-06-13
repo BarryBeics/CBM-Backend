@@ -25,7 +25,7 @@ func (r *mutationResolver) DeleteSymbolStats(ctx context.Context, symbol string)
 // CreateHistoricTickerStats is the resolver for the createHistoricTickerStats field.
 func (r *mutationResolver) CreateHistoricTickerStats(ctx context.Context, input model.NewHistoricTickerStatsInput) ([]*model.HistoricTickerStats, error) {
 	// Assuming you want to save multiple HistoricKlineData in the input
-	insertedHistoricKlineData, err := db.SaveHistoricTickerStats(input)
+	insertedHistoricKlineData, err := db.CreateHistoricTickerStats(input)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func (r *mutationResolver) CreateHistoricTickerStats(ctx context.Context, input 
 	return insertedHistoricKlineData, nil
 }
 
-// DeleteHistoricTickerStats is the resolver for the deleteHistoricTickerStats field.
+// / DeleteHistoricTickerStats is the resolver for the deleteHistoricTickerStats field.
 func (r *mutationResolver) DeleteHistoricTickerStats(ctx context.Context, timestamp int) (bool, error) {
 	err := db.DeleteHistoricTickerStatsByTimestamp(ctx, timestamp)
 
@@ -48,19 +48,19 @@ func (r *mutationResolver) DeleteHistoricTickerStats(ctx context.Context, timest
 
 // ReadAllSymbolStats is the resolver for the ReadAllSymbolStats field.
 func (r *queryResolver) ReadAllSymbolStats(ctx context.Context) ([]*model.SymbolStats, error) {
-	return db.AllSymbolStats(), nil
+	return db.ReadAllSymbolStats(), nil
 }
 
 // ReadSingleSymbolStatsBySymbol is the resolver for the ReadSingleSymbolStatsBySymbol field.
 func (r *queryResolver) ReadSingleSymbolStatsBySymbol(ctx context.Context, symbol string) (*model.SymbolStats, error) {
-	return db.FindSymbolStatsBySymbol(ctx, symbol), nil
+	return db.ReadSingleSymbolStatsBySymbol(symbol), nil
 }
 
 // ReadHistoricTickerStatsAtTimestamp is the resolver for the readHistoricTickerStatsAtTimestamp field.
 func (r *queryResolver) ReadHistoricTickerStatsAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricTickerStats, error) {
 	log.Info().Msgf("Fetching historic ticker stats at Timestamp: %d", timestamp)
 
-	historicTickerStats, err := db.HistoricTickerStatsAtTimestamp(timestamp)
+	historicTickerStats, err := db.ReadHistoricTickerStatsAtTimestamp(timestamp)
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting historic ticker stats at timestamp")
 		return nil, err
@@ -95,7 +95,7 @@ func (r *queryResolver) ReadTickerStatsBySymbol(ctx context.Context, symbol stri
 		l = *limit
 	}
 
-	tickerStats, err := db.TickerStatsBySymbol(symbol, l)
+	tickerStats, err := db.ReadTickerStatsBySymbol(symbol, l)
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting ticker stats by symbol")
 		return nil, err

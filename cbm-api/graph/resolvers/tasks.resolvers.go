@@ -76,7 +76,7 @@ func (r *mutationResolver) DeleteProject(ctx context.Context, id string) (*bool,
 
 // ReadTaskByID is the resolver for the readTaskById field.
 func (r *queryResolver) ReadTaskByID(ctx context.Context, id string) (*model.Task, error) {
-	task, err := db.GetTaskByID(ctx, id)
+	task, err := db.ReadTaskByID(ctx, id)
 	if err != nil {
 		log.Error().Err(err).Msg("Error fetching task by ID:")
 		return nil, err
@@ -87,7 +87,7 @@ func (r *queryResolver) ReadTaskByID(ctx context.Context, id string) (*model.Tas
 
 // ReadAllTasks is the resolver for the readAllTasks field.
 func (r *queryResolver) ReadAllTasks(ctx context.Context) ([]*model.Task, error) {
-	tasks, err := db.GetAllTasks(ctx)
+	tasks, err := db.ReadAllTasks(ctx)
 	if err != nil {
 		log.Error().Err(err).Msg("Error fetching tasks:")
 		return nil, err
@@ -98,7 +98,7 @@ func (r *queryResolver) ReadAllTasks(ctx context.Context) ([]*model.Task, error)
 
 // ReadSingleProjectByID is the resolver for the readSingleProjectById field.
 func (r *queryResolver) ReadSingleProjectByID(ctx context.Context, id string) (*model.Project, error) {
-	project, err := db.GetProjectByID(ctx, id)
+	project, err := db.ReadSingleProjectByID(ctx, id)
 	if err != nil {
 		log.Error().Err(err).Msg("Error fetching project by ID:")
 		return nil, err
@@ -121,7 +121,7 @@ func (r *queryResolver) ReadProjectsFilter(ctx context.Context, filter *model.Pr
 	var err error
 
 	if filter != nil && filter.Sop != nil {
-		projects, err = db.GetProjectsBySOP(ctx, *filter.Sop)
+		projects, err = db.ReadProjectsBySOP(ctx, *filter.Sop)
 	}
 
 	if err != nil {

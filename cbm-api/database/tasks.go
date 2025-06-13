@@ -12,6 +12,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// ==========================
+// === Tasks ===
+// ==========================
+
 // CreateTask inserts a new task into the Tasks collection.
 func (db *DB) CreateTask(ctx context.Context, input model.CreateTaskInput) (*model.Task, error) {
 	collection := db.client.Database("go_trading_db").Collection("Tasks")
@@ -42,6 +46,64 @@ func (db *DB) CreateTask(ctx context.Context, input model.CreateTaskInput) (*mod
 	}
 
 	return &updated, nil
+}
+
+// ReadAllTasks fetches all tasks from the Tasks collection.
+func (db *DB) ReadAllTasks(ctx context.Context) ([]*model.Task, error) {
+	collection := db.client.Database("go_trading_db").Collection("Tasks")
+
+	cursor, err := collection.Find(ctx, bson.D{}, options.Find())
+	if err != nil {
+		log.Error().Err(err).Msg("Error retrieving tasks:")
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var tasks []*model.Task
+	if err := cursor.All(ctx, &tasks); err != nil {
+		log.Error().Err(err).Msg("Error decoding tasks:")
+		return nil, err
+	}
+
+	return tasks, nil
+}
+
+// ReadTaskByID fetches a single task by its ID.
+func (db *DB) ReadTaskByID(ctx context.Context, id string) (*model.Task, error) {
+	collection := db.client.Database("go_trading_db").Collection("Tasks")
+
+	filter := bson.M{"id": id}
+
+	var task model.Task
+	err := collection.FindOne(ctx, filter).Decode(&task)
+	if err != nil {
+		log.Error().Err(err).Msg("Error retrieving task by ID:")
+		return nil, err
+	}
+
+	return &task, nil
+}
+
+// ReadTasksByProjectID retrieves tasks associated with a specific project.
+func (db *DB) GetTasksByProjectID(ctx context.Context, projectID string) ([]*model.Task, error) {
+	collection := db.client.Database("go_trading_db").Collection("Tasks")
+
+	filter := bson.M{"projectId": projectID}
+
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		log.Error().Err(err).Msg("Error retrieving tasks by project ID:")
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var tasks []*model.Task
+	if err := cursor.All(ctx, &tasks); err != nil {
+		log.Error().Err(err).Msg("Error decoding tasks by project ID:")
+		return nil, err
+	}
+
+	return tasks, nil
 }
 
 // UpdateTask updates an existing task in the Tasks collection.
@@ -118,41 +180,9 @@ func (db *DB) DeleteTaskByID(ctx context.Context, id string) (bool, error) {
 	return result.DeletedCount > 0, nil
 }
 
-// GetAllTasks fetches all tasks from the Tasks collection.
-func (db *DB) GetAllTasks(ctx context.Context) ([]*model.Task, error) {
-	collection := db.client.Database("go_trading_db").Collection("Tasks")
-
-	cursor, err := collection.Find(ctx, bson.D{}, options.Find())
-	if err != nil {
-		log.Error().Err(err).Msg("Error retrieving tasks:")
-		return nil, err
-	}
-	defer cursor.Close(ctx)
-
-	var tasks []*model.Task
-	if err := cursor.All(ctx, &tasks); err != nil {
-		log.Error().Err(err).Msg("Error decoding tasks:")
-		return nil, err
-	}
-
-	return tasks, nil
-}
-
-// GetTaskByID fetches a single task by its ID.
-func (db *DB) GetTaskByID(ctx context.Context, id string) (*model.Task, error) {
-	collection := db.client.Database("go_trading_db").Collection("Tasks")
-
-	filter := bson.M{"id": id}
-
-	var task model.Task
-	err := collection.FindOne(ctx, filter).Decode(&task)
-	if err != nil {
-		log.Error().Err(err).Msg("Error retrieving task by ID:")
-		return nil, err
-	}
-
-	return &task, nil
-}
+// ==========================
+// === Projects ===
+// ==========================
 
 // CreateProject inserts a new project into the Projects collection.
 func (db *DB) CreateProject(ctx context.Context, input model.CreateProjectInput) (*model.Project, error) {
@@ -181,6 +211,45 @@ func (db *DB) CreateProject(ctx context.Context, input model.CreateProjectInput)
 	}
 
 	return project, nil
+}
+
+// ReadProjectByID retrieves a project by ID.
+func (db *DB) ReadSingleProjectByID(ctx context.Context, id string) (*model.Project, error) {
+	collection := db.client.Database("go_trading_db").Collection("Projects")
+
+	filter := bson.M{"id": id}
+
+	var project model.Project
+	err := collection.FindOne(ctx, filter).Decode(&project)
+	if err != nil {
+		log.Error().Err(err).Msg("Error retrieving project by ID:")
+		return nil, err
+	}
+
+	return &project, nil
+}
+
+// ReadProjectsBySOP retrieves projects filtered by the SOP boolean field.
+func (db *DB) ReadProjectsBySOP(ctx context.Context, sop bool) ([]*model.Project, error) {
+	collection := db.client.Database("go_trading_db").Collection("Projects")
+
+	// Build the MongoDB filter
+	filter := bson.M{"sop": sop}
+
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		log.Error().Err(err).Msg("Error retrieving filtered projects:")
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var projects []*model.Project
+	if err := cursor.All(ctx, &projects); err != nil {
+		log.Error().Err(err).Msg("Error decoding filtered projects:")
+		return nil, err
+	}
+
+	return projects, nil
 }
 
 // UpdateProject updates an existing project in the Projects collection.
@@ -245,65 +314,4 @@ func (db *DB) DeleteProjectByID(ctx context.Context, id string) (bool, error) {
 	}
 
 	return result.DeletedCount > 0, nil
-}
-
-// GetProjectsBySOP retrieves projects filtered by the SOP boolean field.
-func (db *DB) GetProjectsBySOP(ctx context.Context, sop bool) ([]*model.Project, error) {
-	collection := db.client.Database("go_trading_db").Collection("Projects")
-
-	// Build the MongoDB filter
-	filter := bson.M{"sop": sop}
-
-	cursor, err := collection.Find(ctx, filter)
-	if err != nil {
-		log.Error().Err(err).Msg("Error retrieving filtered projects:")
-		return nil, err
-	}
-	defer cursor.Close(ctx)
-
-	var projects []*model.Project
-	if err := cursor.All(ctx, &projects); err != nil {
-		log.Error().Err(err).Msg("Error decoding filtered projects:")
-		return nil, err
-	}
-
-	return projects, nil
-}
-
-// GetProjectByID retrieves a project by ID.
-func (db *DB) GetProjectByID(ctx context.Context, id string) (*model.Project, error) {
-	collection := db.client.Database("go_trading_db").Collection("Projects")
-
-	filter := bson.M{"id": id}
-
-	var project model.Project
-	err := collection.FindOne(ctx, filter).Decode(&project)
-	if err != nil {
-		log.Error().Err(err).Msg("Error retrieving project by ID:")
-		return nil, err
-	}
-
-	return &project, nil
-}
-
-// GetTasksByProjectID retrieves tasks associated with a specific project.
-func (db *DB) GetTasksByProjectID(ctx context.Context, projectID string) ([]*model.Task, error) {
-	collection := db.client.Database("go_trading_db").Collection("Tasks")
-
-	filter := bson.M{"projectId": projectID}
-
-	cursor, err := collection.Find(ctx, filter)
-	if err != nil {
-		log.Error().Err(err).Msg("Error retrieving tasks by project ID:")
-		return nil, err
-	}
-	defer cursor.Close(ctx)
-
-	var tasks []*model.Task
-	if err := cursor.All(ctx, &tasks); err != nil {
-		log.Error().Err(err).Msg("Error decoding tasks by project ID:")
-		return nil, err
-	}
-
-	return tasks, nil
 }

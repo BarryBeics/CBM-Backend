@@ -46,7 +46,7 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, email string) (*bool,
 
 // ReadUserByEmail is the resolver for the readUserByEmail field.
 func (r *queryResolver) ReadUserByEmail(ctx context.Context, email string) (*model.User, error) {
-	user, err := db.GetUserByEmail(ctx, email)
+	user, err := db.ReadUserByEmail(ctx, email)
 	if err != nil {
 		log.Error().Err(err).Msg("Error fetching user by email:")
 		return nil, err
@@ -57,7 +57,7 @@ func (r *queryResolver) ReadUserByEmail(ctx context.Context, email string) (*mod
 
 // ReadAllUsers is the resolver for the readAllUsers field.
 func (r *queryResolver) ReadAllUsers(ctx context.Context) ([]*model.User, error) {
-	users, err := db.GetAllUsers(ctx)
+	users, err := db.ReadAllUsers(ctx)
 	if err != nil {
 		log.Error().Err(err).Msg("Error fetching all users:")
 		return nil, err
@@ -68,7 +68,7 @@ func (r *queryResolver) ReadAllUsers(ctx context.Context) ([]*model.User, error)
 
 // ReadUsersByRole is the resolver for the readUsersByRole field.
 func (r *queryResolver) ReadUsersByRole(ctx context.Context, role string) ([]*model.User, error) {
-	users, err := db.GetUserByRole(ctx, role)
+	users, err := db.ReadUserByRole(ctx, role)
 	if err != nil {
 		log.Error().Err(err).Msg("Error fetching user by email:")
 		return nil, err

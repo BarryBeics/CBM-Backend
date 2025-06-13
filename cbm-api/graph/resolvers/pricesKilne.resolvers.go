@@ -14,7 +14,7 @@ import (
 // CreateHistoricKlineData is the resolver for the getHistoricKlineData field.
 func (r *mutationResolver) CreateHistoricKline(ctx context.Context, input *model.NewHistoricKlineDataInput) ([]*model.HistoricKlineData, error) {
 	// Assuming you want to save multiple HistoricKlineData in the input
-	insertedHistoricKlineData, err := db.SaveHistoricKlineData(input)
+	insertedHistoricKlineData, err := db.CreateHistoricKlineData(input)
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +25,7 @@ func (r *mutationResolver) CreateHistoricKline(ctx context.Context, input *model
 
 // ReadHistoricKlineData is the resolver for the readHistoricKlineData field.
 func (r *queryResolver) ReadHistoricKlineData(ctx context.Context, symbol string, limit *int) ([]*model.HistoricKlineData, error) {
-	historicKlineData, err := db.HistoricKlineDataBySymbol(symbol, *limit)
+	historicKlineData, err := db.ReadHistoricKlineDataBySymbol(symbol, *limit)
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting historic Kline data")
 		return nil, err

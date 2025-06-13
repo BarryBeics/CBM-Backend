@@ -12,8 +12,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// jwtSecret is the secret key used to sign JWT tokens.
 var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
+// Login authenticates a user and returns a JWT token if successful.
 func (db *DB) Login(ctx context.Context, input *model.LoginInput) (*model.LoginResponse, error) {
 	collection := db.client.Database("go_trading_db").Collection("Customers")
 
