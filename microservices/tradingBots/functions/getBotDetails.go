@@ -21,7 +21,7 @@ import (
 // If both sets of parameters are loaded successfully, strategyDetails and
 // exitDetails are returned along with nil for the err return value.
 func GetParameters(ctx context.Context, client graphql.Client) ([]model.StrategyInput, error) {
-	response, err := graph.GetAllStrategies(ctx, client)
+	response, err := graph.ReadAllStrategies(ctx, client)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func GetParameters(ctx context.Context, client graphql.Client) ([]model.Strategy
 	var strategyDetails []model.StrategyInput
 
 	// Access the "data" key and then the "getAllStrategies" key
-	for _, obj := range response.GetAllStrategies {
+	for _, obj := range response.ReadAllStrategies {
 		// Check if the strategy is not tested
 		if !obj.Tested {
 			objJSON, err := json.Marshal(obj)

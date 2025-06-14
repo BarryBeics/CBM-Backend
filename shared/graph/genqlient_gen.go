@@ -513,508 +513,6 @@ type CreateUserResponse struct {
 // GetCreateUser returns CreateUserResponse.CreateUser, and is useful for accessing the field via an interface.
 func (v *CreateUserResponse) GetCreateUser() CreateUserCreateUser { return v.CreateUser }
 
-// GetAllProjectsFilterProjectsProject includes the requested fields of the GraphQL type Project.
-type GetAllProjectsFilterProjectsProject struct {
-	Id          string                                         `json:"id"`
-	Title       string                                         `json:"title"`
-	Sop         bool                                           `json:"sop"`
-	Description string                                         `json:"description"`
-	Labels      []string                                       `json:"labels"`
-	AssignedTo  string                                         `json:"assignedTo"`
-	DueDate     string                                         `json:"dueDate"`
-	Status      string                                         `json:"status"`
-	CreatedAt   string                                         `json:"createdAt"`
-	UpdatedAt   string                                         `json:"updatedAt"`
-	Tasks       []GetAllProjectsFilterProjectsProjectTasksTask `json:"tasks"`
-}
-
-// GetId returns GetAllProjectsFilterProjectsProject.Id, and is useful for accessing the field via an interface.
-func (v *GetAllProjectsFilterProjectsProject) GetId() string { return v.Id }
-
-// GetTitle returns GetAllProjectsFilterProjectsProject.Title, and is useful for accessing the field via an interface.
-func (v *GetAllProjectsFilterProjectsProject) GetTitle() string { return v.Title }
-
-// GetSop returns GetAllProjectsFilterProjectsProject.Sop, and is useful for accessing the field via an interface.
-func (v *GetAllProjectsFilterProjectsProject) GetSop() bool { return v.Sop }
-
-// GetDescription returns GetAllProjectsFilterProjectsProject.Description, and is useful for accessing the field via an interface.
-func (v *GetAllProjectsFilterProjectsProject) GetDescription() string { return v.Description }
-
-// GetLabels returns GetAllProjectsFilterProjectsProject.Labels, and is useful for accessing the field via an interface.
-func (v *GetAllProjectsFilterProjectsProject) GetLabels() []string { return v.Labels }
-
-// GetAssignedTo returns GetAllProjectsFilterProjectsProject.AssignedTo, and is useful for accessing the field via an interface.
-func (v *GetAllProjectsFilterProjectsProject) GetAssignedTo() string { return v.AssignedTo }
-
-// GetDueDate returns GetAllProjectsFilterProjectsProject.DueDate, and is useful for accessing the field via an interface.
-func (v *GetAllProjectsFilterProjectsProject) GetDueDate() string { return v.DueDate }
-
-// GetStatus returns GetAllProjectsFilterProjectsProject.Status, and is useful for accessing the field via an interface.
-func (v *GetAllProjectsFilterProjectsProject) GetStatus() string { return v.Status }
-
-// GetCreatedAt returns GetAllProjectsFilterProjectsProject.CreatedAt, and is useful for accessing the field via an interface.
-func (v *GetAllProjectsFilterProjectsProject) GetCreatedAt() string { return v.CreatedAt }
-
-// GetUpdatedAt returns GetAllProjectsFilterProjectsProject.UpdatedAt, and is useful for accessing the field via an interface.
-func (v *GetAllProjectsFilterProjectsProject) GetUpdatedAt() string { return v.UpdatedAt }
-
-// GetTasks returns GetAllProjectsFilterProjectsProject.Tasks, and is useful for accessing the field via an interface.
-func (v *GetAllProjectsFilterProjectsProject) GetTasks() []GetAllProjectsFilterProjectsProjectTasksTask {
-	return v.Tasks
-}
-
-// GetAllProjectsFilterProjectsProjectTasksTask includes the requested fields of the GraphQL type Task.
-type GetAllProjectsFilterProjectsProjectTasksTask struct {
-	Id string `json:"id"`
-}
-
-// GetId returns GetAllProjectsFilterProjectsProjectTasksTask.Id, and is useful for accessing the field via an interface.
-func (v *GetAllProjectsFilterProjectsProjectTasksTask) GetId() string { return v.Id }
-
-// GetAllProjectsResponse is returned by GetAllProjects on success.
-type GetAllProjectsResponse struct {
-	// Get projects filtered by SOP standard operating proceedure
-	FilterProjects []GetAllProjectsFilterProjectsProject `json:"filterProjects"`
-}
-
-// GetFilterProjects returns GetAllProjectsResponse.FilterProjects, and is useful for accessing the field via an interface.
-func (v *GetAllProjectsResponse) GetFilterProjects() []GetAllProjectsFilterProjectsProject {
-	return v.FilterProjects
-}
-
-// GetAllStrategiesGetAllStrategiesStrategy includes the requested fields of the GraphQL type Strategy.
-type GetAllStrategiesGetAllStrategiesStrategy struct {
-	BotInstanceName      string  `json:"BotInstanceName"`
-	TradeDuration        int     `json:"TradeDuration"`
-	IncrementsATR        int     `json:"IncrementsATR"`
-	LongSMADuration      int     `json:"LongSMADuration"`
-	ShortSMADuration     int     `json:"ShortSMADuration"`
-	WINCounter           int     `json:"WINCounter"`
-	LOSSCounter          int     `json:"LOSSCounter"`
-	TIMEOUTGainCounter   int     `json:"TIMEOUTGainCounter"`
-	TIMEOUTLossCounter   int     `json:"TIMEOUTLossCounter"`
-	NetGainCounter       int     `json:"NetGainCounter"`
-	NetLossCounter       int     `json:"NetLossCounter"`
-	AccountBalance       float64 `json:"AccountBalance"`
-	MovingAveMomentum    float64 `json:"MovingAveMomentum"`
-	TakeProfitPercentage float64 `json:"TakeProfitPercentage"`
-	StopLossPercentage   float64 `json:"StopLossPercentage"`
-	ATRtollerance        float64 `json:"ATRtollerance"`
-	FeesTotal            float64 `json:"FeesTotal"`
-	Tested               bool    `json:"Tested"`
-	Owner                string  `json:"Owner"`
-	CreatedOn            int     `json:"CreatedOn"`
-}
-
-// GetBotInstanceName returns GetAllStrategiesGetAllStrategiesStrategy.BotInstanceName, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetBotInstanceName() string {
-	return v.BotInstanceName
-}
-
-// GetTradeDuration returns GetAllStrategiesGetAllStrategiesStrategy.TradeDuration, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetTradeDuration() int { return v.TradeDuration }
-
-// GetIncrementsATR returns GetAllStrategiesGetAllStrategiesStrategy.IncrementsATR, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetIncrementsATR() int { return v.IncrementsATR }
-
-// GetLongSMADuration returns GetAllStrategiesGetAllStrategiesStrategy.LongSMADuration, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetLongSMADuration() int { return v.LongSMADuration }
-
-// GetShortSMADuration returns GetAllStrategiesGetAllStrategiesStrategy.ShortSMADuration, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetShortSMADuration() int {
-	return v.ShortSMADuration
-}
-
-// GetWINCounter returns GetAllStrategiesGetAllStrategiesStrategy.WINCounter, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetWINCounter() int { return v.WINCounter }
-
-// GetLOSSCounter returns GetAllStrategiesGetAllStrategiesStrategy.LOSSCounter, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetLOSSCounter() int { return v.LOSSCounter }
-
-// GetTIMEOUTGainCounter returns GetAllStrategiesGetAllStrategiesStrategy.TIMEOUTGainCounter, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetTIMEOUTGainCounter() int {
-	return v.TIMEOUTGainCounter
-}
-
-// GetTIMEOUTLossCounter returns GetAllStrategiesGetAllStrategiesStrategy.TIMEOUTLossCounter, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetTIMEOUTLossCounter() int {
-	return v.TIMEOUTLossCounter
-}
-
-// GetNetGainCounter returns GetAllStrategiesGetAllStrategiesStrategy.NetGainCounter, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetNetGainCounter() int { return v.NetGainCounter }
-
-// GetNetLossCounter returns GetAllStrategiesGetAllStrategiesStrategy.NetLossCounter, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetNetLossCounter() int { return v.NetLossCounter }
-
-// GetAccountBalance returns GetAllStrategiesGetAllStrategiesStrategy.AccountBalance, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetAccountBalance() float64 {
-	return v.AccountBalance
-}
-
-// GetMovingAveMomentum returns GetAllStrategiesGetAllStrategiesStrategy.MovingAveMomentum, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetMovingAveMomentum() float64 {
-	return v.MovingAveMomentum
-}
-
-// GetTakeProfitPercentage returns GetAllStrategiesGetAllStrategiesStrategy.TakeProfitPercentage, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetTakeProfitPercentage() float64 {
-	return v.TakeProfitPercentage
-}
-
-// GetStopLossPercentage returns GetAllStrategiesGetAllStrategiesStrategy.StopLossPercentage, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetStopLossPercentage() float64 {
-	return v.StopLossPercentage
-}
-
-// GetATRtollerance returns GetAllStrategiesGetAllStrategiesStrategy.ATRtollerance, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetATRtollerance() float64 { return v.ATRtollerance }
-
-// GetFeesTotal returns GetAllStrategiesGetAllStrategiesStrategy.FeesTotal, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetFeesTotal() float64 { return v.FeesTotal }
-
-// GetTested returns GetAllStrategiesGetAllStrategiesStrategy.Tested, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetTested() bool { return v.Tested }
-
-// GetOwner returns GetAllStrategiesGetAllStrategiesStrategy.Owner, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetOwner() string { return v.Owner }
-
-// GetCreatedOn returns GetAllStrategiesGetAllStrategiesStrategy.CreatedOn, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesGetAllStrategiesStrategy) GetCreatedOn() int { return v.CreatedOn }
-
-// GetAllStrategiesResponse is returned by GetAllStrategies on success.
-type GetAllStrategiesResponse struct {
-	// Get all strategies
-	GetAllStrategies []GetAllStrategiesGetAllStrategiesStrategy `json:"getAllStrategies"`
-}
-
-// GetGetAllStrategies returns GetAllStrategiesResponse.GetAllStrategies, and is useful for accessing the field via an interface.
-func (v *GetAllStrategiesResponse) GetGetAllStrategies() []GetAllStrategiesGetAllStrategiesStrategy {
-	return v.GetAllStrategies
-}
-
-// GetAllTasksAllTasksTask includes the requested fields of the GraphQL type Task.
-type GetAllTasksAllTasksTask struct {
-	Id          string   `json:"id"`
-	Title       string   `json:"title"`
-	Description string   `json:"description"`
-	Status      string   `json:"status"`
-	Labels      []string `json:"labels"`
-	AssignedTo  string   `json:"assignedTo"`
-	DueDate     string   `json:"dueDate"`
-	DeferDate   string   `json:"deferDate"`
-	Department  string   `json:"department"`
-	ProjectId   string   `json:"projectId"`
-	Duration    int      `json:"duration"`
-	CreatedAt   string   `json:"createdAt"`
-	UpdatedAt   string   `json:"updatedAt"`
-}
-
-// GetId returns GetAllTasksAllTasksTask.Id, and is useful for accessing the field via an interface.
-func (v *GetAllTasksAllTasksTask) GetId() string { return v.Id }
-
-// GetTitle returns GetAllTasksAllTasksTask.Title, and is useful for accessing the field via an interface.
-func (v *GetAllTasksAllTasksTask) GetTitle() string { return v.Title }
-
-// GetDescription returns GetAllTasksAllTasksTask.Description, and is useful for accessing the field via an interface.
-func (v *GetAllTasksAllTasksTask) GetDescription() string { return v.Description }
-
-// GetStatus returns GetAllTasksAllTasksTask.Status, and is useful for accessing the field via an interface.
-func (v *GetAllTasksAllTasksTask) GetStatus() string { return v.Status }
-
-// GetLabels returns GetAllTasksAllTasksTask.Labels, and is useful for accessing the field via an interface.
-func (v *GetAllTasksAllTasksTask) GetLabels() []string { return v.Labels }
-
-// GetAssignedTo returns GetAllTasksAllTasksTask.AssignedTo, and is useful for accessing the field via an interface.
-func (v *GetAllTasksAllTasksTask) GetAssignedTo() string { return v.AssignedTo }
-
-// GetDueDate returns GetAllTasksAllTasksTask.DueDate, and is useful for accessing the field via an interface.
-func (v *GetAllTasksAllTasksTask) GetDueDate() string { return v.DueDate }
-
-// GetDeferDate returns GetAllTasksAllTasksTask.DeferDate, and is useful for accessing the field via an interface.
-func (v *GetAllTasksAllTasksTask) GetDeferDate() string { return v.DeferDate }
-
-// GetDepartment returns GetAllTasksAllTasksTask.Department, and is useful for accessing the field via an interface.
-func (v *GetAllTasksAllTasksTask) GetDepartment() string { return v.Department }
-
-// GetProjectId returns GetAllTasksAllTasksTask.ProjectId, and is useful for accessing the field via an interface.
-func (v *GetAllTasksAllTasksTask) GetProjectId() string { return v.ProjectId }
-
-// GetDuration returns GetAllTasksAllTasksTask.Duration, and is useful for accessing the field via an interface.
-func (v *GetAllTasksAllTasksTask) GetDuration() int { return v.Duration }
-
-// GetCreatedAt returns GetAllTasksAllTasksTask.CreatedAt, and is useful for accessing the field via an interface.
-func (v *GetAllTasksAllTasksTask) GetCreatedAt() string { return v.CreatedAt }
-
-// GetUpdatedAt returns GetAllTasksAllTasksTask.UpdatedAt, and is useful for accessing the field via an interface.
-func (v *GetAllTasksAllTasksTask) GetUpdatedAt() string { return v.UpdatedAt }
-
-// GetAllTasksResponse is returned by GetAllTasks on success.
-type GetAllTasksResponse struct {
-	// Get all tasks
-	AllTasks []GetAllTasksAllTasksTask `json:"allTasks"`
-}
-
-// GetAllTasks returns GetAllTasksResponse.AllTasks, and is useful for accessing the field via an interface.
-func (v *GetAllTasksResponse) GetAllTasks() []GetAllTasksAllTasksTask { return v.AllTasks }
-
-// GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices includes the requested fields of the GraphQL type HistoricPrices.
-type GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices struct {
-	Pair      []GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair `json:"Pair"`
-	Timestamp int                                                                          `json:"Timestamp"`
-}
-
-// GetPair returns GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices.Pair, and is useful for accessing the field via an interface.
-func (v *GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices) GetPair() []GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair {
-	return v.Pair
-}
-
-// GetTimestamp returns GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices.Timestamp, and is useful for accessing the field via an interface.
-func (v *GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices) GetTimestamp() int {
-	return v.Timestamp
-}
-
-// GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair includes the requested fields of the GraphQL type Pair.
-type GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair struct {
-	Symbol string `json:"Symbol"`
-	Price  string `json:"Price"`
-}
-
-// GetSymbol returns GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair.Symbol, and is useful for accessing the field via an interface.
-func (v *GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair) GetSymbol() string {
-	return v.Symbol
-}
-
-// GetPrice returns GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair.Price, and is useful for accessing the field via an interface.
-func (v *GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPricesPair) GetPrice() string {
-	return v.Price
-}
-
-// GetHistoricPricesAtTimestampResponse is returned by GetHistoricPricesAtTimestamp on success.
-type GetHistoricPricesAtTimestampResponse struct {
-	// Gets all prices data at a given timestamp
-	GetHistoricPricesAtTimestamp []GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices `json:"getHistoricPricesAtTimestamp"`
-}
-
-// GetGetHistoricPricesAtTimestamp returns GetHistoricPricesAtTimestampResponse.GetHistoricPricesAtTimestamp, and is useful for accessing the field via an interface.
-func (v *GetHistoricPricesAtTimestampResponse) GetGetHistoricPricesAtTimestamp() []GetHistoricPricesAtTimestampGetHistoricPricesAtTimestampHistoricPrices {
-	return v.GetHistoricPricesAtTimestamp
-}
-
-// GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats includes the requested fields of the GraphQL type HistoricTickerStats.
-type GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats struct {
-	Timestamp int                                                                                                     `json:"Timestamp"`
-	Stats     []GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats `json:"Stats"`
-}
-
-// GetTimestamp returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats.Timestamp, and is useful for accessing the field via an interface.
-func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats) GetTimestamp() int {
-	return v.Timestamp
-}
-
-// GetStats returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats.Stats, and is useful for accessing the field via an interface.
-func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats) GetStats() []GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats {
-	return v.Stats
-}
-
-// GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats includes the requested fields of the GraphQL type TickerStats.
-type GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats struct {
-	Symbol            string `json:"Symbol"`
-	PriceChange       string `json:"PriceChange"`
-	PriceChangePct    string `json:"PriceChangePct"`
-	QuoteVolume       string `json:"QuoteVolume"`
-	Volume            string `json:"Volume"`
-	TradeCount        int    `json:"TradeCount"`
-	HighPrice         string `json:"HighPrice"`
-	LowPrice          string `json:"LowPrice"`
-	LastPrice         string `json:"LastPrice"`
-	LiquidityEstimate string `json:"LiquidityEstimate"`
-}
-
-// GetSymbol returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.Symbol, and is useful for accessing the field via an interface.
-func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetSymbol() string {
-	return v.Symbol
-}
-
-// GetPriceChange returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.PriceChange, and is useful for accessing the field via an interface.
-func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetPriceChange() string {
-	return v.PriceChange
-}
-
-// GetPriceChangePct returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.PriceChangePct, and is useful for accessing the field via an interface.
-func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetPriceChangePct() string {
-	return v.PriceChangePct
-}
-
-// GetQuoteVolume returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.QuoteVolume, and is useful for accessing the field via an interface.
-func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetQuoteVolume() string {
-	return v.QuoteVolume
-}
-
-// GetVolume returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.Volume, and is useful for accessing the field via an interface.
-func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetVolume() string {
-	return v.Volume
-}
-
-// GetTradeCount returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.TradeCount, and is useful for accessing the field via an interface.
-func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetTradeCount() int {
-	return v.TradeCount
-}
-
-// GetHighPrice returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.HighPrice, and is useful for accessing the field via an interface.
-func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetHighPrice() string {
-	return v.HighPrice
-}
-
-// GetLowPrice returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.LowPrice, and is useful for accessing the field via an interface.
-func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetLowPrice() string {
-	return v.LowPrice
-}
-
-// GetLastPrice returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.LastPrice, and is useful for accessing the field via an interface.
-func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetLastPrice() string {
-	return v.LastPrice
-}
-
-// GetLiquidityEstimate returns GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.LiquidityEstimate, and is useful for accessing the field via an interface.
-func (v *GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetLiquidityEstimate() string {
-	return v.LiquidityEstimate
-}
-
-// GetHistoricTickerStatsAtTimestampResponse is returned by GetHistoricTickerStatsAtTimestamp on success.
-type GetHistoricTickerStatsAtTimestampResponse struct {
-	// Gets all 24h Ticker Stats at a specific timestamp
-	GetHistoricTickerStatsAtTimestamp []GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats `json:"getHistoricTickerStatsAtTimestamp"`
-}
-
-// GetGetHistoricTickerStatsAtTimestamp returns GetHistoricTickerStatsAtTimestampResponse.GetHistoricTickerStatsAtTimestamp, and is useful for accessing the field via an interface.
-func (v *GetHistoricTickerStatsAtTimestampResponse) GetGetHistoricTickerStatsAtTimestamp() []GetHistoricTickerStatsAtTimestampGetHistoricTickerStatsAtTimestampHistoricTickerStats {
-	return v.GetHistoricTickerStatsAtTimestamp
-}
-
-// GetPriceDataGetHistoricPriceHistoricPrices includes the requested fields of the GraphQL type HistoricPrices.
-type GetPriceDataGetHistoricPriceHistoricPrices struct {
-	Pair      []GetPriceDataGetHistoricPriceHistoricPricesPair `json:"Pair"`
-	Timestamp int                                              `json:"Timestamp"`
-}
-
-// GetPair returns GetPriceDataGetHistoricPriceHistoricPrices.Pair, and is useful for accessing the field via an interface.
-func (v *GetPriceDataGetHistoricPriceHistoricPrices) GetPair() []GetPriceDataGetHistoricPriceHistoricPricesPair {
-	return v.Pair
-}
-
-// GetTimestamp returns GetPriceDataGetHistoricPriceHistoricPrices.Timestamp, and is useful for accessing the field via an interface.
-func (v *GetPriceDataGetHistoricPriceHistoricPrices) GetTimestamp() int { return v.Timestamp }
-
-// GetPriceDataGetHistoricPriceHistoricPricesPair includes the requested fields of the GraphQL type Pair.
-type GetPriceDataGetHistoricPriceHistoricPricesPair struct {
-	Symbol string `json:"Symbol"`
-	Price  string `json:"Price"`
-}
-
-// GetSymbol returns GetPriceDataGetHistoricPriceHistoricPricesPair.Symbol, and is useful for accessing the field via an interface.
-func (v *GetPriceDataGetHistoricPriceHistoricPricesPair) GetSymbol() string { return v.Symbol }
-
-// GetPrice returns GetPriceDataGetHistoricPriceHistoricPricesPair.Price, and is useful for accessing the field via an interface.
-func (v *GetPriceDataGetHistoricPriceHistoricPricesPair) GetPrice() string { return v.Price }
-
-// GetPriceDataResponse is returned by GetPriceData on success.
-type GetPriceDataResponse struct {
-	// Fetches price data for a given symbol up to a given limit of records
-	GetHistoricPrice []GetPriceDataGetHistoricPriceHistoricPrices `json:"getHistoricPrice"`
-}
-
-// GetGetHistoricPrice returns GetPriceDataResponse.GetHistoricPrice, and is useful for accessing the field via an interface.
-func (v *GetPriceDataResponse) GetGetHistoricPrice() []GetPriceDataGetHistoricPriceHistoricPrices {
-	return v.GetHistoricPrice
-}
-
-// GetSymbolStatsBySymbolResponse is returned by GetSymbolStatsBySymbol on success.
-type GetSymbolStatsBySymbolResponse struct {
-	// Get Symbol Stats by Symbol
-	SymbolStatsBySymbol GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats `json:"SymbolStatsBySymbol"`
-}
-
-// GetSymbolStatsBySymbol returns GetSymbolStatsBySymbolResponse.SymbolStatsBySymbol, and is useful for accessing the field via an interface.
-func (v *GetSymbolStatsBySymbolResponse) GetSymbolStatsBySymbol() GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats {
-	return v.SymbolStatsBySymbol
-}
-
-// GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats includes the requested fields of the GraphQL type SymbolStats.
-type GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats struct {
-	Symbol               string       `json:"Symbol"`
-	PositionCounts       []model.Mean `json:"PositionCounts"`
-	LiquidityEstimate    model.Mean   `json:"LiquidityEstimate"`
-	MaxLiquidityEstimate float64      `json:"MaxLiquidityEstimate"`
-	MinLiquidityEstimate float64      `json:"MinLiquidityEstimate"`
-}
-
-// GetSymbol returns GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats.Symbol, and is useful for accessing the field via an interface.
-func (v *GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats) GetSymbol() string { return v.Symbol }
-
-// GetPositionCounts returns GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats.PositionCounts, and is useful for accessing the field via an interface.
-func (v *GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats) GetPositionCounts() []model.Mean {
-	return v.PositionCounts
-}
-
-// GetLiquidityEstimate returns GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats.LiquidityEstimate, and is useful for accessing the field via an interface.
-func (v *GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats) GetLiquidityEstimate() model.Mean {
-	return v.LiquidityEstimate
-}
-
-// GetMaxLiquidityEstimate returns GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats.MaxLiquidityEstimate, and is useful for accessing the field via an interface.
-func (v *GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats) GetMaxLiquidityEstimate() float64 {
-	return v.MaxLiquidityEstimate
-}
-
-// GetMinLiquidityEstimate returns GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats.MinLiquidityEstimate, and is useful for accessing the field via an interface.
-func (v *GetSymbolStatsBySymbolSymbolStatsBySymbolSymbolStats) GetMinLiquidityEstimate() float64 {
-	return v.MinLiquidityEstimate
-}
-
-// GetTickerLiquidityEstimateGetTickerStatsBySymbolTickerStats includes the requested fields of the GraphQL type TickerStats.
-type GetTickerLiquidityEstimateGetTickerStatsBySymbolTickerStats struct {
-	LiquidityEstimate string `json:"LiquidityEstimate"`
-}
-
-// GetLiquidityEstimate returns GetTickerLiquidityEstimateGetTickerStatsBySymbolTickerStats.LiquidityEstimate, and is useful for accessing the field via an interface.
-func (v *GetTickerLiquidityEstimateGetTickerStatsBySymbolTickerStats) GetLiquidityEstimate() string {
-	return v.LiquidityEstimate
-}
-
-// GetTickerLiquidityEstimateResponse is returned by GetTickerLiquidityEstimate on success.
-type GetTickerLiquidityEstimateResponse struct {
-	// Fetches TickerStats history for a given symbol (e.g., to chart volatility or volume)
-	GetTickerStatsBySymbol []GetTickerLiquidityEstimateGetTickerStatsBySymbolTickerStats `json:"getTickerStatsBySymbol"`
-}
-
-// GetGetTickerStatsBySymbol returns GetTickerLiquidityEstimateResponse.GetTickerStatsBySymbol, and is useful for accessing the field via an interface.
-func (v *GetTickerLiquidityEstimateResponse) GetGetTickerStatsBySymbol() []GetTickerLiquidityEstimateGetTickerStatsBySymbolTickerStats {
-	return v.GetTickerStatsBySymbol
-}
-
-// GetUserByEmailGetUserByEmailUser includes the requested fields of the GraphQL type User.
-type GetUserByEmailGetUserByEmailUser struct {
-	Id    string `json:"id"`
-	Email string `json:"email"`
-}
-
-// GetId returns GetUserByEmailGetUserByEmailUser.Id, and is useful for accessing the field via an interface.
-func (v *GetUserByEmailGetUserByEmailUser) GetId() string { return v.Id }
-
-// GetEmail returns GetUserByEmailGetUserByEmailUser.Email, and is useful for accessing the field via an interface.
-func (v *GetUserByEmailGetUserByEmailUser) GetEmail() string { return v.Email }
-
-// GetUserByEmailResponse is returned by GetUserByEmail on success.
-type GetUserByEmailResponse struct {
-	GetUserByEmail GetUserByEmailGetUserByEmailUser `json:"getUserByEmail"`
-}
-
-// GetGetUserByEmail returns GetUserByEmailResponse.GetUserByEmail, and is useful for accessing the field via an interface.
-func (v *GetUserByEmailResponse) GetGetUserByEmail() GetUserByEmailGetUserByEmailUser {
-	return v.GetUserByEmail
-}
-
 type NewHistoricPriceInput struct {
 	Pairs     []PairInput `json:"Pairs"`
 	Timestamp int         `json:"Timestamp"`
@@ -1051,6 +549,517 @@ func (v *PairInput) GetPrice() string { return v.Price }
 
 // GetPercentageChange returns PairInput.PercentageChange, and is useful for accessing the field via an interface.
 func (v *PairInput) GetPercentageChange() string { return v.PercentageChange }
+
+// ReadAllStrategiesReadAllStrategiesStrategy includes the requested fields of the GraphQL type Strategy.
+type ReadAllStrategiesReadAllStrategiesStrategy struct {
+	BotInstanceName      string  `json:"BotInstanceName"`
+	TradeDuration        int     `json:"TradeDuration"`
+	IncrementsATR        int     `json:"IncrementsATR"`
+	LongSMADuration      int     `json:"LongSMADuration"`
+	ShortSMADuration     int     `json:"ShortSMADuration"`
+	WINCounter           int     `json:"WINCounter"`
+	LOSSCounter          int     `json:"LOSSCounter"`
+	TIMEOUTGainCounter   int     `json:"TIMEOUTGainCounter"`
+	TIMEOUTLossCounter   int     `json:"TIMEOUTLossCounter"`
+	NetGainCounter       int     `json:"NetGainCounter"`
+	NetLossCounter       int     `json:"NetLossCounter"`
+	AccountBalance       float64 `json:"AccountBalance"`
+	MovingAveMomentum    float64 `json:"MovingAveMomentum"`
+	TakeProfitPercentage float64 `json:"TakeProfitPercentage"`
+	StopLossPercentage   float64 `json:"StopLossPercentage"`
+	ATRtollerance        float64 `json:"ATRtollerance"`
+	FeesTotal            float64 `json:"FeesTotal"`
+	Tested               bool    `json:"Tested"`
+	Owner                string  `json:"Owner"`
+	CreatedOn            int     `json:"CreatedOn"`
+}
+
+// GetBotInstanceName returns ReadAllStrategiesReadAllStrategiesStrategy.BotInstanceName, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetBotInstanceName() string {
+	return v.BotInstanceName
+}
+
+// GetTradeDuration returns ReadAllStrategiesReadAllStrategiesStrategy.TradeDuration, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetTradeDuration() int { return v.TradeDuration }
+
+// GetIncrementsATR returns ReadAllStrategiesReadAllStrategiesStrategy.IncrementsATR, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetIncrementsATR() int { return v.IncrementsATR }
+
+// GetLongSMADuration returns ReadAllStrategiesReadAllStrategiesStrategy.LongSMADuration, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetLongSMADuration() int {
+	return v.LongSMADuration
+}
+
+// GetShortSMADuration returns ReadAllStrategiesReadAllStrategiesStrategy.ShortSMADuration, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetShortSMADuration() int {
+	return v.ShortSMADuration
+}
+
+// GetWINCounter returns ReadAllStrategiesReadAllStrategiesStrategy.WINCounter, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetWINCounter() int { return v.WINCounter }
+
+// GetLOSSCounter returns ReadAllStrategiesReadAllStrategiesStrategy.LOSSCounter, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetLOSSCounter() int { return v.LOSSCounter }
+
+// GetTIMEOUTGainCounter returns ReadAllStrategiesReadAllStrategiesStrategy.TIMEOUTGainCounter, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetTIMEOUTGainCounter() int {
+	return v.TIMEOUTGainCounter
+}
+
+// GetTIMEOUTLossCounter returns ReadAllStrategiesReadAllStrategiesStrategy.TIMEOUTLossCounter, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetTIMEOUTLossCounter() int {
+	return v.TIMEOUTLossCounter
+}
+
+// GetNetGainCounter returns ReadAllStrategiesReadAllStrategiesStrategy.NetGainCounter, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetNetGainCounter() int { return v.NetGainCounter }
+
+// GetNetLossCounter returns ReadAllStrategiesReadAllStrategiesStrategy.NetLossCounter, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetNetLossCounter() int { return v.NetLossCounter }
+
+// GetAccountBalance returns ReadAllStrategiesReadAllStrategiesStrategy.AccountBalance, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetAccountBalance() float64 {
+	return v.AccountBalance
+}
+
+// GetMovingAveMomentum returns ReadAllStrategiesReadAllStrategiesStrategy.MovingAveMomentum, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetMovingAveMomentum() float64 {
+	return v.MovingAveMomentum
+}
+
+// GetTakeProfitPercentage returns ReadAllStrategiesReadAllStrategiesStrategy.TakeProfitPercentage, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetTakeProfitPercentage() float64 {
+	return v.TakeProfitPercentage
+}
+
+// GetStopLossPercentage returns ReadAllStrategiesReadAllStrategiesStrategy.StopLossPercentage, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetStopLossPercentage() float64 {
+	return v.StopLossPercentage
+}
+
+// GetATRtollerance returns ReadAllStrategiesReadAllStrategiesStrategy.ATRtollerance, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetATRtollerance() float64 {
+	return v.ATRtollerance
+}
+
+// GetFeesTotal returns ReadAllStrategiesReadAllStrategiesStrategy.FeesTotal, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetFeesTotal() float64 { return v.FeesTotal }
+
+// GetTested returns ReadAllStrategiesReadAllStrategiesStrategy.Tested, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetTested() bool { return v.Tested }
+
+// GetOwner returns ReadAllStrategiesReadAllStrategiesStrategy.Owner, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetOwner() string { return v.Owner }
+
+// GetCreatedOn returns ReadAllStrategiesReadAllStrategiesStrategy.CreatedOn, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesReadAllStrategiesStrategy) GetCreatedOn() int { return v.CreatedOn }
+
+// ReadAllStrategiesResponse is returned by ReadAllStrategies on success.
+type ReadAllStrategiesResponse struct {
+	// Get all strategies
+	ReadAllStrategies []ReadAllStrategiesReadAllStrategiesStrategy `json:"readAllStrategies"`
+}
+
+// GetReadAllStrategies returns ReadAllStrategiesResponse.ReadAllStrategies, and is useful for accessing the field via an interface.
+func (v *ReadAllStrategiesResponse) GetReadAllStrategies() []ReadAllStrategiesReadAllStrategiesStrategy {
+	return v.ReadAllStrategies
+}
+
+// ReadAllTasksReadAllTasksTask includes the requested fields of the GraphQL type Task.
+type ReadAllTasksReadAllTasksTask struct {
+	Id          string   `json:"id"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Status      string   `json:"status"`
+	Labels      []string `json:"labels"`
+	AssignedTo  string   `json:"assignedTo"`
+	DueDate     string   `json:"dueDate"`
+	DeferDate   string   `json:"deferDate"`
+	Department  string   `json:"department"`
+	ProjectId   string   `json:"projectId"`
+	Duration    int      `json:"duration"`
+	CreatedAt   string   `json:"createdAt"`
+	UpdatedAt   string   `json:"updatedAt"`
+}
+
+// GetId returns ReadAllTasksReadAllTasksTask.Id, and is useful for accessing the field via an interface.
+func (v *ReadAllTasksReadAllTasksTask) GetId() string { return v.Id }
+
+// GetTitle returns ReadAllTasksReadAllTasksTask.Title, and is useful for accessing the field via an interface.
+func (v *ReadAllTasksReadAllTasksTask) GetTitle() string { return v.Title }
+
+// GetDescription returns ReadAllTasksReadAllTasksTask.Description, and is useful for accessing the field via an interface.
+func (v *ReadAllTasksReadAllTasksTask) GetDescription() string { return v.Description }
+
+// GetStatus returns ReadAllTasksReadAllTasksTask.Status, and is useful for accessing the field via an interface.
+func (v *ReadAllTasksReadAllTasksTask) GetStatus() string { return v.Status }
+
+// GetLabels returns ReadAllTasksReadAllTasksTask.Labels, and is useful for accessing the field via an interface.
+func (v *ReadAllTasksReadAllTasksTask) GetLabels() []string { return v.Labels }
+
+// GetAssignedTo returns ReadAllTasksReadAllTasksTask.AssignedTo, and is useful for accessing the field via an interface.
+func (v *ReadAllTasksReadAllTasksTask) GetAssignedTo() string { return v.AssignedTo }
+
+// GetDueDate returns ReadAllTasksReadAllTasksTask.DueDate, and is useful for accessing the field via an interface.
+func (v *ReadAllTasksReadAllTasksTask) GetDueDate() string { return v.DueDate }
+
+// GetDeferDate returns ReadAllTasksReadAllTasksTask.DeferDate, and is useful for accessing the field via an interface.
+func (v *ReadAllTasksReadAllTasksTask) GetDeferDate() string { return v.DeferDate }
+
+// GetDepartment returns ReadAllTasksReadAllTasksTask.Department, and is useful for accessing the field via an interface.
+func (v *ReadAllTasksReadAllTasksTask) GetDepartment() string { return v.Department }
+
+// GetProjectId returns ReadAllTasksReadAllTasksTask.ProjectId, and is useful for accessing the field via an interface.
+func (v *ReadAllTasksReadAllTasksTask) GetProjectId() string { return v.ProjectId }
+
+// GetDuration returns ReadAllTasksReadAllTasksTask.Duration, and is useful for accessing the field via an interface.
+func (v *ReadAllTasksReadAllTasksTask) GetDuration() int { return v.Duration }
+
+// GetCreatedAt returns ReadAllTasksReadAllTasksTask.CreatedAt, and is useful for accessing the field via an interface.
+func (v *ReadAllTasksReadAllTasksTask) GetCreatedAt() string { return v.CreatedAt }
+
+// GetUpdatedAt returns ReadAllTasksReadAllTasksTask.UpdatedAt, and is useful for accessing the field via an interface.
+func (v *ReadAllTasksReadAllTasksTask) GetUpdatedAt() string { return v.UpdatedAt }
+
+// ReadAllTasksResponse is returned by ReadAllTasks on success.
+type ReadAllTasksResponse struct {
+	// Get all tasks
+	ReadAllTasks []ReadAllTasksReadAllTasksTask `json:"readAllTasks"`
+}
+
+// GetReadAllTasks returns ReadAllTasksResponse.ReadAllTasks, and is useful for accessing the field via an interface.
+func (v *ReadAllTasksResponse) GetReadAllTasks() []ReadAllTasksReadAllTasksTask {
+	return v.ReadAllTasks
+}
+
+// ReadHistoricPriceReadHistoricPriceHistoricPrices includes the requested fields of the GraphQL type HistoricPrices.
+type ReadHistoricPriceReadHistoricPriceHistoricPrices struct {
+	Pair      []ReadHistoricPriceReadHistoricPriceHistoricPricesPair `json:"Pair"`
+	Timestamp int                                                    `json:"Timestamp"`
+}
+
+// GetPair returns ReadHistoricPriceReadHistoricPriceHistoricPrices.Pair, and is useful for accessing the field via an interface.
+func (v *ReadHistoricPriceReadHistoricPriceHistoricPrices) GetPair() []ReadHistoricPriceReadHistoricPriceHistoricPricesPair {
+	return v.Pair
+}
+
+// GetTimestamp returns ReadHistoricPriceReadHistoricPriceHistoricPrices.Timestamp, and is useful for accessing the field via an interface.
+func (v *ReadHistoricPriceReadHistoricPriceHistoricPrices) GetTimestamp() int { return v.Timestamp }
+
+// ReadHistoricPriceReadHistoricPriceHistoricPricesPair includes the requested fields of the GraphQL type Pair.
+type ReadHistoricPriceReadHistoricPriceHistoricPricesPair struct {
+	Symbol string `json:"Symbol"`
+	Price  string `json:"Price"`
+}
+
+// GetSymbol returns ReadHistoricPriceReadHistoricPriceHistoricPricesPair.Symbol, and is useful for accessing the field via an interface.
+func (v *ReadHistoricPriceReadHistoricPriceHistoricPricesPair) GetSymbol() string { return v.Symbol }
+
+// GetPrice returns ReadHistoricPriceReadHistoricPriceHistoricPricesPair.Price, and is useful for accessing the field via an interface.
+func (v *ReadHistoricPriceReadHistoricPriceHistoricPricesPair) GetPrice() string { return v.Price }
+
+// ReadHistoricPriceResponse is returned by ReadHistoricPrice on success.
+type ReadHistoricPriceResponse struct {
+	// Fetches price data for a given symbol up to a given limit of records
+	ReadHistoricPrice []ReadHistoricPriceReadHistoricPriceHistoricPrices `json:"readHistoricPrice"`
+}
+
+// GetReadHistoricPrice returns ReadHistoricPriceResponse.ReadHistoricPrice, and is useful for accessing the field via an interface.
+func (v *ReadHistoricPriceResponse) GetReadHistoricPrice() []ReadHistoricPriceReadHistoricPriceHistoricPrices {
+	return v.ReadHistoricPrice
+}
+
+// ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPrices includes the requested fields of the GraphQL type HistoricPrices.
+type ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPrices struct {
+	Pair      []ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPricesPair `json:"Pair"`
+	Timestamp int                                                                            `json:"Timestamp"`
+}
+
+// GetPair returns ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPrices.Pair, and is useful for accessing the field via an interface.
+func (v *ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPrices) GetPair() []ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPricesPair {
+	return v.Pair
+}
+
+// GetTimestamp returns ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPrices.Timestamp, and is useful for accessing the field via an interface.
+func (v *ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPrices) GetTimestamp() int {
+	return v.Timestamp
+}
+
+// ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPricesPair includes the requested fields of the GraphQL type Pair.
+type ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPricesPair struct {
+	Symbol string `json:"Symbol"`
+	Price  string `json:"Price"`
+}
+
+// GetSymbol returns ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPricesPair.Symbol, and is useful for accessing the field via an interface.
+func (v *ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPricesPair) GetSymbol() string {
+	return v.Symbol
+}
+
+// GetPrice returns ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPricesPair.Price, and is useful for accessing the field via an interface.
+func (v *ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPricesPair) GetPrice() string {
+	return v.Price
+}
+
+// ReadHistoricPricesAtTimestampResponse is returned by ReadHistoricPricesAtTimestamp on success.
+type ReadHistoricPricesAtTimestampResponse struct {
+	// Gets all prices data at a given timestamp
+	ReadHistoricPricesAtTimestamp []ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPrices `json:"readHistoricPricesAtTimestamp"`
+}
+
+// GetReadHistoricPricesAtTimestamp returns ReadHistoricPricesAtTimestampResponse.ReadHistoricPricesAtTimestamp, and is useful for accessing the field via an interface.
+func (v *ReadHistoricPricesAtTimestampResponse) GetReadHistoricPricesAtTimestamp() []ReadHistoricPricesAtTimestampReadHistoricPricesAtTimestampHistoricPrices {
+	return v.ReadHistoricPricesAtTimestamp
+}
+
+// ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStats includes the requested fields of the GraphQL type HistoricTickerStats.
+type ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStats struct {
+	Timestamp int                                                                                                       `json:"Timestamp"`
+	Stats     []ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats `json:"Stats"`
+}
+
+// GetTimestamp returns ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStats.Timestamp, and is useful for accessing the field via an interface.
+func (v *ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStats) GetTimestamp() int {
+	return v.Timestamp
+}
+
+// GetStats returns ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStats.Stats, and is useful for accessing the field via an interface.
+func (v *ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStats) GetStats() []ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats {
+	return v.Stats
+}
+
+// ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats includes the requested fields of the GraphQL type TickerStats.
+type ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats struct {
+	Symbol            string `json:"Symbol"`
+	PriceChange       string `json:"PriceChange"`
+	PriceChangePct    string `json:"PriceChangePct"`
+	QuoteVolume       string `json:"QuoteVolume"`
+	Volume            string `json:"Volume"`
+	TradeCount        int    `json:"TradeCount"`
+	HighPrice         string `json:"HighPrice"`
+	LowPrice          string `json:"LowPrice"`
+	LastPrice         string `json:"LastPrice"`
+	LiquidityEstimate string `json:"LiquidityEstimate"`
+}
+
+// GetSymbol returns ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.Symbol, and is useful for accessing the field via an interface.
+func (v *ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetSymbol() string {
+	return v.Symbol
+}
+
+// GetPriceChange returns ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.PriceChange, and is useful for accessing the field via an interface.
+func (v *ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetPriceChange() string {
+	return v.PriceChange
+}
+
+// GetPriceChangePct returns ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.PriceChangePct, and is useful for accessing the field via an interface.
+func (v *ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetPriceChangePct() string {
+	return v.PriceChangePct
+}
+
+// GetQuoteVolume returns ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.QuoteVolume, and is useful for accessing the field via an interface.
+func (v *ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetQuoteVolume() string {
+	return v.QuoteVolume
+}
+
+// GetVolume returns ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.Volume, and is useful for accessing the field via an interface.
+func (v *ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetVolume() string {
+	return v.Volume
+}
+
+// GetTradeCount returns ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.TradeCount, and is useful for accessing the field via an interface.
+func (v *ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetTradeCount() int {
+	return v.TradeCount
+}
+
+// GetHighPrice returns ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.HighPrice, and is useful for accessing the field via an interface.
+func (v *ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetHighPrice() string {
+	return v.HighPrice
+}
+
+// GetLowPrice returns ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.LowPrice, and is useful for accessing the field via an interface.
+func (v *ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetLowPrice() string {
+	return v.LowPrice
+}
+
+// GetLastPrice returns ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.LastPrice, and is useful for accessing the field via an interface.
+func (v *ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetLastPrice() string {
+	return v.LastPrice
+}
+
+// GetLiquidityEstimate returns ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats.LiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStatsStatsTickerStats) GetLiquidityEstimate() string {
+	return v.LiquidityEstimate
+}
+
+// ReadHistoricTickerStatsAtTimestampResponse is returned by ReadHistoricTickerStatsAtTimestamp on success.
+type ReadHistoricTickerStatsAtTimestampResponse struct {
+	// Gets all 24h Ticker Stats at a specific timestamp
+	ReadHistoricTickerStatsAtTimestamp []ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStats `json:"readHistoricTickerStatsAtTimestamp"`
+}
+
+// GetReadHistoricTickerStatsAtTimestamp returns ReadHistoricTickerStatsAtTimestampResponse.ReadHistoricTickerStatsAtTimestamp, and is useful for accessing the field via an interface.
+func (v *ReadHistoricTickerStatsAtTimestampResponse) GetReadHistoricTickerStatsAtTimestamp() []ReadHistoricTickerStatsAtTimestampReadHistoricTickerStatsAtTimestampHistoricTickerStats {
+	return v.ReadHistoricTickerStatsAtTimestamp
+}
+
+// ReadProjectsFilterReadProjectsFilterProject includes the requested fields of the GraphQL type Project.
+type ReadProjectsFilterReadProjectsFilterProject struct {
+	Id          string                                                 `json:"id"`
+	Title       string                                                 `json:"title"`
+	Sop         bool                                                   `json:"sop"`
+	Description string                                                 `json:"description"`
+	Labels      []string                                               `json:"labels"`
+	AssignedTo  string                                                 `json:"assignedTo"`
+	DueDate     string                                                 `json:"dueDate"`
+	Status      string                                                 `json:"status"`
+	CreatedAt   string                                                 `json:"createdAt"`
+	UpdatedAt   string                                                 `json:"updatedAt"`
+	Tasks       []ReadProjectsFilterReadProjectsFilterProjectTasksTask `json:"tasks"`
+}
+
+// GetId returns ReadProjectsFilterReadProjectsFilterProject.Id, and is useful for accessing the field via an interface.
+func (v *ReadProjectsFilterReadProjectsFilterProject) GetId() string { return v.Id }
+
+// GetTitle returns ReadProjectsFilterReadProjectsFilterProject.Title, and is useful for accessing the field via an interface.
+func (v *ReadProjectsFilterReadProjectsFilterProject) GetTitle() string { return v.Title }
+
+// GetSop returns ReadProjectsFilterReadProjectsFilterProject.Sop, and is useful for accessing the field via an interface.
+func (v *ReadProjectsFilterReadProjectsFilterProject) GetSop() bool { return v.Sop }
+
+// GetDescription returns ReadProjectsFilterReadProjectsFilterProject.Description, and is useful for accessing the field via an interface.
+func (v *ReadProjectsFilterReadProjectsFilterProject) GetDescription() string { return v.Description }
+
+// GetLabels returns ReadProjectsFilterReadProjectsFilterProject.Labels, and is useful for accessing the field via an interface.
+func (v *ReadProjectsFilterReadProjectsFilterProject) GetLabels() []string { return v.Labels }
+
+// GetAssignedTo returns ReadProjectsFilterReadProjectsFilterProject.AssignedTo, and is useful for accessing the field via an interface.
+func (v *ReadProjectsFilterReadProjectsFilterProject) GetAssignedTo() string { return v.AssignedTo }
+
+// GetDueDate returns ReadProjectsFilterReadProjectsFilterProject.DueDate, and is useful for accessing the field via an interface.
+func (v *ReadProjectsFilterReadProjectsFilterProject) GetDueDate() string { return v.DueDate }
+
+// GetStatus returns ReadProjectsFilterReadProjectsFilterProject.Status, and is useful for accessing the field via an interface.
+func (v *ReadProjectsFilterReadProjectsFilterProject) GetStatus() string { return v.Status }
+
+// GetCreatedAt returns ReadProjectsFilterReadProjectsFilterProject.CreatedAt, and is useful for accessing the field via an interface.
+func (v *ReadProjectsFilterReadProjectsFilterProject) GetCreatedAt() string { return v.CreatedAt }
+
+// GetUpdatedAt returns ReadProjectsFilterReadProjectsFilterProject.UpdatedAt, and is useful for accessing the field via an interface.
+func (v *ReadProjectsFilterReadProjectsFilterProject) GetUpdatedAt() string { return v.UpdatedAt }
+
+// GetTasks returns ReadProjectsFilterReadProjectsFilterProject.Tasks, and is useful for accessing the field via an interface.
+func (v *ReadProjectsFilterReadProjectsFilterProject) GetTasks() []ReadProjectsFilterReadProjectsFilterProjectTasksTask {
+	return v.Tasks
+}
+
+// ReadProjectsFilterReadProjectsFilterProjectTasksTask includes the requested fields of the GraphQL type Task.
+type ReadProjectsFilterReadProjectsFilterProjectTasksTask struct {
+	Id string `json:"id"`
+}
+
+// GetId returns ReadProjectsFilterReadProjectsFilterProjectTasksTask.Id, and is useful for accessing the field via an interface.
+func (v *ReadProjectsFilterReadProjectsFilterProjectTasksTask) GetId() string { return v.Id }
+
+// ReadProjectsFilterResponse is returned by ReadProjectsFilter on success.
+type ReadProjectsFilterResponse struct {
+	// Get projects filtered by SOP standard operating proceedure
+	ReadProjectsFilter []ReadProjectsFilterReadProjectsFilterProject `json:"readProjectsFilter"`
+}
+
+// GetReadProjectsFilter returns ReadProjectsFilterResponse.ReadProjectsFilter, and is useful for accessing the field via an interface.
+func (v *ReadProjectsFilterResponse) GetReadProjectsFilter() []ReadProjectsFilterReadProjectsFilterProject {
+	return v.ReadProjectsFilter
+}
+
+// ReadSingleSymbolStatsBySymbolReadSingleSymbolStatsBySymbolSymbolStats includes the requested fields of the GraphQL type SymbolStats.
+type ReadSingleSymbolStatsBySymbolReadSingleSymbolStatsBySymbolSymbolStats struct {
+	Symbol               string       `json:"Symbol"`
+	PositionCounts       []model.Mean `json:"PositionCounts"`
+	LiquidityEstimate    model.Mean   `json:"LiquidityEstimate"`
+	MaxLiquidityEstimate float64      `json:"MaxLiquidityEstimate"`
+	MinLiquidityEstimate float64      `json:"MinLiquidityEstimate"`
+}
+
+// GetSymbol returns ReadSingleSymbolStatsBySymbolReadSingleSymbolStatsBySymbolSymbolStats.Symbol, and is useful for accessing the field via an interface.
+func (v *ReadSingleSymbolStatsBySymbolReadSingleSymbolStatsBySymbolSymbolStats) GetSymbol() string {
+	return v.Symbol
+}
+
+// GetPositionCounts returns ReadSingleSymbolStatsBySymbolReadSingleSymbolStatsBySymbolSymbolStats.PositionCounts, and is useful for accessing the field via an interface.
+func (v *ReadSingleSymbolStatsBySymbolReadSingleSymbolStatsBySymbolSymbolStats) GetPositionCounts() []model.Mean {
+	return v.PositionCounts
+}
+
+// GetLiquidityEstimate returns ReadSingleSymbolStatsBySymbolReadSingleSymbolStatsBySymbolSymbolStats.LiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *ReadSingleSymbolStatsBySymbolReadSingleSymbolStatsBySymbolSymbolStats) GetLiquidityEstimate() model.Mean {
+	return v.LiquidityEstimate
+}
+
+// GetMaxLiquidityEstimate returns ReadSingleSymbolStatsBySymbolReadSingleSymbolStatsBySymbolSymbolStats.MaxLiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *ReadSingleSymbolStatsBySymbolReadSingleSymbolStatsBySymbolSymbolStats) GetMaxLiquidityEstimate() float64 {
+	return v.MaxLiquidityEstimate
+}
+
+// GetMinLiquidityEstimate returns ReadSingleSymbolStatsBySymbolReadSingleSymbolStatsBySymbolSymbolStats.MinLiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *ReadSingleSymbolStatsBySymbolReadSingleSymbolStatsBySymbolSymbolStats) GetMinLiquidityEstimate() float64 {
+	return v.MinLiquidityEstimate
+}
+
+// ReadSingleSymbolStatsBySymbolResponse is returned by ReadSingleSymbolStatsBySymbol on success.
+type ReadSingleSymbolStatsBySymbolResponse struct {
+	// Get Symbol Stats by Symbol
+	ReadSingleSymbolStatsBySymbol ReadSingleSymbolStatsBySymbolReadSingleSymbolStatsBySymbolSymbolStats `json:"ReadSingleSymbolStatsBySymbol"`
+}
+
+// GetReadSingleSymbolStatsBySymbol returns ReadSingleSymbolStatsBySymbolResponse.ReadSingleSymbolStatsBySymbol, and is useful for accessing the field via an interface.
+func (v *ReadSingleSymbolStatsBySymbolResponse) GetReadSingleSymbolStatsBySymbol() ReadSingleSymbolStatsBySymbolReadSingleSymbolStatsBySymbolSymbolStats {
+	return v.ReadSingleSymbolStatsBySymbol
+}
+
+// ReadTickerStatsBySymbolReadTickerStatsBySymbolTickerStats includes the requested fields of the GraphQL type TickerStats.
+type ReadTickerStatsBySymbolReadTickerStatsBySymbolTickerStats struct {
+	LiquidityEstimate string `json:"LiquidityEstimate"`
+}
+
+// GetLiquidityEstimate returns ReadTickerStatsBySymbolReadTickerStatsBySymbolTickerStats.LiquidityEstimate, and is useful for accessing the field via an interface.
+func (v *ReadTickerStatsBySymbolReadTickerStatsBySymbolTickerStats) GetLiquidityEstimate() string {
+	return v.LiquidityEstimate
+}
+
+// ReadTickerStatsBySymbolResponse is returned by ReadTickerStatsBySymbol on success.
+type ReadTickerStatsBySymbolResponse struct {
+	// Fetches TickerStats history for a given symbol (e.g., to chart volatility or volume)
+	ReadTickerStatsBySymbol []ReadTickerStatsBySymbolReadTickerStatsBySymbolTickerStats `json:"readTickerStatsBySymbol"`
+}
+
+// GetReadTickerStatsBySymbol returns ReadTickerStatsBySymbolResponse.ReadTickerStatsBySymbol, and is useful for accessing the field via an interface.
+func (v *ReadTickerStatsBySymbolResponse) GetReadTickerStatsBySymbol() []ReadTickerStatsBySymbolReadTickerStatsBySymbolTickerStats {
+	return v.ReadTickerStatsBySymbol
+}
+
+// ReadUserByEmailReadUserByEmailUser includes the requested fields of the GraphQL type User.
+type ReadUserByEmailReadUserByEmailUser struct {
+	Id    string `json:"id"`
+	Email string `json:"email"`
+}
+
+// GetId returns ReadUserByEmailReadUserByEmailUser.Id, and is useful for accessing the field via an interface.
+func (v *ReadUserByEmailReadUserByEmailUser) GetId() string { return v.Id }
+
+// GetEmail returns ReadUserByEmailReadUserByEmailUser.Email, and is useful for accessing the field via an interface.
+func (v *ReadUserByEmailReadUserByEmailUser) GetEmail() string { return v.Email }
+
+// ReadUserByEmailResponse is returned by ReadUserByEmail on success.
+type ReadUserByEmailResponse struct {
+	// Get user by email
+	ReadUserByEmail ReadUserByEmailReadUserByEmailUser `json:"readUserByEmail"`
+}
+
+// GetReadUserByEmail returns ReadUserByEmailResponse.ReadUserByEmail, and is useful for accessing the field via an interface.
+func (v *ReadUserByEmailResponse) GetReadUserByEmail() ReadUserByEmailReadUserByEmailUser {
+	return v.ReadUserByEmail
+}
 
 type TickerStatsInput struct {
 	Symbol            string `json:"Symbol"`
@@ -1325,69 +1334,69 @@ type __CreateUserInput struct {
 // GetInput returns __CreateUserInput.Input, and is useful for accessing the field via an interface.
 func (v *__CreateUserInput) GetInput() CreateUserInput { return v.Input }
 
-// __GetAllProjectsInput is used internally by genqlient
-type __GetAllProjectsInput struct {
+// __ReadHistoricPriceInput is used internally by genqlient
+type __ReadHistoricPriceInput struct {
+	Symbol string `json:"symbol"`
+	Limit  int    `json:"limit"`
+}
+
+// GetSymbol returns __ReadHistoricPriceInput.Symbol, and is useful for accessing the field via an interface.
+func (v *__ReadHistoricPriceInput) GetSymbol() string { return v.Symbol }
+
+// GetLimit returns __ReadHistoricPriceInput.Limit, and is useful for accessing the field via an interface.
+func (v *__ReadHistoricPriceInput) GetLimit() int { return v.Limit }
+
+// __ReadHistoricPricesAtTimestampInput is used internally by genqlient
+type __ReadHistoricPricesAtTimestampInput struct {
+	Datetime int `json:"datetime"`
+}
+
+// GetDatetime returns __ReadHistoricPricesAtTimestampInput.Datetime, and is useful for accessing the field via an interface.
+func (v *__ReadHistoricPricesAtTimestampInput) GetDatetime() int { return v.Datetime }
+
+// __ReadHistoricTickerStatsAtTimestampInput is used internally by genqlient
+type __ReadHistoricTickerStatsAtTimestampInput struct {
+	Datetime int `json:"datetime"`
+}
+
+// GetDatetime returns __ReadHistoricTickerStatsAtTimestampInput.Datetime, and is useful for accessing the field via an interface.
+func (v *__ReadHistoricTickerStatsAtTimestampInput) GetDatetime() int { return v.Datetime }
+
+// __ReadProjectsFilterInput is used internally by genqlient
+type __ReadProjectsFilterInput struct {
 	IsSop bool `json:"isSop"`
 }
 
-// GetIsSop returns __GetAllProjectsInput.IsSop, and is useful for accessing the field via an interface.
-func (v *__GetAllProjectsInput) GetIsSop() bool { return v.IsSop }
+// GetIsSop returns __ReadProjectsFilterInput.IsSop, and is useful for accessing the field via an interface.
+func (v *__ReadProjectsFilterInput) GetIsSop() bool { return v.IsSop }
 
-// __GetHistoricPricesAtTimestampInput is used internally by genqlient
-type __GetHistoricPricesAtTimestampInput struct {
-	Datetime int `json:"datetime"`
+// __ReadSingleSymbolStatsBySymbolInput is used internally by genqlient
+type __ReadSingleSymbolStatsBySymbolInput struct {
+	Symbol string `json:"symbol"`
 }
 
-// GetDatetime returns __GetHistoricPricesAtTimestampInput.Datetime, and is useful for accessing the field via an interface.
-func (v *__GetHistoricPricesAtTimestampInput) GetDatetime() int { return v.Datetime }
+// GetSymbol returns __ReadSingleSymbolStatsBySymbolInput.Symbol, and is useful for accessing the field via an interface.
+func (v *__ReadSingleSymbolStatsBySymbolInput) GetSymbol() string { return v.Symbol }
 
-// __GetHistoricTickerStatsAtTimestampInput is used internally by genqlient
-type __GetHistoricTickerStatsAtTimestampInput struct {
-	Datetime int `json:"datetime"`
-}
-
-// GetDatetime returns __GetHistoricTickerStatsAtTimestampInput.Datetime, and is useful for accessing the field via an interface.
-func (v *__GetHistoricTickerStatsAtTimestampInput) GetDatetime() int { return v.Datetime }
-
-// __GetPriceDataInput is used internally by genqlient
-type __GetPriceDataInput struct {
+// __ReadTickerStatsBySymbolInput is used internally by genqlient
+type __ReadTickerStatsBySymbolInput struct {
 	Symbol string `json:"symbol"`
 	Limit  int    `json:"limit"`
 }
 
-// GetSymbol returns __GetPriceDataInput.Symbol, and is useful for accessing the field via an interface.
-func (v *__GetPriceDataInput) GetSymbol() string { return v.Symbol }
+// GetSymbol returns __ReadTickerStatsBySymbolInput.Symbol, and is useful for accessing the field via an interface.
+func (v *__ReadTickerStatsBySymbolInput) GetSymbol() string { return v.Symbol }
 
-// GetLimit returns __GetPriceDataInput.Limit, and is useful for accessing the field via an interface.
-func (v *__GetPriceDataInput) GetLimit() int { return v.Limit }
+// GetLimit returns __ReadTickerStatsBySymbolInput.Limit, and is useful for accessing the field via an interface.
+func (v *__ReadTickerStatsBySymbolInput) GetLimit() int { return v.Limit }
 
-// __GetSymbolStatsBySymbolInput is used internally by genqlient
-type __GetSymbolStatsBySymbolInput struct {
-	Symbol string `json:"symbol"`
-}
-
-// GetSymbol returns __GetSymbolStatsBySymbolInput.Symbol, and is useful for accessing the field via an interface.
-func (v *__GetSymbolStatsBySymbolInput) GetSymbol() string { return v.Symbol }
-
-// __GetTickerLiquidityEstimateInput is used internally by genqlient
-type __GetTickerLiquidityEstimateInput struct {
-	Symbol string `json:"symbol"`
-	Limit  int    `json:"limit"`
-}
-
-// GetSymbol returns __GetTickerLiquidityEstimateInput.Symbol, and is useful for accessing the field via an interface.
-func (v *__GetTickerLiquidityEstimateInput) GetSymbol() string { return v.Symbol }
-
-// GetLimit returns __GetTickerLiquidityEstimateInput.Limit, and is useful for accessing the field via an interface.
-func (v *__GetTickerLiquidityEstimateInput) GetLimit() int { return v.Limit }
-
-// __GetUserByEmailInput is used internally by genqlient
-type __GetUserByEmailInput struct {
+// __ReadUserByEmailInput is used internally by genqlient
+type __ReadUserByEmailInput struct {
 	Email string `json:"email"`
 }
 
-// GetEmail returns __GetUserByEmailInput.Email, and is useful for accessing the field via an interface.
-func (v *__GetUserByEmailInput) GetEmail() string { return v.Email }
+// GetEmail returns __ReadUserByEmailInput.Email, and is useful for accessing the field via an interface.
+func (v *__ReadUserByEmailInput) GetEmail() string { return v.Email }
 
 // __UpdateCountersInput is used internally by genqlient
 type __UpdateCountersInput struct {
@@ -1764,56 +1773,10 @@ func CreateUser(
 	return data_, err_
 }
 
-// The query executed by GetAllProjects.
-const GetAllProjects_Operation = `
-query GetAllProjects ($isSop: Boolean) {
-	filterProjects(filter: {sop:$isSop}) {
-		id
-		title
-		sop
-		description
-		labels
-		assignedTo
-		dueDate
-		status
-		createdAt
-		updatedAt
-		tasks {
-			id
-		}
-	}
-}
-`
-
-func GetAllProjects(
-	ctx_ context.Context,
-	client_ graphql.Client,
-	isSop bool,
-) (data_ *GetAllProjectsResponse, err_ error) {
-	req_ := &graphql.Request{
-		OpName: "GetAllProjects",
-		Query:  GetAllProjects_Operation,
-		Variables: &__GetAllProjectsInput{
-			IsSop: isSop,
-		},
-	}
-
-	data_ = &GetAllProjectsResponse{}
-	resp_ := &graphql.Response{Data: data_}
-
-	err_ = client_.MakeRequest(
-		ctx_,
-		req_,
-		resp_,
-	)
-
-	return data_, err_
-}
-
-// The query executed by GetAllStrategies.
-const GetAllStrategies_Operation = `
-query GetAllStrategies {
-	getAllStrategies {
+// The query executed by ReadAllStrategies.
+const ReadAllStrategies_Operation = `
+query ReadAllStrategies {
+	readAllStrategies {
 		BotInstanceName
 		TradeDuration
 		IncrementsATR
@@ -1838,16 +1801,16 @@ query GetAllStrategies {
 }
 `
 
-func GetAllStrategies(
+func ReadAllStrategies(
 	ctx_ context.Context,
 	client_ graphql.Client,
-) (data_ *GetAllStrategiesResponse, err_ error) {
+) (data_ *ReadAllStrategiesResponse, err_ error) {
 	req_ := &graphql.Request{
-		OpName: "GetAllStrategies",
-		Query:  GetAllStrategies_Operation,
+		OpName: "ReadAllStrategies",
+		Query:  ReadAllStrategies_Operation,
 	}
 
-	data_ = &GetAllStrategiesResponse{}
+	data_ = &ReadAllStrategiesResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -1859,10 +1822,10 @@ func GetAllStrategies(
 	return data_, err_
 }
 
-// The query executed by GetAllTasks.
-const GetAllTasks_Operation = `
-query GetAllTasks {
-	allTasks {
+// The query executed by ReadAllTasks.
+const ReadAllTasks_Operation = `
+query ReadAllTasks {
+	readAllTasks {
 		id
 		title
 		description
@@ -1880,16 +1843,16 @@ query GetAllTasks {
 }
 `
 
-func GetAllTasks(
+func ReadAllTasks(
 	ctx_ context.Context,
 	client_ graphql.Client,
-) (data_ *GetAllTasksResponse, err_ error) {
+) (data_ *ReadAllTasksResponse, err_ error) {
 	req_ := &graphql.Request{
-		OpName: "GetAllTasks",
-		Query:  GetAllTasks_Operation,
+		OpName: "ReadAllTasks",
+		Query:  ReadAllTasks_Operation,
 	}
 
-	data_ = &GetAllTasksResponse{}
+	data_ = &ReadAllTasksResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -1901,10 +1864,10 @@ func GetAllTasks(
 	return data_, err_
 }
 
-// The query executed by GetHistoricPricesAtTimestamp.
-const GetHistoricPricesAtTimestamp_Operation = `
-query GetHistoricPricesAtTimestamp ($datetime: Int!) {
-	getHistoricPricesAtTimestamp(Timestamp: $datetime) {
+// The query executed by ReadHistoricPrice.
+const ReadHistoricPrice_Operation = `
+query ReadHistoricPrice ($symbol: String!, $limit: Int!) {
+	readHistoricPrice(symbol: $symbol, limit: $limit) {
 		Pair {
 			Symbol
 			Price
@@ -1914,20 +1877,22 @@ query GetHistoricPricesAtTimestamp ($datetime: Int!) {
 }
 `
 
-func GetHistoricPricesAtTimestamp(
+func ReadHistoricPrice(
 	ctx_ context.Context,
 	client_ graphql.Client,
-	datetime int,
-) (data_ *GetHistoricPricesAtTimestampResponse, err_ error) {
+	symbol string,
+	limit int,
+) (data_ *ReadHistoricPriceResponse, err_ error) {
 	req_ := &graphql.Request{
-		OpName: "GetHistoricPricesAtTimestamp",
-		Query:  GetHistoricPricesAtTimestamp_Operation,
-		Variables: &__GetHistoricPricesAtTimestampInput{
-			Datetime: datetime,
+		OpName: "ReadHistoricPrice",
+		Query:  ReadHistoricPrice_Operation,
+		Variables: &__ReadHistoricPriceInput{
+			Symbol: symbol,
+			Limit:  limit,
 		},
 	}
 
-	data_ = &GetHistoricPricesAtTimestampResponse{}
+	data_ = &ReadHistoricPriceResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -1939,10 +1904,48 @@ func GetHistoricPricesAtTimestamp(
 	return data_, err_
 }
 
-// The query executed by GetHistoricTickerStatsAtTimestamp.
-const GetHistoricTickerStatsAtTimestamp_Operation = `
-query GetHistoricTickerStatsAtTimestamp ($datetime: Int!) {
-	getHistoricTickerStatsAtTimestamp(Timestamp: $datetime) {
+// The query executed by ReadHistoricPricesAtTimestamp.
+const ReadHistoricPricesAtTimestamp_Operation = `
+query ReadHistoricPricesAtTimestamp ($datetime: Int!) {
+	readHistoricPricesAtTimestamp(Timestamp: $datetime) {
+		Pair {
+			Symbol
+			Price
+		}
+		Timestamp
+	}
+}
+`
+
+func ReadHistoricPricesAtTimestamp(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	datetime int,
+) (data_ *ReadHistoricPricesAtTimestampResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ReadHistoricPricesAtTimestamp",
+		Query:  ReadHistoricPricesAtTimestamp_Operation,
+		Variables: &__ReadHistoricPricesAtTimestampInput{
+			Datetime: datetime,
+		},
+	}
+
+	data_ = &ReadHistoricPricesAtTimestampResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by ReadHistoricTickerStatsAtTimestamp.
+const ReadHistoricTickerStatsAtTimestamp_Operation = `
+query ReadHistoricTickerStatsAtTimestamp ($datetime: Int!) {
+	readHistoricTickerStatsAtTimestamp(Timestamp: $datetime) {
 		Timestamp
 		Stats {
 			Symbol
@@ -1960,20 +1963,20 @@ query GetHistoricTickerStatsAtTimestamp ($datetime: Int!) {
 }
 `
 
-func GetHistoricTickerStatsAtTimestamp(
+func ReadHistoricTickerStatsAtTimestamp(
 	ctx_ context.Context,
 	client_ graphql.Client,
 	datetime int,
-) (data_ *GetHistoricTickerStatsAtTimestampResponse, err_ error) {
+) (data_ *ReadHistoricTickerStatsAtTimestampResponse, err_ error) {
 	req_ := &graphql.Request{
-		OpName: "GetHistoricTickerStatsAtTimestamp",
-		Query:  GetHistoricTickerStatsAtTimestamp_Operation,
-		Variables: &__GetHistoricTickerStatsAtTimestampInput{
+		OpName: "ReadHistoricTickerStatsAtTimestamp",
+		Query:  ReadHistoricTickerStatsAtTimestamp_Operation,
+		Variables: &__ReadHistoricTickerStatsAtTimestampInput{
 			Datetime: datetime,
 		},
 	}
 
-	data_ = &GetHistoricTickerStatsAtTimestampResponse{}
+	data_ = &ReadHistoricTickerStatsAtTimestampResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -1985,35 +1988,41 @@ func GetHistoricTickerStatsAtTimestamp(
 	return data_, err_
 }
 
-// The query executed by GetPriceData.
-const GetPriceData_Operation = `
-query GetPriceData ($symbol: String!, $limit: Int!) {
-	getHistoricPrice(symbol: $symbol, limit: $limit) {
-		Pair {
-			Symbol
-			Price
+// The query executed by ReadProjectsFilter.
+const ReadProjectsFilter_Operation = `
+query ReadProjectsFilter ($isSop: Boolean) {
+	readProjectsFilter(filter: {sop:$isSop}) {
+		id
+		title
+		sop
+		description
+		labels
+		assignedTo
+		dueDate
+		status
+		createdAt
+		updatedAt
+		tasks {
+			id
 		}
-		Timestamp
 	}
 }
 `
 
-func GetPriceData(
+func ReadProjectsFilter(
 	ctx_ context.Context,
 	client_ graphql.Client,
-	symbol string,
-	limit int,
-) (data_ *GetPriceDataResponse, err_ error) {
+	isSop bool,
+) (data_ *ReadProjectsFilterResponse, err_ error) {
 	req_ := &graphql.Request{
-		OpName: "GetPriceData",
-		Query:  GetPriceData_Operation,
-		Variables: &__GetPriceDataInput{
-			Symbol: symbol,
-			Limit:  limit,
+		OpName: "ReadProjectsFilter",
+		Query:  ReadProjectsFilter_Operation,
+		Variables: &__ReadProjectsFilterInput{
+			IsSop: isSop,
 		},
 	}
 
-	data_ = &GetPriceDataResponse{}
+	data_ = &ReadProjectsFilterResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -2025,10 +2034,10 @@ func GetPriceData(
 	return data_, err_
 }
 
-// The query executed by GetSymbolStatsBySymbol.
-const GetSymbolStatsBySymbol_Operation = `
-query GetSymbolStatsBySymbol ($symbol: String!) {
-	SymbolStatsBySymbol(Symbol: $symbol) {
+// The query executed by ReadSingleSymbolStatsBySymbol.
+const ReadSingleSymbolStatsBySymbol_Operation = `
+query ReadSingleSymbolStatsBySymbol ($symbol: String!) {
+	ReadSingleSymbolStatsBySymbol(Symbol: $symbol) {
 		Symbol
 		PositionCounts {
 			Avg
@@ -2044,20 +2053,20 @@ query GetSymbolStatsBySymbol ($symbol: String!) {
 }
 `
 
-func GetSymbolStatsBySymbol(
+func ReadSingleSymbolStatsBySymbol(
 	ctx_ context.Context,
 	client_ graphql.Client,
 	symbol string,
-) (data_ *GetSymbolStatsBySymbolResponse, err_ error) {
+) (data_ *ReadSingleSymbolStatsBySymbolResponse, err_ error) {
 	req_ := &graphql.Request{
-		OpName: "GetSymbolStatsBySymbol",
-		Query:  GetSymbolStatsBySymbol_Operation,
-		Variables: &__GetSymbolStatsBySymbolInput{
+		OpName: "ReadSingleSymbolStatsBySymbol",
+		Query:  ReadSingleSymbolStatsBySymbol_Operation,
+		Variables: &__ReadSingleSymbolStatsBySymbolInput{
 			Symbol: symbol,
 		},
 	}
 
-	data_ = &GetSymbolStatsBySymbolResponse{}
+	data_ = &ReadSingleSymbolStatsBySymbolResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -2069,31 +2078,31 @@ func GetSymbolStatsBySymbol(
 	return data_, err_
 }
 
-// The query executed by GetTickerLiquidityEstimate.
-const GetTickerLiquidityEstimate_Operation = `
-query GetTickerLiquidityEstimate ($symbol: String!, $limit: Int!) {
-	getTickerStatsBySymbol(symbol: $symbol, limit: $limit) {
+// The query executed by ReadTickerStatsBySymbol.
+const ReadTickerStatsBySymbol_Operation = `
+query ReadTickerStatsBySymbol ($symbol: String!, $limit: Int!) {
+	readTickerStatsBySymbol(symbol: $symbol, limit: $limit) {
 		LiquidityEstimate
 	}
 }
 `
 
-func GetTickerLiquidityEstimate(
+func ReadTickerStatsBySymbol(
 	ctx_ context.Context,
 	client_ graphql.Client,
 	symbol string,
 	limit int,
-) (data_ *GetTickerLiquidityEstimateResponse, err_ error) {
+) (data_ *ReadTickerStatsBySymbolResponse, err_ error) {
 	req_ := &graphql.Request{
-		OpName: "GetTickerLiquidityEstimate",
-		Query:  GetTickerLiquidityEstimate_Operation,
-		Variables: &__GetTickerLiquidityEstimateInput{
+		OpName: "ReadTickerStatsBySymbol",
+		Query:  ReadTickerStatsBySymbol_Operation,
+		Variables: &__ReadTickerStatsBySymbolInput{
 			Symbol: symbol,
 			Limit:  limit,
 		},
 	}
 
-	data_ = &GetTickerLiquidityEstimateResponse{}
+	data_ = &ReadTickerStatsBySymbolResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -2105,30 +2114,30 @@ func GetTickerLiquidityEstimate(
 	return data_, err_
 }
 
-// The query executed by GetUserByEmail.
-const GetUserByEmail_Operation = `
-query GetUserByEmail ($email: String!) {
-	getUserByEmail(email: $email) {
+// The query executed by ReadUserByEmail.
+const ReadUserByEmail_Operation = `
+query ReadUserByEmail ($email: String!) {
+	readUserByEmail(email: $email) {
 		id
 		email
 	}
 }
 `
 
-func GetUserByEmail(
+func ReadUserByEmail(
 	ctx_ context.Context,
 	client_ graphql.Client,
 	email string,
-) (data_ *GetUserByEmailResponse, err_ error) {
+) (data_ *ReadUserByEmailResponse, err_ error) {
 	req_ := &graphql.Request{
-		OpName: "GetUserByEmail",
-		Query:  GetUserByEmail_Operation,
-		Variables: &__GetUserByEmailInput{
+		OpName: "ReadUserByEmail",
+		Query:  ReadUserByEmail_Operation,
+		Variables: &__ReadUserByEmailInput{
 			Email: email,
 		},
 	}
 
-	data_ = &GetUserByEmailResponse{}
+	data_ = &ReadUserByEmailResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

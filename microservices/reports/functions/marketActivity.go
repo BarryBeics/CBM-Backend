@@ -86,14 +86,14 @@ func ManageSymbolStats(client graphql.Client, top10 []shared.Gainers) {
 	ctx := context.Background()
 
 	for i, pair := range top10 {
-		res, err := graph.GetSymbolStatsBySymbol(ctx, client, pair.Symbol)
+		res, err := graph.ReadSingleSymbolStatsBySymbol(ctx, client, pair.Symbol)
 		// Always create a fresh slice for positionCounts
 		positionCounts := make([]*model.MeanInput, 10)
 		for j := 0; j < 10; j++ {
 			positionCounts[j] = &model.MeanInput{Avg: 0, Count: 0}
 		}
 
-		if err != nil || res == nil || res.SymbolStatsBySymbol.Symbol == "" {
+		if err != nil || res == nil || res.ReadSingleSymbolStatsBySymbol.Symbol == "" {
 			log.Warn().Str("symbol", pair.Symbol).Msg("No existing stats found, creating new entry")
 			// New entry: set this position
 			if i < 10 {
@@ -101,12 +101,12 @@ func ManageSymbolStats(client graphql.Client, top10 []shared.Gainers) {
 			}
 		} else {
 			// Existing stats: copy over old values and update this position
-			for j := 0; j < len(res.SymbolStatsBySymbol.PositionCounts) && j < 10; j++ {
-				old := res.SymbolStatsBySymbol.PositionCounts[j]
+			for j := 0; j < len(res.ReadSingleSymbolStatsBySymbol.PositionCounts) && j < 10; j++ {
+				old := res.ReadSingleSymbolStatsBySymbol.PositionCounts[j]
 				positionCounts[j] = &model.MeanInput{Avg: old.Avg, Count: old.Count}
 			}
 			if i < 10 {
-				oldStat := res.SymbolStatsBySymbol.PositionCounts[i]
+				oldStat := res.ReadSingleSymbolStatsBySymbol.PositionCounts[i]
 				newCount := oldStat.Count + 1
 				newAvg := ((oldStat.Avg * float64(oldStat.Count)) + pair.IncrementPriceGain) / float64(newCount)
 				positionCounts[i] = &model.MeanInput{

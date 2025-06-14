@@ -1,5 +1,5 @@
-query GetAllTasks{
-  allTasks {
+query ReadAllTasks{
+  readAllTasks {
     id
     title
     description
@@ -18,8 +18,8 @@ query GetAllTasks{
 
 
 
-query GetAllProjects($isSop: Boolean) {
-  filterProjects(filter: { sop: $isSop }) {
+query ReadProjectsFilter($isSop: Boolean) {
+  readProjectsFilter(filter: { sop: $isSop }) {
     id
     title
     sop

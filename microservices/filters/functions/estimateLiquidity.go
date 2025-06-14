@@ -17,13 +17,13 @@ func FilterByLiquidity(ctx context.Context, client graphql.Client, pairs []share
 	log.Info().Int("qty pairs", len(pairs)).Msg("filtering pairs by liquidity")
 
 	for _, pair := range pairs {
-		stats, err := graph.GetTickerLiquidityEstimate(ctx, client, pair.Symbol, 1)
+		stats, err := graph.ReadTickerStatsBySymbol(ctx, client, pair.Symbol, 1)
 		if err != nil {
 			log.Error().Str("symbol", pair.Symbol).Err(err).Msg("failed to load liquidity stats")
 			continue // Don't return early, just skip this one
 		}
 
-		thing := stats.GetTickerStatsBySymbol
+		thing := stats.ReadTickerStatsBySymbol
 
 		if len(thing) == 0 || thing[0].LiquidityEstimate == "" {
 			continue
