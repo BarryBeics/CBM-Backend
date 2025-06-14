@@ -44,6 +44,7 @@ type QuoteAssetPrices map[string]string
 func BinanceTradeVolumes(backend string) error {
 
 	// STEP 1 : Get the nearest whole 5 minutes & print the current time
+	// STEP 1 : Get the nearest whole 5 minutes & print the current time
 	now := time.Now().Unix()
 	roundedEpoch := shared.RoundTimeToFiveMinuteInterval(now)
 	log.Info().Int64("Executing task at:", now).Int("Rounded time", roundedEpoch).Msg("Time")
@@ -120,22 +121,47 @@ func BinanceTradeVolumes(backend string) error {
 
 		for i, stat := range market {
 			usdVolume := EstimateUSDVolume(stat.Symbol, stat.QuoteVolume, quotePrices)
-			//log.Info().Float64("USDVolume", usdVolume).Msg("Estimated USD Volume")
-			previous := findPreviousStat(stat.Symbol, previousStatsInput) // <-- use this helper
-			if previous == nil {
-				continue // or handle missing previous stat as needed
-			}
-			deltaVol := usdVolume - EstimateUSDVolume(previous.Symbol, previous.QuoteVolume, quotePrices)
-			//log.Info().Float64("DeltaVolume", deltaVol).Msg("Delta Volume")
-			deltaTrades := stat.TradeCount - previous.TradeCount
-			//log.Info().Int("DeltaTrades", deltaTrades).Msg("Delta Trades")
+			// if usdVolume > 0 {
+			// 	log.Info().Str("Symbol", stat.Symbol).
+			// 		Float64("USDVolume", usdVolume).
+			// 		Msg("Estimated USD Volume")
+			// }
 
-			if deltaTrades > 0 {
+			previous := findPreviousStat(stat.Symbol, previousStatsInput)
+			if previous == nil {
+				//log.Warn().Str("Symbol", stat.Symbol).Msg("No previous stat found")
+				continue
+			}
+
+			previousUSDVol := EstimateUSDVolume(previous.Symbol, previous.QuoteVolume, quotePrices)
+			deltaVol := usdVolume - previousUSDVol
+			deltaTrades := stat.TradeCount - previous.TradeCount
+
+			log.Info().Str("Symbol", stat.Symbol).
+				Float64("DeltaVolume", deltaVol).
+				Int("DeltaTrades", deltaTrades).
+				Msg("Delta stats")
+
+			// Add sanity check to ensure both deltas are positive
+			if deltaTrades > 0 && deltaVol > 0 {
 				liquidityEstimate := (deltaVol / float64(deltaTrades)) / 12
 				s := fmt.Sprintf("%f", liquidityEstimate)
 				market[i].LiquidityEstimate = &s
+
+				log.Info().
+					Str("Symbol", stat.Symbol).
+					Float64("LiquidityEstimate", liquidityEstimate).
+					Msg("Calculated liquidity estimate")
+			} else {
+				// Log a warning when estimate is skipped
+				log.Warn().
+					Str("Symbol", stat.Symbol).
+					Float64("DeltaVolume", deltaVol).
+					Int("DeltaTrades", deltaTrades).
+					Msg("Skipping liquidity estimate due to non-positive deltas")
 			}
 		}
+
 	}
 
 	// Log the first 10 entries before saving

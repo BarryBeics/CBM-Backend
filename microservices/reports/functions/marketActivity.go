@@ -21,9 +21,11 @@ func MarketActivityReport(client graphql.Client, TopAverages []int, pairsOnTheMo
 	log.Debug().Int("pairs_count", len(pairsOnTheMove)).Msg("the market activity report")
 
 	for _, pair := range pairsOnTheMove {
-		log.Info().Str("Symbol", pair.Symbol).
-			Float64("PriceGain", pair.SMAPriceGain).
-			Msg("Pair on the move")
+		if pair.SMAPriceGain < 0 {
+			log.Info().Str("Symbol", pair.Symbol).
+				Float64("PriceGain", pair.SMAPriceGain).
+				Msg("Pair on the move")
+		}
 	}
 
 	ManageSymbolStats(client, pairsOnTheMove[:min(10, len(pairsOnTheMove))])
