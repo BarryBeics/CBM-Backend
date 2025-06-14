@@ -77,7 +77,7 @@ func GetPriceData(ctx context.Context, client graphql.Client, datetime int, botN
 	// Call the appropriate function to get historic prices at the specified timestamp
 
 	log.Debug().Int("Time", datetime).Msg("getting data for")
-	pricesList, err := graph.GetHistoricPricesAtTimestamp(ctx, client, datetime)
+	pricesList, err := graph.ReadHistoricPricesAtTimestamp(ctx, client, datetime)
 	if err != nil {
 		log.Error().Int("timestamp", datetime).Err(err).Msg("failed to load prices list from MongoDB")
 		return nil, err
@@ -99,10 +99,10 @@ func GetPriceData(ctx context.Context, client graphql.Client, datetime int, botN
 	return priceDataList, nil
 }
 
-func convertToPriceDataList(response *graph.GetHistoricPricesAtTimestampResponse) ([]model.Pair, error) {
+func convertToPriceDataList(response *graph.ReadHistoricPricesAtTimestampResponse) ([]model.Pair, error) {
 	var priceDataList []model.Pair
 
-	for _, historicPrices := range response.GetGetHistoricPricesAtTimestamp() {
+	for _, historicPrices := range response.GetReadHistoricPricesAtTimestamp() {
 		for _, Pair := range historicPrices.GetPair() {
 			priceData := model.Pair{
 				Symbol: Pair.GetSymbol(),

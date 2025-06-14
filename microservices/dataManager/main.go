@@ -85,34 +85,34 @@ func runExport() error {
 	ctx := context.Background()
 
 	log.Info().Msg("Fetching projects...")
-	projectsResp, err := graph.GetAllProjects(ctx, client, false)
+	projectsResp, err := graph.ReadProjectsFilter(ctx, client, false)
 	if err != nil {
 		return fmt.Errorf("fetching projects: %w", err)
 	}
 
 	log.Info().Msg("Fetching SOPs...")
-	sopsResp, err := graph.GetAllProjects(ctx, client, true)
+	sopsResp, err := graph.ReadProjectsFilter(ctx, client, true)
 	if err != nil {
 		return fmt.Errorf("fetching sops: %w", err)
 	}
 
 	log.Info().Msg("Fetching tasks...")
-	tasksResp, err := graph.GetAllTasks(ctx, client)
+	tasksResp, err := graph.ReadAllTasks(ctx, client)
 	if err != nil {
 		return fmt.Errorf("fetching tasks: %w", err)
 	}
 
-	if err := writeJSON("projects.json", projectsResp.FilterProjects); err != nil {
+	if err := writeJSON("projects.json", projectsResp.ReadProjectsFilter); err != nil {
 		return fmt.Errorf("writing projects.json: %w", err)
 	}
 	log.Info().Msg("projects.json written")
 
-	if err := writeJSON("sops.json", sopsResp.FilterProjects); err != nil {
+	if err := writeJSON("sops.json", sopsResp.ReadProjectsFilter); err != nil {
 		return fmt.Errorf("writing sops.json: %w", err)
 	}
 	log.Info().Msg("sops.json written")
 
-	if err := writeJSON("tasks.json", tasksResp.AllTasks); err != nil {
+	if err := writeJSON("tasks.json", tasksResp.ReadAllTasks); err != nil {
 		return fmt.Errorf("writing tasks.json: %w", err)
 	}
 	log.Info().Msg("tasks.json written")
@@ -262,7 +262,7 @@ func seedUsers() error {
 }
 
 func userExists(ctx context.Context, client graphql.Client, email string) (bool, error) {
-	resp, err := graph.GetUserByEmail(ctx, client, email)
+	resp, err := graph.ReadUserByEmail(ctx, client, email)
 	if err != nil {
 		// If the error is "no documents in result", treat as "user not found"
 		if strings.Contains(err.Error(), "no documents in result") {
@@ -272,5 +272,5 @@ func userExists(ctx context.Context, client graphql.Client, email string) (bool,
 	}
 
 	// Use the ID check as a fallback in case it returns an empty struct
-	return resp.GetUserByEmail.Id != "", nil
+	return resp.ReadUserByEmail.Id != "", nil
 }

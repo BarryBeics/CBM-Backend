@@ -177,19 +177,19 @@ func findPreviousStat(symbol string, stats []model.TickerStatsInput) *model.Tick
 }
 
 func getTradeStatsFromDB(ctx context.Context, client graphql.Client, roundedEpoch int64) ([]model.TickerStats, error) {
-	resp, err := graph.GetHistoricTickerStatsAtTimestamp(ctx, client, int(roundedEpoch))
+	resp, err := graph.ReadHistoricTickerStatsAtTimestamp(ctx, client, int(roundedEpoch))
 	if err != nil {
 		log.Error().Err(err).Int64("timestamp", roundedEpoch).Msg("Failed to get trade stats from DB")
 		return nil, err
 	}
 
-	if resp == nil || len(resp.GetHistoricTickerStatsAtTimestamp) == 0 {
+	if resp == nil || len(resp.ReadHistoricTickerStatsAtTimestamp) == 0 {
 		log.Warn().Int64("timestamp", roundedEpoch).Msg("No trade stats found for the specified timestamp")
 		return nil, nil
 	}
 
 	stats := make([]model.TickerStats, 0)
-	for _, entry := range resp.GetHistoricTickerStatsAtTimestamp {
+	for _, entry := range resp.ReadHistoricTickerStatsAtTimestamp {
 		if len(entry.Stats) == 0 {
 			log.Warn().Msgf("No TickerStats for timestamp: %d", entry.Timestamp)
 			continue
@@ -255,17 +255,17 @@ func GetUSDPricesForQuoteAssets(ctx context.Context, client graphql.Client) (Quo
 	usdPrices := make(QuoteAssetPrices)
 
 	for _, symbol := range requiredSymbols {
-		resp, err := graph.GetPriceData(ctx, client, symbol, 1)
+		resp, err := graph.ReadHistoricPrice(ctx, client, symbol, 1)
 		if err != nil {
 			return nil, fmt.Errorf("failed to fetch price for %s: %w", symbol, err)
 		}
-		if len(resp.GetHistoricPrice) == 0 || len(resp.GetHistoricPrice[0].Pair) == 0 {
+		if len(resp.ReadHistoricPrice) == 0 || len(resp.ReadHistoricPrice[0].Pair) == 0 {
 			return nil, fmt.Errorf("no price data for symbol: %s", symbol)
 		}
 
 		// Extract quote asset (e.g., BTCUSDT → BTC)
 		quoteAsset := strings.TrimSuffix(symbol, "USDT")
-		usdPrices[quoteAsset] = resp.GetHistoricPrice[0].Pair[0].Price
+		usdPrices[quoteAsset] = resp.ReadHistoricPrice[0].Pair[0].Price
 	}
 
 	return usdPrices, nil

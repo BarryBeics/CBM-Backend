@@ -26,8 +26,8 @@ mutation CreateHistoricTickerStats($input: NewHistoricTickerStatsInput!) {
   }
 }
 
-query GetHistoricTickerStatsAtTimestamp($datetime: Int!) {
-  getHistoricTickerStatsAtTimestamp(Timestamp: $datetime) {
+query ReadHistoricTickerStatsAtTimestamp($datetime: Int!) {
+  readHistoricTickerStatsAtTimestamp(Timestamp: $datetime) {
     Timestamp
     Stats {
       Symbol
@@ -44,17 +44,17 @@ query GetHistoricTickerStatsAtTimestamp($datetime: Int!) {
   }
 }
 
-query GetTickerLiquidityEstimate($symbol: String!, $limit: Int!) {
-		getTickerStatsBySymbol(symbol: $symbol, limit: $limit) {
+query ReadTickerStatsBySymbol($symbol: String!, $limit: Int!) {
+		readTickerStatsBySymbol(symbol: $symbol, limit: $limit) {
 			LiquidityEstimate
 		}
 	}
 
 
-query GetHistoricPricesAtTimestamp(
+query ReadHistoricPricesAtTimestamp(
   $datetime: Int!
   ){
-  getHistoricPricesAtTimestamp(
+  readHistoricPricesAtTimestamp(
     Timestamp: $datetime) {
     Pair {
       Symbol
@@ -64,8 +64,8 @@ query GetHistoricPricesAtTimestamp(
   }
 }
 
-query GetPriceData($symbol: String!, $limit: Int!) {
-  getHistoricPrice(symbol: $symbol, limit: $limit) {
+query ReadHistoricPrice($symbol: String!, $limit: Int!) {
+  readHistoricPrice(symbol: $symbol, limit: $limit) {
     Pair {
       Symbol
       Price

@@ -115,8 +115,8 @@ mutation UpsertLiquidityEstimate(
 }
 
 
-query GetSymbolStatsBySymbol($symbol: String!) {
-  SymbolStatsBySymbol(Symbol: $symbol) {
+query ReadSingleSymbolStatsBySymbol($symbol: String!) {
+  ReadSingleSymbolStatsBySymbol(Symbol: $symbol) {
     Symbol
     PositionCounts {
       Avg
