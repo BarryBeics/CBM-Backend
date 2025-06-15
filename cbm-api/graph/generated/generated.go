@@ -58,6 +58,13 @@ type ComplexityRoot struct {
 		TopCGain       func(childComplexity int) int
 	}
 
+	FearAndGreedIndex struct {
+		CreatedAt           func(childComplexity int) int
+		Timestamp           func(childComplexity int) int
+		Value               func(childComplexity int) int
+		ValueClassification func(childComplexity int) int
+	}
+
 	HistoricKlineData struct {
 		Coins    func(childComplexity int) int
 		Opentime func(childComplexity int) int
@@ -95,6 +102,7 @@ type ComplexityRoot struct {
 		CreateTask                func(childComplexity int, input model.CreateTaskInput) int
 		CreateTradeOutcomeReport  func(childComplexity int, input *model.NewTradeOutcomeReport) int
 		CreateUser                func(childComplexity int, input model.CreateUserInput) int
+		DeleteFearAndGreedIndex   func(childComplexity int, timestamp int) int
 		DeleteHistoricPrices      func(childComplexity int, timestamp int) int
 		DeleteHistoricTickerStats func(childComplexity int, timestamp int) int
 		DeleteOutcomeReports      func(childComplexity int, timestamp int) int
@@ -110,6 +118,7 @@ type ComplexityRoot struct {
 		UpdateStrategy            func(childComplexity int, botInstanceName string, input model.StrategyInput) int
 		UpdateTask                func(childComplexity int, input model.UpdateTaskInput) int
 		UpdateUser                func(childComplexity int, input model.UpdateUserInput) int
+		UpsertFearAndGreedIndex   func(childComplexity int, input model.UpsertFearAndGreedIndexInput) int
 		UpsertSymbolStats         func(childComplexity int, input *model.UpsertSymbolStatsInput) int
 	}
 
@@ -151,6 +160,9 @@ type ComplexityRoot struct {
 		ReadAllTradeOutcomes               func(childComplexity int) int
 		ReadAllUsers                       func(childComplexity int) int
 		ReadAvailableSymbols               func(childComplexity int) int
+		ReadFearAndGreedIndex              func(childComplexity int, limit *int) int
+		ReadFearAndGreedIndexAtTimestamp   func(childComplexity int, timestamp int) int
+		ReadFearAndGreedIndexCount         func(childComplexity int) int
 		ReadHistoricKlineData              func(childComplexity int, symbol string, limit *int) int
 		ReadHistoricPrice                  func(childComplexity int, symbol string, limit *int) int
 		ReadHistoricPricesAtTimestamp      func(childComplexity int, timestamp int) int
@@ -274,6 +286,8 @@ type MutationResolver interface {
 	DeleteStrategy(ctx context.Context, botInstanceName string) (*bool, error)
 	UpdateCounters(ctx context.Context, input model.UpdateCountersInput) (*bool, error)
 	UpdateMarkAsTested(ctx context.Context, input model.MarkAsTestedInput) (*bool, error)
+	UpsertFearAndGreedIndex(ctx context.Context, input model.UpsertFearAndGreedIndexInput) (*model.FearAndGreedIndex, error)
+	DeleteFearAndGreedIndex(ctx context.Context, timestamp int) (bool, error)
 	Login(ctx context.Context, input model.LoginInput) (*model.LoginResponse, error)
 	CreateHistoricPrices(ctx context.Context, input *model.NewHistoricPriceInput) ([]*model.HistoricPrices, error)
 	DeleteHistoricPrices(ctx context.Context, timestamp int) (bool, error)
@@ -299,6 +313,9 @@ type QueryResolver interface {
 	ReadAllActivityReports(ctx context.Context) ([]*model.ActivityReport, error)
 	ReadStrategyByName(ctx context.Context, botInstanceName string) (*model.Strategy, error)
 	ReadAllStrategies(ctx context.Context) ([]*model.Strategy, error)
+	ReadFearAndGreedIndex(ctx context.Context, limit *int) ([]*model.FearAndGreedIndex, error)
+	ReadFearAndGreedIndexAtTimestamp(ctx context.Context, timestamp int) (*model.FearAndGreedIndex, error)
+	ReadFearAndGreedIndexCount(ctx context.Context) (int, error)
 	ReadHistoricPrice(ctx context.Context, symbol string, limit *int) ([]*model.HistoricPrices, error)
 	ReadHistoricPricesAtTimestamp(ctx context.Context, timestamp int) ([]*model.HistoricPrices, error)
 	ReadUniqueTimestampCount(ctx context.Context) (int, error)
@@ -395,6 +412,34 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.ActivityReport.TopCGain(childComplexity), true
+
+	case "FearAndGreedIndex.CreatedAt":
+		if e.complexity.FearAndGreedIndex.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.FearAndGreedIndex.CreatedAt(childComplexity), true
+
+	case "FearAndGreedIndex.Timestamp":
+		if e.complexity.FearAndGreedIndex.Timestamp == nil {
+			break
+		}
+
+		return e.complexity.FearAndGreedIndex.Timestamp(childComplexity), true
+
+	case "FearAndGreedIndex.Value":
+		if e.complexity.FearAndGreedIndex.Value == nil {
+			break
+		}
+
+		return e.complexity.FearAndGreedIndex.Value(childComplexity), true
+
+	case "FearAndGreedIndex.ValueClassification":
+		if e.complexity.FearAndGreedIndex.ValueClassification == nil {
+			break
+		}
+
+		return e.complexity.FearAndGreedIndex.ValueClassification(childComplexity), true
 
 	case "HistoricKlineData.coins":
 		if e.complexity.HistoricKlineData.Coins == nil {
@@ -588,6 +633,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(model.CreateUserInput)), true
 
+	case "Mutation.deleteFearAndGreedIndex":
+		if e.complexity.Mutation.DeleteFearAndGreedIndex == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteFearAndGreedIndex_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteFearAndGreedIndex(childComplexity, args["Timestamp"].(int)), true
+
 	case "Mutation.deleteHistoricPrices":
 		if e.complexity.Mutation.DeleteHistoricPrices == nil {
 			break
@@ -767,6 +824,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["input"].(model.UpdateUserInput)), true
+
+	case "Mutation.upsertFearAndGreedIndex":
+		if e.complexity.Mutation.UpsertFearAndGreedIndex == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_upsertFearAndGreedIndex_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpsertFearAndGreedIndex(childComplexity, args["input"].(model.UpsertFearAndGreedIndexInput)), true
 
 	case "Mutation.upsertSymbolStats":
 		if e.complexity.Mutation.UpsertSymbolStats == nil {
@@ -980,6 +1049,37 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.ReadAvailableSymbols(childComplexity), true
+
+	case "Query.readFearAndGreedIndex":
+		if e.complexity.Query.ReadFearAndGreedIndex == nil {
+			break
+		}
+
+		args, err := ec.field_Query_readFearAndGreedIndex_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ReadFearAndGreedIndex(childComplexity, args["limit"].(*int)), true
+
+	case "Query.readFearAndGreedIndexAtTimestamp":
+		if e.complexity.Query.ReadFearAndGreedIndexAtTimestamp == nil {
+			break
+		}
+
+		args, err := ec.field_Query_readFearAndGreedIndexAtTimestamp_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ReadFearAndGreedIndexAtTimestamp(childComplexity, args["Timestamp"].(int)), true
+
+	case "Query.readFearAndGreedIndexCount":
+		if e.complexity.Query.ReadFearAndGreedIndexCount == nil {
+			break
+		}
+
+		return e.complexity.Query.ReadFearAndGreedIndexCount(childComplexity), true
 
 	case "Query.readHistoricKlineData":
 		if e.complexity.Query.ReadHistoricKlineData == nil {
@@ -1749,6 +1849,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateProjectInput,
 		ec.unmarshalInputUpdateTaskInput,
 		ec.unmarshalInputUpdateUserInput,
+		ec.unmarshalInputUpsertFearAndGreedIndexInput,
 		ec.unmarshalInputUpsertSymbolStatsInput,
 	)
 	first := true
@@ -1962,6 +2063,56 @@ extend type Query {
 enum ContactMethod {
     EMAIL
     WHATSAPP
+}
+`, BuiltIn: false},
+	{Name: "../schema/fearAndGreed.graphqls", Input: `# ==========================
+# Types
+# ==========================
+
+type FearAndGreedIndex {
+  Timestamp: Int!          # UNIX time (daily)
+  Value: String!           # e.g. "53"
+  ValueClassification: String! # e.g. "Neutral", "Fear", "Greed"
+  CreatedAt: DateTime!     # When the entry was saved to the DB
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input UpsertFearAndGreedIndexInput {
+  Timestamp: Int!               # The index day timestamp
+  Value: String!                # The actual index value as a string
+  ValueClassification: String! # Classification like "Fear", "Greed"
+}
+
+
+# ==========================
+# Mutations
+# ==========================
+
+extend type Mutation {
+  "Creates or updates the index value for a specific timestamp"
+  upsertFearAndGreedIndex(input: UpsertFearAndGreedIndexInput!): FearAndGreedIndex!
+
+  "Deletes an index entry by timestamp (e.g., for dev re-ingestion)"
+  deleteFearAndGreedIndex(Timestamp: Int!): Boolean!
+}
+
+
+# ==========================
+# Queries
+# ==========================
+
+extend type Query {
+  "Reads index values up to a given limit (most recent first)"
+  readFearAndGreedIndex(limit: Int): [FearAndGreedIndex!]!
+
+  "Reads a specific index value by timestamp"
+  readFearAndGreedIndexAtTimestamp(Timestamp: Int!): FearAndGreedIndex
+
+  "Returns the count of saved index entries"
+  readFearAndGreedIndexCount: Int!
 }
 `, BuiltIn: false},
 	{Name: "../schema/login.graphqls", Input: `# ==========================
@@ -2438,6 +2589,9 @@ input ProjectFilterInput {
 # ==========================
 
 extend type Mutation {
+    # ==========================
+    # Tasks
+    # ==========================
     "Create a new task"
     createTask(input: CreateTaskInput!): Task
 
@@ -2446,6 +2600,10 @@ extend type Mutation {
 
     "Delete a task by ID"
     deleteTask(id: ID!): Boolean
+
+    # ==========================
+    # Projects
+    # ==========================
 
     "Create a new project"
     createProject(input: CreateProjectInput!): Project
@@ -2463,11 +2621,18 @@ extend type Mutation {
 # ==========================
 
 extend type Query {
+    # ==========================
+    # Tasks
+    # ==========================
     "Get a single task by ID"
     readTaskById(id: ID!): Task
 
     "Get all tasks"
     readAllTasks: [Task]
+
+    # ==========================
+    # Projects
+    # ==========================
 
     "Get a single project by ID"
     readSingleProjectById(id: ID!): Project
@@ -2833,6 +2998,34 @@ func (ec *executionContext) field_Mutation_createUser_argsInput(
 	}
 
 	var zeroVal model.CreateUserInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteFearAndGreedIndex_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_deleteFearAndGreedIndex_argsTimestamp(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["Timestamp"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_deleteFearAndGreedIndex_argsTimestamp(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int, error) {
+	if _, ok := rawArgs["Timestamp"]; !ok {
+		var zeroVal int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("Timestamp"))
+	if tmp, ok := rawArgs["Timestamp"]; ok {
+		return ec.unmarshalNInt2int(ctx, tmp)
+	}
+
+	var zeroVal int
 	return zeroVal, nil
 }
 
@@ -3279,6 +3472,34 @@ func (ec *executionContext) field_Mutation_updateUser_argsInput(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_upsertFearAndGreedIndex_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_upsertFearAndGreedIndex_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_upsertFearAndGreedIndex_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.UpsertFearAndGreedIndexInput, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal model.UpsertFearAndGreedIndexInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpsertFearAndGreedIndexInput2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUpsertFearAndGreedIndexInput(ctx, tmp)
+	}
+
+	var zeroVal model.UpsertFearAndGreedIndexInput
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_upsertSymbolStats_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -3388,6 +3609,62 @@ func (ec *executionContext) field_Query_readActivityReport_argsID(
 	}
 
 	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_readFearAndGreedIndexAtTimestamp_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_readFearAndGreedIndexAtTimestamp_argsTimestamp(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["Timestamp"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_readFearAndGreedIndexAtTimestamp_argsTimestamp(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int, error) {
+	if _, ok := rawArgs["Timestamp"]; !ok {
+		var zeroVal int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("Timestamp"))
+	if tmp, ok := rawArgs["Timestamp"]; ok {
+		return ec.unmarshalNInt2int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_readFearAndGreedIndex_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_readFearAndGreedIndex_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_readFearAndGreedIndex_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	if _, ok := rawArgs["limit"]; !ok {
+		var zeroVal *int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
 	return zeroVal, nil
 }
 
@@ -4356,6 +4633,182 @@ func (ec *executionContext) fieldContext_ActivityReport_FearGreedIndex(_ context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FearAndGreedIndex_Timestamp(ctx context.Context, field graphql.CollectedField, obj *model.FearAndGreedIndex) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FearAndGreedIndex_Timestamp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Timestamp, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FearAndGreedIndex_Timestamp(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FearAndGreedIndex",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FearAndGreedIndex_Value(ctx context.Context, field graphql.CollectedField, obj *model.FearAndGreedIndex) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FearAndGreedIndex_Value(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Value, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FearAndGreedIndex_Value(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FearAndGreedIndex",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FearAndGreedIndex_ValueClassification(ctx context.Context, field graphql.CollectedField, obj *model.FearAndGreedIndex) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FearAndGreedIndex_ValueClassification(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ValueClassification, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FearAndGreedIndex_ValueClassification(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FearAndGreedIndex",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FearAndGreedIndex_CreatedAt(ctx context.Context, field graphql.CollectedField, obj *model.FearAndGreedIndex) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FearAndGreedIndex_CreatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FearAndGreedIndex_CreatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FearAndGreedIndex",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5381,6 +5834,126 @@ func (ec *executionContext) fieldContext_Mutation_updateMarkAsTested(ctx context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateMarkAsTested_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_upsertFearAndGreedIndex(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_upsertFearAndGreedIndex(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpsertFearAndGreedIndex(rctx, fc.Args["input"].(model.UpsertFearAndGreedIndexInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.FearAndGreedIndex)
+	fc.Result = res
+	return ec.marshalNFearAndGreedIndex2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐFearAndGreedIndex(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_upsertFearAndGreedIndex(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Timestamp":
+				return ec.fieldContext_FearAndGreedIndex_Timestamp(ctx, field)
+			case "Value":
+				return ec.fieldContext_FearAndGreedIndex_Value(ctx, field)
+			case "ValueClassification":
+				return ec.fieldContext_FearAndGreedIndex_ValueClassification(ctx, field)
+			case "CreatedAt":
+				return ec.fieldContext_FearAndGreedIndex_CreatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FearAndGreedIndex", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_upsertFearAndGreedIndex_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteFearAndGreedIndex(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteFearAndGreedIndex(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteFearAndGreedIndex(rctx, fc.Args["Timestamp"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteFearAndGreedIndex(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteFearAndGreedIndex_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -7852,6 +8425,177 @@ func (ec *executionContext) fieldContext_Query_readAllStrategies(_ context.Conte
 				return ec.fieldContext_Strategy_CreatedOn(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Strategy", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_readFearAndGreedIndex(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_readFearAndGreedIndex(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ReadFearAndGreedIndex(rctx, fc.Args["limit"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.FearAndGreedIndex)
+	fc.Result = res
+	return ec.marshalNFearAndGreedIndex2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐFearAndGreedIndexᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_readFearAndGreedIndex(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Timestamp":
+				return ec.fieldContext_FearAndGreedIndex_Timestamp(ctx, field)
+			case "Value":
+				return ec.fieldContext_FearAndGreedIndex_Value(ctx, field)
+			case "ValueClassification":
+				return ec.fieldContext_FearAndGreedIndex_ValueClassification(ctx, field)
+			case "CreatedAt":
+				return ec.fieldContext_FearAndGreedIndex_CreatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FearAndGreedIndex", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_readFearAndGreedIndex_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_readFearAndGreedIndexAtTimestamp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_readFearAndGreedIndexAtTimestamp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ReadFearAndGreedIndexAtTimestamp(rctx, fc.Args["Timestamp"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.FearAndGreedIndex)
+	fc.Result = res
+	return ec.marshalOFearAndGreedIndex2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐFearAndGreedIndex(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_readFearAndGreedIndexAtTimestamp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Timestamp":
+				return ec.fieldContext_FearAndGreedIndex_Timestamp(ctx, field)
+			case "Value":
+				return ec.fieldContext_FearAndGreedIndex_Value(ctx, field)
+			case "ValueClassification":
+				return ec.fieldContext_FearAndGreedIndex_ValueClassification(ctx, field)
+			case "CreatedAt":
+				return ec.fieldContext_FearAndGreedIndex_CreatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FearAndGreedIndex", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_readFearAndGreedIndexAtTimestamp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_readFearAndGreedIndexCount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_readFearAndGreedIndexCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ReadFearAndGreedIndexCount(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_readFearAndGreedIndexCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -16154,6 +16898,47 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpsertFearAndGreedIndexInput(ctx context.Context, obj any) (model.UpsertFearAndGreedIndexInput, error) {
+	var it model.UpsertFearAndGreedIndexInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"Timestamp", "Value", "ValueClassification"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "Timestamp":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Timestamp"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Timestamp = data
+		case "Value":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Value"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Value = data
+		case "ValueClassification":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ValueClassification"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ValueClassification = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpsertSymbolStatsInput(ctx context.Context, obj any) (model.UpsertSymbolStatsInput, error) {
 	var it model.UpsertSymbolStatsInput
 	asMap := map[string]any{}
@@ -16256,6 +17041,60 @@ func (ec *executionContext) _ActivityReport(ctx context.Context, sel ast.Selecti
 			out.Values[i] = ec._ActivityReport_TopCGain(ctx, field, obj)
 		case "FearGreedIndex":
 			out.Values[i] = ec._ActivityReport_FearGreedIndex(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var fearAndGreedIndexImplementors = []string{"FearAndGreedIndex"}
+
+func (ec *executionContext) _FearAndGreedIndex(ctx context.Context, sel ast.SelectionSet, obj *model.FearAndGreedIndex) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, fearAndGreedIndexImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FearAndGreedIndex")
+		case "Timestamp":
+			out.Values[i] = ec._FearAndGreedIndex_Timestamp(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "Value":
+			out.Values[i] = ec._FearAndGreedIndex_Value(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "ValueClassification":
+			out.Values[i] = ec._FearAndGreedIndex_ValueClassification(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "CreatedAt":
+			out.Values[i] = ec._FearAndGreedIndex_CreatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -16555,6 +17394,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateMarkAsTested(ctx, field)
 			})
+		case "upsertFearAndGreedIndex":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_upsertFearAndGreedIndex(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteFearAndGreedIndex":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteFearAndGreedIndex(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "login":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_login(ctx, field)
@@ -16960,6 +17813,69 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_readAllStrategies(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "readFearAndGreedIndex":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_readFearAndGreedIndex(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "readFearAndGreedIndexAtTimestamp":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_readFearAndGreedIndexAtTimestamp(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "readFearAndGreedIndexCount":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_readFearAndGreedIndexCount(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -18375,6 +19291,64 @@ func (ec *executionContext) marshalNDateTime2timeᚐTime(ctx context.Context, se
 	return res
 }
 
+func (ec *executionContext) marshalNFearAndGreedIndex2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐFearAndGreedIndex(ctx context.Context, sel ast.SelectionSet, v model.FearAndGreedIndex) graphql.Marshaler {
+	return ec._FearAndGreedIndex(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNFearAndGreedIndex2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐFearAndGreedIndexᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.FearAndGreedIndex) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNFearAndGreedIndex2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐFearAndGreedIndex(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNFearAndGreedIndex2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐFearAndGreedIndex(ctx context.Context, sel ast.SelectionSet, v *model.FearAndGreedIndex) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._FearAndGreedIndex(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v any) (float64, error) {
 	res, err := graphql.UnmarshalFloatContext(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -19083,6 +20057,11 @@ func (ec *executionContext) unmarshalNUpdateUserInput2cryptobotmanagerᚗcomᚋc
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNUpsertFearAndGreedIndexInput2cryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUpsertFearAndGreedIndexInput(ctx context.Context, v any) (model.UpsertFearAndGreedIndexInput, error) {
+	res, err := ec.unmarshalInputUpsertFearAndGreedIndexInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNUser2ᚕᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.User) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -19412,6 +20391,13 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOFearAndGreedIndex2ᚖcryptobotmanagerᚗcomᚋcbmᚑbackendᚋcbmᚑapiᚋgraphᚋmodelᚐFearAndGreedIndex(ctx context.Context, sel ast.SelectionSet, v *model.FearAndGreedIndex) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._FearAndGreedIndex(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v any) (*float64, error) {

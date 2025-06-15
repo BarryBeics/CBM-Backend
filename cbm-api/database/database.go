@@ -53,11 +53,12 @@ func Connect() *DB {
 
 // ensureIndexes creates necessary indexes for the HistoricPrices collection.
 func (db *DB) ensureIndexes() error {
-	collection := db.client.Database("go_trading_db").Collection("HistoricPrices")
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 	defer cancel()
 
-	indexes := []mongo.IndexModel{
+	// Ensure HistoricPrices indexes
+	historicPrices := db.client.Database("go_trading_db").Collection("HistoricPrices")
+	historicIndexes := []mongo.IndexModel{
 		{
 			Keys: bson.D{
 				{Key: "pair.symbol", Value: 1},
@@ -70,9 +71,21 @@ func (db *DB) ensureIndexes() error {
 			Options: options.Index().SetName("timestamp_desc"),
 		},
 	}
+	if _, err := historicPrices.Indexes().CreateMany(ctx, historicIndexes); err != nil {
+		return err
+	}
 
-	_, err := collection.Indexes().CreateMany(ctx, indexes)
-	return err
+	// Ensure FearAndGreedIndex index on timestamp (unique)
+	fngCollection := db.client.Database("go_trading_db").Collection("fear_and_greed_index")
+	fngIndex := mongo.IndexModel{
+		Keys:    bson.D{{Key: "timestamp", Value: 1}},
+		Options: options.Index().SetUnique(true).SetName("timestamp_unique"),
+	}
+	if _, err := fngCollection.Indexes().CreateOne(ctx, fngIndex); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Close disconnects the MongoDB client.
