@@ -35,6 +35,7 @@ tasks:
       - go build -o backTesting microservices/BackTesting/main.go
       - go build -o fetchPrices microservices/externalDataAPIs/cmd/fetchPrices/main.go
       - go build -o fetchLiquidity microservices/externalDataAPIs/cmd/fetchLiquidity/main.go
+      - go build -o fetchFearAndGreedIndex microservices/externalDataAPIs/cmd/fetchFearAndGreedIndex/main.go
     env:
       CGO_ENABLED: 0
     sources:
