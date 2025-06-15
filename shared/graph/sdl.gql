@@ -70,6 +70,13 @@ input CreateUserInput {
 
 scalar DateTime
 
+type FearAndGreedIndex {
+  Timestamp: Int!
+  Value: String!
+  ValueClassification: String!
+  CreatedAt: DateTime!
+}
+
 type HistoricKlineData {
   opentime: Int!
   coins: [OHLC!]!
@@ -142,6 +149,18 @@ type Mutation {
   Set the Tested boolen value by bot Name
   """
   updateMarkAsTested(input: MarkAsTestedInput!): Boolean
+
+  """
+  Creates or updates the index value for a specific timestamp
+  """
+  upsertFearAndGreedIndex(
+    input: UpsertFearAndGreedIndexInput!
+  ): FearAndGreedIndex!
+
+  """
+  Deletes an index entry by timestamp (e.g., for dev re-ingestion)
+  """
+  deleteFearAndGreedIndex(Timestamp: Int!): Boolean!
   login(input: LoginInput!): LoginResponse!
 
   """
@@ -344,6 +363,21 @@ type Query {
   Get all strategies
   """
   readAllStrategies: [Strategy]
+
+  """
+  Reads index values up to a given limit (most recent first)
+  """
+  readFearAndGreedIndex(limit: Int): [FearAndGreedIndex!]!
+
+  """
+  Reads a specific index value by timestamp
+  """
+  readFearAndGreedIndexAtTimestamp(Timestamp: Int!): FearAndGreedIndex
+
+  """
+  Returns the count of saved index entries
+  """
+  readFearAndGreedIndexCount: Int!
 
   """
   Fetches price data for a given symbol up to a given limit of records
@@ -616,6 +650,12 @@ input UpdateUserInput {
   invitedBy: String
   joinedBallot: Boolean
   isPaidMember: Boolean
+}
+
+input UpsertFearAndGreedIndexInput {
+  Timestamp: Int!
+  Value: String!
+  ValueClassification: String!
 }
 
 input UpsertSymbolStatsInput {

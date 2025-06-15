@@ -30,11 +30,12 @@ tasks:
   build:
     desc: Build the Go Code
     cmds:
-      - go generate ./shared ./microservices/backTesting ./microservices/filters ./microservices/reports ./microservices/binance ./microservices/dataManager
+      - go generate ./shared ./microservices/backTesting ./microservices/filters ./microservices/reports ./microservices/externalDataAPIs ./microservices/dataManager
       - go test ./shared/tests/...
       - go build -o backTesting microservices/BackTesting/main.go
-      - go build -o fetchPrices microservices/binance/cmd/fetchPrices/main.go
-      - go build -o fetchLiquidity microservices/binance/cmd/fetchLiquidity/main.go
+      - go build -o fetchPrices microservices/externalDataAPIs/cmd/fetchPrices/main.go
+      - go build -o fetchLiquidity microservices/externalDataAPIs/cmd/fetchLiquidity/main.go
+      - go build -o fetchFearAndGreedIndex microservices/externalDataAPIs/cmd/fetchFearAndGreedIndex/main.go
     env:
       CGO_ENABLED: 0
     sources:

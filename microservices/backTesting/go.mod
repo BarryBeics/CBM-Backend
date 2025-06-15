@@ -6,7 +6,7 @@ replace cryptobotmanager.com/cbm-backend/shared => ../../shared
 
 replace cryptobotmanager.com/cbm-backend/microservices/filters => ../filters
 
-replace cryptobotmanager.com/cbm-backend/microservices/binance => ../binance
+replace cryptobotmanager.com/cbm-backend/microservices/externalDataAPIs => ../externalDataAPIs
 
 replace cryptobotmanager.com/cbm-backend/microservices/reports => ../reports
 
@@ -18,7 +18,7 @@ replace cryptobotmanager.com/cbm-backend/cbm-api => ../../cbm-api
 
 require (
 	cryptobotmanager.com/cbm-backend/cbm-api v0.0.0-00010101000000-000000000000
-	cryptobotmanager.com/cbm-backend/microservices/binance v0.0.0-00010101000000-000000000000
+	cryptobotmanager.com/cbm-backend/microservices/externalDataAPIs v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/microservices/filters v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/microservices/reports v0.0.0-00010101000000-000000000000
 	cryptobotmanager.com/cbm-backend/microservices/tradingBots v0.0.0-00010101000000-000000000000

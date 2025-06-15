@@ -4,7 +4,7 @@ use (
 	./microservices/backTesting
 	./microservices/filters
 	./microservices/reports
-	./microservices/binance
+	./microservices/externalDataAPIs
 	./microservices/dataManager
 	./cbm-api
 	./shared

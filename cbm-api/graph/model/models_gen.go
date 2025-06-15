@@ -55,6 +55,13 @@ type CreateUserInput struct {
 	PreferredContactMethod *string `json:"preferredContactMethod,omitempty"`
 }
 
+type FearAndGreedIndex struct {
+	Timestamp           int       `json:"Timestamp"`
+	Value               string    `json:"Value"`
+	ValueClassification string    `json:"ValueClassification"`
+	CreatedAt           time.Time `json:"CreatedAt"`
+}
+
 type HistoricKlineData struct {
 	Opentime int     `json:"opentime"`
 	Coins    []*Ohlc `json:"coins"`
@@ -356,6 +363,12 @@ type UpdateUserInput struct {
 	InvitedBy              *string `json:"invitedBy,omitempty"`
 	JoinedBallot           *bool   `json:"joinedBallot,omitempty"`
 	IsPaidMember           *bool   `json:"isPaidMember,omitempty"`
+}
+
+type UpsertFearAndGreedIndexInput struct {
+	Timestamp           int    `json:"Timestamp"`
+	Value               string `json:"Value"`
+	ValueClassification string `json:"ValueClassification"`
 }
 
 type UpsertSymbolStatsInput struct {

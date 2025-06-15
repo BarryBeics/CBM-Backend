@@ -1,0 +1,49 @@
+# ==========================
+# Types
+# ==========================
+
+type FearAndGreedIndex {
+  Timestamp: Int!          # UNIX time (daily)
+  Value: String!           # e.g. "53"
+  ValueClassification: String! # e.g. "Neutral", "Fear", "Greed"
+  CreatedAt: DateTime!     # When the entry was saved to the DB
+}
+
+# ==========================
+# Input Types
+# ==========================
+
+input UpsertFearAndGreedIndexInput {
+  Timestamp: Int!               # The index day timestamp
+  Value: String!                # The actual index value as a string
+  ValueClassification: String! # Classification like "Fear", "Greed"
+}
+
+
+# ==========================
+# Mutations
+# ==========================
+
+extend type Mutation {
+  "Creates or updates the index value for a specific timestamp"
+  upsertFearAndGreedIndex(input: UpsertFearAndGreedIndexInput!): FearAndGreedIndex!
+
+  "Deletes an index entry by timestamp (e.g., for dev re-ingestion)"
+  deleteFearAndGreedIndex(Timestamp: Int!): Boolean!
+}
+
+
+# ==========================
+# Queries
+# ==========================
+
+extend type Query {
+  "Reads index values up to a given limit (most recent first)"
+  readFearAndGreedIndex(limit: Int): [FearAndGreedIndex!]!
+
+  "Reads a specific index value by timestamp"
+  readFearAndGreedIndexAtTimestamp(Timestamp: Int!): FearAndGreedIndex
+
+  "Returns the count of saved index entries"
+  readFearAndGreedIndexCount: Int!
+}

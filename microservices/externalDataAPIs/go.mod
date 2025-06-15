@@ -1,4 +1,4 @@
-module cryptobotmanager.com/cbm-backend/microservices/binance
+module cryptobotmanager.com/cbm-backend/microservices/externalDataAPIs
 
 go 1.24.2
 

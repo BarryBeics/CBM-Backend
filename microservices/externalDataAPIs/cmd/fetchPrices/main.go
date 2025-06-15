@@ -9,7 +9,7 @@ import (
 
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
 	backTesting "cryptobotmanager.com/cbm-backend/microservices/backTesting/functions"
-	"cryptobotmanager.com/cbm-backend/microservices/binance"
+	binance "cryptobotmanager.com/cbm-backend/microservices/externalDataAPIs"
 	filter "cryptobotmanager.com/cbm-backend/microservices/filters/functions"
 	"cryptobotmanager.com/cbm-backend/shared"
 	"github.com/Khan/genqlient/graphql"

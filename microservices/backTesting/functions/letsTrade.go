@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"cryptobotmanager.com/cbm-backend/cbm-api/graph/model"
-	trade "cryptobotmanager.com/cbm-backend/microservices/binance/streamPrices"
+	trade "cryptobotmanager.com/cbm-backend/microservices/externalDataAPIs/streamPrices"
 	filter "cryptobotmanager.com/cbm-backend/microservices/filters/functions"
 	reports "cryptobotmanager.com/cbm-backend/microservices/reports/functions"
 	tradingBots "cryptobotmanager.com/cbm-backend/microservices/tradingBots/functions"

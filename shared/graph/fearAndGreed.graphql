@@ -1,0 +1,9 @@
+mutation UpsertFearAndGreedIndex($Timestamp: Int!, $Value: String!, $ValueClassification: String!) {
+  upsertFearAndGreedIndex(
+    input: { Timestamp: $Timestamp, Value: $Value, ValueClassification: $ValueClassification }
+  ) {
+    Timestamp
+    Value
+    ValueClassification
+  }
+}
