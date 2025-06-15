@@ -1152,6 +1152,35 @@ type UpdateCountersResponse struct {
 // GetUpdateCounters returns UpdateCountersResponse.UpdateCounters, and is useful for accessing the field via an interface.
 func (v *UpdateCountersResponse) GetUpdateCounters() bool { return v.UpdateCounters }
 
+// UpsertFearAndGreedIndexResponse is returned by UpsertFearAndGreedIndex on success.
+type UpsertFearAndGreedIndexResponse struct {
+	// Creates or updates the index value for a specific timestamp
+	UpsertFearAndGreedIndex UpsertFearAndGreedIndexUpsertFearAndGreedIndex `json:"upsertFearAndGreedIndex"`
+}
+
+// GetUpsertFearAndGreedIndex returns UpsertFearAndGreedIndexResponse.UpsertFearAndGreedIndex, and is useful for accessing the field via an interface.
+func (v *UpsertFearAndGreedIndexResponse) GetUpsertFearAndGreedIndex() UpsertFearAndGreedIndexUpsertFearAndGreedIndex {
+	return v.UpsertFearAndGreedIndex
+}
+
+// UpsertFearAndGreedIndexUpsertFearAndGreedIndex includes the requested fields of the GraphQL type FearAndGreedIndex.
+type UpsertFearAndGreedIndexUpsertFearAndGreedIndex struct {
+	Timestamp           int    `json:"Timestamp"`
+	Value               string `json:"Value"`
+	ValueClassification string `json:"ValueClassification"`
+}
+
+// GetTimestamp returns UpsertFearAndGreedIndexUpsertFearAndGreedIndex.Timestamp, and is useful for accessing the field via an interface.
+func (v *UpsertFearAndGreedIndexUpsertFearAndGreedIndex) GetTimestamp() int { return v.Timestamp }
+
+// GetValue returns UpsertFearAndGreedIndexUpsertFearAndGreedIndex.Value, and is useful for accessing the field via an interface.
+func (v *UpsertFearAndGreedIndexUpsertFearAndGreedIndex) GetValue() string { return v.Value }
+
+// GetValueClassification returns UpsertFearAndGreedIndexUpsertFearAndGreedIndex.ValueClassification, and is useful for accessing the field via an interface.
+func (v *UpsertFearAndGreedIndexUpsertFearAndGreedIndex) GetValueClassification() string {
+	return v.ValueClassification
+}
+
 // UpsertLiquidityEstimateResponse is returned by UpsertLiquidityEstimate on success.
 type UpsertLiquidityEstimateResponse struct {
 	// If the symbol exists, update it. If not, create it
@@ -1405,6 +1434,24 @@ type __UpdateCountersInput struct {
 
 // GetInput returns __UpdateCountersInput.Input, and is useful for accessing the field via an interface.
 func (v *__UpdateCountersInput) GetInput() UpdateCountersInput { return v.Input }
+
+// __UpsertFearAndGreedIndexInput is used internally by genqlient
+type __UpsertFearAndGreedIndexInput struct {
+	Timestamp           int    `json:"Timestamp"`
+	Value               string `json:"Value"`
+	ValueClassification string `json:"ValueClassification"`
+}
+
+// GetTimestamp returns __UpsertFearAndGreedIndexInput.Timestamp, and is useful for accessing the field via an interface.
+func (v *__UpsertFearAndGreedIndexInput) GetTimestamp() int { return v.Timestamp }
+
+// GetValue returns __UpsertFearAndGreedIndexInput.Value, and is useful for accessing the field via an interface.
+func (v *__UpsertFearAndGreedIndexInput) GetValue() string { return v.Value }
+
+// GetValueClassification returns __UpsertFearAndGreedIndexInput.ValueClassification, and is useful for accessing the field via an interface.
+func (v *__UpsertFearAndGreedIndexInput) GetValueClassification() string {
+	return v.ValueClassification
+}
 
 // __UpsertLiquidityEstimateInput is used internally by genqlient
 type __UpsertLiquidityEstimateInput struct {
@@ -2170,6 +2217,46 @@ func UpdateCounters(
 	}
 
 	data_ = &UpdateCountersResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by UpsertFearAndGreedIndex.
+const UpsertFearAndGreedIndex_Operation = `
+mutation UpsertFearAndGreedIndex ($Timestamp: Int!, $Value: String!, $ValueClassification: String!) {
+	upsertFearAndGreedIndex(input: {Timestamp:$Timestamp,Value:$Value,ValueClassification:$ValueClassification}) {
+		Timestamp
+		Value
+		ValueClassification
+	}
+}
+`
+
+func UpsertFearAndGreedIndex(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	Timestamp int,
+	Value string,
+	ValueClassification string,
+) (data_ *UpsertFearAndGreedIndexResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "UpsertFearAndGreedIndex",
+		Query:  UpsertFearAndGreedIndex_Operation,
+		Variables: &__UpsertFearAndGreedIndexInput{
+			Timestamp:           Timestamp,
+			Value:               Value,
+			ValueClassification: ValueClassification,
+		},
+	}
+
+	data_ = &UpsertFearAndGreedIndexResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
