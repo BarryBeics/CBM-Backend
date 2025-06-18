@@ -15,7 +15,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func LetsTrade(ctx context.Context, client graphql.Client, market []model.Pair, datetime int) error {
+func LetsTrade(ctx context.Context, client graphql.Client, market []model.Pair, currentDatetime int) error {
 
 	cfg := shared.GetDefaultCfg()
 
@@ -28,12 +28,12 @@ func LetsTrade(ctx context.Context, client graphql.Client, market []model.Pair, 
 	if len(PairsOnTheMove) == 0 {
 		return nil
 	}
-	reports.MarketActivityReport(client, cfg.TopAverages, PairsOnTheMove, datetime)
+	reports.MarketActivityReport(client, cfg.TopAverages, PairsOnTheMove, currentDatetime)
 	fmt.Println("")
 	fmt.Println("")
 	fmt.Println("")
 	fmt.Println("")
-	log.Info().Int("Qty of pairs on the move", len(PairsOnTheMove)).Int("Datetime", datetime).Msg("FIRST FILTER (Is Active)- reduce all trading pairs to just those who have gained in the last 5 minutes")
+	log.Info().Int("Qty of pairs on the move", len(PairsOnTheMove)).Int("Datetime", currentDatetime).Msg("FIRST FILTER (Is Active)- reduce all trading pairs to just those who have gained in the last 5 minutes")
 
 	// Filter the current selection by weather is has shown enough liquidity to support a trade
 	// After FirstFilter and before GetParameters
@@ -68,7 +68,7 @@ func LetsTrade(ctx context.Context, client graphql.Client, market []model.Pair, 
 
 			fmt.Println("")
 			log.Info().Msg("SECOND FILTER (SMA Gain)")
-			coinsWithMomentum, err := filter.CompareSimpleMovingAverages(ctx, client, datetime, &LiquidPairsOnTheMove, details.ShortSMADuration, details.LongSMADuration, details.MovingAveMomentum, botName)
+			coinsWithMomentum, err := filter.CompareSimpleMovingAverages(ctx, client, currentDatetime, &LiquidPairsOnTheMove, details.ShortSMADuration, details.LongSMADuration, details.MovingAveMomentum, botName)
 			if err != nil {
 				log.Error().Msgf("coins With Momentum")
 			}

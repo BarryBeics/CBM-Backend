@@ -64,8 +64,9 @@ func BinancePrices(backend string) error {
 	// make live API calls to Binance
 	// Get the nearest whole 5 minutes & print the current time
 	now := time.Now().Unix()
-	roundedEpoch := shared.RoundTimeToFiveMinuteInterval(now)
-	log.Info().Int64("Executing task at:", now).Int("Rounded time", roundedEpoch).Msg("Time")
+	currentDatetime := shared.RoundTimeToFiveMinuteInterval(now)
+	log.Info().Int64("Executing task at:", now).Int("Rounded time", currentDatetime).Msg("Time")
+	previousDateTime := currentDatetime - 300
 
 	// Create Client & Context
 	client := graphql.NewClient(backend, &http.Client{})
@@ -78,7 +79,7 @@ func BinancePrices(backend string) error {
 		log.Error().Err(err).Msgf("Failed to get price data from Binance!")
 	}
 
-	previousPrices, err := filter.GetPriceData(ctx, client, roundedEpoch, "Gopher")
+	previousPrices, err := filter.GetPriceData(ctx, client, previousDateTime, "Gopher")
 	if err != nil {
 		log.Error().Err(err).Msgf("Failed to get previous price data!")
 		return err
@@ -90,13 +91,13 @@ func BinancePrices(backend string) error {
 		return err
 	}
 
-	err = shared.SavePriceDataAsJSON(market, int64(roundedEpoch))
+	err = shared.SavePriceDataAsJSON(market, int64(currentDatetime))
 	if err != nil {
 		log.Error().Err(err).Msgf("Failed to save price data to JSON!")
 	}
 
-	if err := shared.SavePriceData(ctx, client, market, roundedEpoch); err != nil {
-		log.Error().Err(err).Int("timestamp", roundedEpoch).Msg("Save PriceData")
+	if err := shared.SavePriceData(ctx, client, market, currentDatetime); err != nil {
+		log.Error().Err(err).Int("timestamp", currentDatetime).Msg("Save PriceData")
 	}
-	return backTesting.LetsTrade(ctx, client, market, roundedEpoch)
+	return backTesting.LetsTrade(ctx, client, market, currentDatetime)
 }
