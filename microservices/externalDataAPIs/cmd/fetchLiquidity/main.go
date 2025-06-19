@@ -32,7 +32,7 @@ func main() {
 	// Initialize logger
 	shared.SetupLogger()
 
-	err = BinanceTradeVolumes(backend)
+	err = BinanceDailyLiquiditySnapshot(backend)
 	if err != nil {
 		log.Error().Err(err).Msgf("Failed to get price data from Binance!")
 	}
@@ -41,130 +41,48 @@ func main() {
 
 type QuoteAssetPrices map[string]string
 
-func BinanceTradeVolumes(backend string) error {
+func BinanceDailyLiquiditySnapshot(backend string) error {
+	// STEP 1: Get start-of-day timestamp (rounded to 00:00 UTC)
+	now := time.Now().UTC()
+	startOfDay := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC).Unix()
+	log.Info().Int64("timestamp", startOfDay).Msg("Starting daily liquidity snapshot")
 
-	// STEP 1 : Get the nearest whole 5 minutes & print the current time
-	// STEP 1 : Get the nearest whole 5 minutes & print the current time
-	now := time.Now().Unix()
-	roundedEpoch := shared.RoundTimeToFiveMinuteInterval(now)
-	log.Info().Int64("Executing task at:", now).Int("Rounded time", roundedEpoch).Msg("Time")
-
-	// STEP 2 : Create Client & Context
+	// STEP 2: Create GraphQL client and context
 	client := graphql.NewClient(backend, &http.Client{})
 	ctx := context.Background()
-	var market []model.TickerStatsInput
-	var err error
 
-	// STEP 3 : Get previous time (60 minutes ago) from roundedEpoch
-	returnedPreviousTime, err := shared.GetPreviousTime(roundedEpoch, 60)
-	if err != nil {
-		log.Error().Msgf("Failed to get previous time!")
-		return err
-	}
-	previousTime := int(returnedPreviousTime)
-	log.Info().Int("Previous time", previousTime).Msg("Previous time")
-
-	// STEP 4 : Fetch previous stats from DB
-	previousStats, err := getTradeStatsFromDB(ctx, client, int64(previousTime))
-	if err != nil {
-		log.Error().Err(err).Msgf("Failed to get previous trade stats from DB!")
-		return err
-	}
-
-	for i, s := range previousStats {
-		if i >= 10 {
-			break
-		}
-		log.Info().Str("Symbol", s.Symbol).
-			Str("LastPrice", s.LastPrice).
-			Str("Volume", s.Volume).
-			Str("QuoteVolume", s.QuoteVolume).Msg("Previous Stats")
-	}
-
-	// STEP 5 : Retrieve latest stats from Binance
-	market, err = Fetch24hrTickerStats()
+	// STEP 3: Fetch 24h stats from Binance
+	market, err := Fetch24hrTickerStats()
 	if err != nil || len(market) == 0 {
-		log.Error().Err(err).Msgf("Failed to get price data from Binance!")
+		log.Error().Err(err).Msg("Failed to get 24h stats from Binance")
+		return err
 	}
 
-	// STEP 6 : If previous stats are not found, we can skip to STEP 9
-	if previousStats != nil {
-		// STEP 7 : Get latest quote prices from DB
-		quotePrices, err := GetUSDPricesForQuoteAssets(ctx, client)
-		if err != nil {
-			log.Error().Err(err).Msgf("Failed to get quote prices for assets!")
-			return err
-		}
-
-		for asset, price := range quotePrices {
-			log.Info().Str("QuoteAsset", asset).Str("USDPrice", price).Msg("Quote Asset USD Price")
-		}
-
-		// STEP 8 : range market to calculate liquidity estimates
-
-		// Convert previousStats ([]model.TickerStats) to []model.TickerStatsInput
-		var previousStatsInput []model.TickerStatsInput
-		for _, s := range previousStats {
-			previousStatsInput = append(previousStatsInput, model.TickerStatsInput{
-				Symbol:            s.Symbol,
-				PriceChange:       s.PriceChange,
-				PriceChangePct:    s.PriceChangePct,
-				QuoteVolume:       s.QuoteVolume,
-				Volume:            s.Volume,
-				TradeCount:        s.TradeCount,
-				HighPrice:         s.HighPrice,
-				LowPrice:          s.LowPrice,
-				LastPrice:         s.LastPrice,
-				LiquidityEstimate: s.LiquidityEstimate,
-			})
-		}
-
-		for i, stat := range market {
-			usdVolume := EstimateUSDVolume(stat.Symbol, stat.QuoteVolume, quotePrices)
-			// if usdVolume > 0 {
-			// 	log.Info().Str("Symbol", stat.Symbol).
-			// 		Float64("USDVolume", usdVolume).
-			// 		Msg("Estimated USD Volume")
-			// }
-
-			previous := findPreviousStat(stat.Symbol, previousStatsInput)
-			if previous == nil {
-				//log.Warn().Str("Symbol", stat.Symbol).Msg("No previous stat found")
-				continue
-			}
-
-			previousUSDVol := EstimateUSDVolume(previous.Symbol, previous.QuoteVolume, quotePrices)
-			deltaVol := usdVolume - previousUSDVol
-			deltaTrades := stat.TradeCount - previous.TradeCount
-
-			log.Info().Str("Symbol", stat.Symbol).
-				Float64("DeltaVolume", deltaVol).
-				Int("DeltaTrades", deltaTrades).
-				Msg("Delta stats")
-
-			// Add sanity check to ensure both deltas are positive
-			if deltaTrades > 0 && deltaVol > 0 {
-				liquidityEstimate := (deltaVol / float64(deltaTrades)) / 12
-				s := fmt.Sprintf("%f", liquidityEstimate)
-				market[i].LiquidityEstimate = &s
-
-				log.Info().
-					Str("Symbol", stat.Symbol).
-					Float64("LiquidityEstimate", liquidityEstimate).
-					Msg("Calculated liquidity estimate")
-			} else {
-				// Log a warning when estimate is skipped
-				log.Warn().
-					Str("Symbol", stat.Symbol).
-					Float64("DeltaVolume", deltaVol).
-					Int("DeltaTrades", deltaTrades).
-					Msg("Skipping liquidity estimate due to non-positive deltas")
-			}
-		}
-
+	// STEP 4: Fetch quote asset USD prices (e.g., BNB, BTC, ETH)
+	quotePrices, err := GetUSDPricesForQuoteAssets(ctx, client)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to fetch quote prices")
+		return err
 	}
 
-	// Log the first 10 entries before saving
+	for asset, price := range quotePrices {
+		log.Info().Str("quote", asset).Str("usd", price).Msg("Quote asset USD price")
+	}
+
+	// STEP 5: Calculate liquidity estimate from 24h volume and trade count
+	for i, stat := range market {
+		usdVolume := EstimateUSDVolume(stat.Symbol, stat.QuoteVolume, quotePrices)
+		if stat.TradeCount <= 0 || usdVolume <= 0 {
+			continue // skip
+		}
+
+		// LiquidityEstimate = avg USD volume per 5min = (usdVol / trades) / 12
+		liquidityEstimate := (usdVolume / float64(stat.TradeCount)) / 12
+		str := fmt.Sprintf("%f", liquidityEstimate)
+		market[i].LiquidityEstimate = &str
+	}
+
+	// Log sample
 	for i, s := range market {
 		if i >= 10 {
 			break
@@ -173,73 +91,21 @@ func BinanceTradeVolumes(backend string) error {
 		if s.LiquidityEstimate != nil {
 			liq = *s.LiquidityEstimate
 		}
-		log.Info().
-			Str("Symbol", s.Symbol).
-			Str("LastPrice", s.LastPrice).
-			Str("Volume", s.Volume).
-			Str("LiquidityEstimate", liq).
-			Msg("About to save TickerStatsInput")
+		log.Info().Str("symbol", s.Symbol).Str("liq", liq).Msg("Final estimate")
 	}
 
-	// STEP 9 : Save the trade stats to DB and JSON including the calculated liquidity estimates
-	err = shared.SaveTradeStatsAsJSON(market, int64(roundedEpoch))
+	// STEP 6: Save stats to DB and local JSON
+	err = shared.SaveTradeStatsAsJSON(market, startOfDay)
 	if err != nil {
-		log.Error().Err(err).Msgf("Failed to save trade stats to JSON!")
+		log.Error().Err(err).Msg("Failed to save trade stats as JSON")
 	}
 
-	if err := shared.SaveTradeStats(ctx, client, market, roundedEpoch); err != nil {
-		log.Error().Err(err).Int("timestamp", roundedEpoch).Msg("Save TradeStats")
+	if err := shared.SaveTradeStats(ctx, client, market, int(startOfDay)); err != nil {
+		log.Error().Err(err).Msg("Failed to save to DB")
+		return err
 	}
+
 	return nil
-}
-
-func findPreviousStat(symbol string, stats []model.TickerStatsInput) *model.TickerStatsInput {
-	for _, s := range stats {
-		if s.Symbol == symbol {
-			return &s
-		}
-	}
-	return nil
-}
-
-func getTradeStatsFromDB(ctx context.Context, client graphql.Client, roundedEpoch int64) ([]model.TickerStats, error) {
-	resp, err := graph.ReadHistoricTickerStatsAtTimestamp(ctx, client, int(roundedEpoch))
-	if err != nil {
-		log.Error().Err(err).Int64("timestamp", roundedEpoch).Msg("Failed to get trade stats from DB")
-		return nil, err
-	}
-
-	if resp == nil || len(resp.ReadHistoricTickerStatsAtTimestamp) == 0 {
-		log.Warn().Int64("timestamp", roundedEpoch).Msg("No trade stats found for the specified timestamp")
-		return nil, nil
-	}
-
-	stats := make([]model.TickerStats, 0)
-	for _, entry := range resp.ReadHistoricTickerStatsAtTimestamp {
-		if len(entry.Stats) == 0 {
-			log.Warn().Msgf("No TickerStats for timestamp: %d", entry.Timestamp)
-			continue
-		}
-		for _, s := range entry.Stats {
-			var liquidityEstimatePtr *string
-			if s.LiquidityEstimate != "" {
-				liquidityEstimatePtr = &s.LiquidityEstimate
-			}
-			stats = append(stats, model.TickerStats{
-				Symbol:            s.Symbol,
-				PriceChange:       s.PriceChange,
-				PriceChangePct:    s.PriceChangePct,
-				QuoteVolume:       s.QuoteVolume,
-				Volume:            s.Volume,
-				TradeCount:        s.TradeCount,
-				HighPrice:         s.HighPrice,
-				LowPrice:          s.LowPrice,
-				LastPrice:         s.LastPrice,
-				LiquidityEstimate: liquidityEstimatePtr,
-			})
-		}
-	}
-	return stats, nil
 }
 
 // FetchPricesFromBinanceAPI fetches market prices from Binance API
